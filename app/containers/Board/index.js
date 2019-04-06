@@ -5,6 +5,9 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { FormattedMessage } from 'react-intl';
 
+import Container from 'components/Container';
+import Section from 'components/Section';
+
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 
@@ -13,22 +16,22 @@ import reducer from './reducer';
 import saga from './saga';
 import { selectBoardItems } from './selectors';
 
-class Container extends React.PureComponent {
+class Component extends React.PureComponent {
   render() {
     return (
-      <section className="section">
-        <div className="container">
+      <Section>
+        <Container>
           <h1>
             <FormattedMessage {...messages.header} />
           </h1>
           <p>{JSON.stringify(this.props.items)}</p>
-        </div>
-      </section>
+        </Container>
+      </Section>
     );
   }
 }
 
-Container.propTypes = {
+Component.propTypes = {
   item: PropTypes.array,
 };
 
@@ -52,4 +55,4 @@ export default compose(
   withReducer,
   withSaga,
   withConnect,
-)(Container);
+)(Component);
