@@ -17,6 +17,11 @@ import saga from './saga';
 import { selectBoardItems } from './selectors';
 
 class Component extends React.PureComponent {
+  renderItems = items => {
+    const keys = Object.keys(items);
+    return keys.map(key => <p key={key}>{JSON.stringify(items[key])}</p>);
+  };
+
   render() {
     return (
       <Section>
@@ -24,7 +29,7 @@ class Component extends React.PureComponent {
           <h1>
             <FormattedMessage {...messages.header} />
           </h1>
-          <p>{JSON.stringify(this.props.items)}</p>
+          {this.renderItems(this.props.items)}
         </Container>
       </Section>
     );
@@ -32,7 +37,7 @@ class Component extends React.PureComponent {
 }
 
 Component.propTypes = {
-  item: PropTypes.array,
+  items: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
