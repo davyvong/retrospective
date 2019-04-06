@@ -1,5 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
-import './tabs.css';
+import 'styles/tabs.css';
 
 const GlobalStyle = createGlobalStyle`
   html,
