@@ -30,6 +30,7 @@ class Component extends React.PureComponent {
       const item = this.props.items[id] || {};
       return (
         <pre key={id} style={{ backgroundColor: item.color }}>
+          {`"${id}": `}
           {JSON.stringify(item, null, 2)}
         </pre>
       );
