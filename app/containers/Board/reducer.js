@@ -17,17 +17,17 @@ export const initialState = fromJS({
 function reducer(state = initialState, action) {
   switch (action.type) {
     case BOARD_ITEM_ADDED:
-      return boardItemAdded(state, action);
+      return setBoardItem(state, action);
     case BOARD_ITEM_MODIFIED:
-      return boardItemModified(state, action);
+      return setBoardItem(state, action);
     case BOARD_ITEM_DELETED:
-      return boardItemDeleted(state, action);
+      return deleteBoardItem(state, action);
     default:
       return state;
   }
 }
 
-function boardItemAdded(state, action) {
+function setBoardItem(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: doc } = action;
     if (
@@ -41,24 +41,7 @@ function boardItemAdded(state, action) {
   return state;
 }
 
-function boardItemModified(state, action) {
-  if (isType(action.params, 'Object')) {
-    const { params: doc } = action;
-    if (
-      isType(doc, 'Object') &&
-      isType(doc.data, 'Object') &&
-      isGUID(doc.id, 'String')
-    ) {
-      return state.updateIn(['items', doc.id], value => ({
-        ...value,
-        ...doc.data,
-      }));
-    }
-  }
-  return state;
-}
-
-function boardItemDeleted(state, action) {
+function deleteBoardItem(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: doc } = action;
     if (isType(doc, 'Object') && isGUID(doc.id, 'String')) {

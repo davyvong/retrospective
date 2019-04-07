@@ -19,7 +19,14 @@ import { selectBoardItems } from './selectors';
 class Component extends React.PureComponent {
   renderItems = items => {
     const keys = Object.keys(items);
-    return keys.map(key => <p key={key}>{JSON.stringify(items[key])}</p>);
+    return keys.map(key => (
+      <div>
+        <pre key={key}>
+          {`"${key}": `}
+          {JSON.stringify(items[key], null, 2)}
+        </pre>
+      </div>
+    ));
   };
 
   render() {
