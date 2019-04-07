@@ -17,19 +17,31 @@ import saga from './saga';
 import { selectBoardItems } from './selectors';
 
 class Component extends React.PureComponent {
-  renderItems = items => {
-    const keys = Object.keys(items);
-    return keys.map(key => <p key={key}>{JSON.stringify(items[key])}</p>);
-  };
+  sortItems = (items, key, direction = false) =>
+    Object.keys(items).sort((a, b) => {
+      if (direction) {
+        return items[a][key] - items[b][key];
+      }
+      return items[b][key] - items[a][key];
+    });
+
+  renderItems = items =>
+    items.map(id => (
+      <pre key={id}>
+        {`"${id}": `}
+        {JSON.stringify(this.props.items[id], null, 2)}
+      </pre>
+    ));
 
   render() {
+    const sortedItems = this.sortItems(this.props.items, 'upvotes');
     return (
       <Section>
         <Container>
           <h1>
             <FormattedMessage {...messages.header} />
           </h1>
-          {this.renderItems(this.props.items)}
+          {this.renderItems(sortedItems)}
         </Container>
       </Section>
     );
