@@ -26,12 +26,14 @@ class Component extends React.PureComponent {
     });
 
   renderItems = items =>
-    items.map(id => (
-      <pre key={id}>
-        {`"${id}": `}
-        {JSON.stringify(this.props.items[id], null, 2)}
-      </pre>
-    ));
+    items.map(id => {
+      const item = this.props.items[id] || {};
+      return (
+        <pre key={id} style={{ backgroundColor: item.color }}>
+          {JSON.stringify(item, null, 2)}
+        </pre>
+      );
+    });
 
   render() {
     const sortedItems = this.sortItems(this.props.items, 'upvotes');

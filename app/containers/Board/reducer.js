@@ -35,7 +35,10 @@ function setBoardItem(state, action) {
       isType(doc.data, 'Object') &&
       isGUID(doc.id, 'String')
     ) {
-      return state.setIn(['items', doc.id], doc.data);
+      return state.setIn(['items', doc.id], {
+        ...doc.data,
+        id: doc.id,
+      });
     }
   }
   return state;
