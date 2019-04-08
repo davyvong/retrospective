@@ -1,8 +1,8 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import Container from 'components/Container';
-import Section from 'components/Section';
+import Container from 'components/Bulma/Container';
+import Section from 'components/Bulma/Section';
 
 import messages from './messages';
 

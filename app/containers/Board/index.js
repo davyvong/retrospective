@@ -5,8 +5,9 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { FormattedMessage } from 'react-intl';
 
-import Container from 'components/Container';
-import Section from 'components/Section';
+import BoardItem from 'components/Board/BoardItem';
+import Container from 'components/Bulma/Container';
+import Section from 'components/Bulma/Section';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
@@ -26,15 +27,7 @@ class Component extends React.PureComponent {
     });
 
   renderItems = items =>
-    items.map(id => {
-      const item = this.props.items[id] || {};
-      return (
-        <pre key={id} style={{ backgroundColor: item.color }}>
-          {`"${id}": `}
-          {JSON.stringify(item, null, 2)}
-        </pre>
-      );
-    });
+    items.map(id => <BoardItem id={id} item={this.props.items[id]} key={id} />);
 
   render() {
     const sortedItems = this.sortItems(this.props.items, 'upvotes');
