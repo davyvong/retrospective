@@ -13,7 +13,7 @@ function Component(props) {
   return (
     <Wrapper color={`${item.color}80`}>
       <Subject>{item.subject}</Subject>
-      <Body>{item.body}</Body>
+      <Body defaultValue={item.body} />
       {item.isLocked && <Lock />}
       <Footer>
         <div>
