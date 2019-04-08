@@ -1,5 +1,5 @@
 {
-  "app.containers.Board.header": "Retrospective",
+  "app.containers.Board.header": "Board",
   "app.containers.NotFound.description": "The page you requested does not exist.",
   "app.containers.NotFound.title": "Not Found"
 }
