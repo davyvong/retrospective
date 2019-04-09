@@ -9,6 +9,10 @@ const Component = styled.button`
   text-align: center;
   width: 100%;
 
+  &:focus {
+    outline: none;
+  }
+
   &:hover {
     background-color: #00000020;
   }

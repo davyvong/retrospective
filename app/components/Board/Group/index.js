@@ -46,10 +46,19 @@ class Component extends React.PureComponent {
     this.setState({ name: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
         this.props.onChange({
-          data: { name: this.state.name },
+          data: {
+            locked: false,
+            name: this.state.name,
+          },
           id: this.props.id,
         });
       }, 2000);
+      if (!this.props.group.locked) {
+        this.props.onChange({
+          data: { locked: true },
+          id: this.props.id,
+        });
+      }
     });
   };
 
@@ -76,14 +85,11 @@ class Component extends React.PureComponent {
   render() {
     const { items, name } = this.state;
     const { group, id, renderItem } = this.props;
+    const locked = Boolean(group.locked && !this.updateTimeout);
     return (
       <Wrapper>
-        <Name
-          defaultValue={name}
-          disabled={group.locked}
-          onChange={this.onChange}
-        />
-        {group.locked && <Lock />}
+        <Name disabled={locked} onChange={this.onChange} value={name} />
+        {locked && <Lock />}
         <Create>Create</Create>
         <List>
           <DragDropContext onDragEnd={this.onDragEnd}>

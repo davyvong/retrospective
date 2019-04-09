@@ -38,26 +38,32 @@ class Component extends React.PureComponent {
     this.setState({ message: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
         this.props.onChange({
-          data: { message: this.state.message },
+          data: {
+            locked: false,
+            message: this.state.message,
+          },
           id: this.props.id,
         });
       }, 2000);
+      if (!this.props.item.locked) {
+        this.props.onChange({
+          data: { locked: true },
+          id: this.props.id,
+        });
+      }
     });
   };
 
   render() {
     const { item } = this.props;
     const { message } = this.state;
+    const locked = Boolean(item.locked && !this.updateTimeout);
     return (
       <Wrapper color={item.color ? `${item.color}80` : BOARD_ITEM_COLORS.GREY}>
         <Hoverable>
-          <Message
-            disabled={item.locked}
-            onChange={this.onChange}
-            value={message}
-          />
+          <Message disabled={locked} onChange={this.onChange} value={message} />
         </Hoverable>
-        {item.locked && <Lock />}
+        {locked && <Lock />}
         <Footer>
           <div>
             {item.upvotes > 0 ? item.upvotes : 'No'} Upvote
