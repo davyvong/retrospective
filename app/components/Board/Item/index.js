@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Data from './Data';
 import Footer from './Footer';
 import Hoverable from './Hoverable';
 import Lock from './Lock';
@@ -15,7 +14,7 @@ class Component extends React.PureComponent {
   }
 
   render() {
-    const { id, item } = this.props;
+    const { item } = this.props;
     return (
       <Wrapper color={`${item.color}80`}>
         <Hoverable>
@@ -28,10 +27,6 @@ class Component extends React.PureComponent {
             {item.upvotes !== 1 && 's'}
           </div>
         </Footer>
-        <Data color={`${item.color}60`}>
-          {`"${id}": `}
-          {JSON.stringify(item, null, 2)}
-        </Data>
       </Wrapper>
     );
   }
@@ -42,7 +37,7 @@ Component.defaultProps = {
 };
 
 Component.propTypes = {
-  id: PropTypes.string,
+  // id: PropTypes.string.isRequired,
   item: PropTypes.object,
 };
 

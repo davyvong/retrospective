@@ -8,7 +8,10 @@ const selectBoardInfo = () =>
     title: state.get('title'),
   }));
 
+const selectBoardGroups = () =>
+  createSelector(selectState, state => state.get('groups').toJS());
+
 const selectBoardItems = () =>
   createSelector(selectState, state => state.get('items').toJS());
 
-export { selectBoardInfo, selectBoardItems };
+export { selectBoardInfo, selectBoardGroups, selectBoardItems };

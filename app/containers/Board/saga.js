@@ -2,6 +2,9 @@ import { call, fork } from 'redux-saga/effects';
 
 import {
   boardSnapshot,
+  boardGroupAdded,
+  boardGroupModified,
+  boardGroupDeleted,
   boardItemAdded,
   boardItemModified,
   boardItemDeleted,
@@ -23,6 +26,20 @@ export function* boardInfoListener() {
   );
 }
 
+function* boardGroupListener() {
+  yield call(
+    createSubCollectionListener,
+    'boards',
+    'd9965f7c-0437-4bc3-8647-40e313058fee',
+    'groups',
+    {
+      [CHANGE_TYPES.ADDED]: boardGroupAdded,
+      [CHANGE_TYPES.MODIFIED]: boardGroupModified,
+      [CHANGE_TYPES.DELETED]: boardGroupDeleted,
+    },
+  );
+}
+
 function* boardItemListener() {
   yield call(
     createSubCollectionListener,
@@ -39,5 +56,6 @@ function* boardItemListener() {
 
 export default function* saga() {
   yield fork(boardInfoListener);
+  yield fork(boardGroupListener);
   yield fork(boardItemListener);
 }

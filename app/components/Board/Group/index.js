@@ -66,7 +66,7 @@ Component.defaultProps = {
 
 Component.propTypes = {
   id: PropTypes.string.isRequired,
-  items: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
+  items: PropTypes.array,
   onReorder: PropTypes.func,
   renderItem: PropTypes.func,
 };

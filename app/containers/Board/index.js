@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { injectIntl, intlShape } from 'react-intl';
-import uuidv4 from 'uuid/v4';
 
 import { Draggable } from 'react-beautiful-dnd';
 
@@ -22,7 +21,11 @@ import injectSaga from 'utils/injectSaga';
 import messages from './messages';
 import reducer from './reducer';
 import saga from './saga';
-import { selectBoardInfo, selectBoardItems } from './selectors';
+import {
+  selectBoardInfo,
+  selectBoardGroups,
+  selectBoardItems,
+} from './selectors';
 
 class Component extends React.PureComponent {
   constructor(props) {
@@ -42,6 +45,9 @@ class Component extends React.PureComponent {
     });
   }
 
+  filterCollection = (collection, key, value) =>
+    Object.keys(collection).filter(id => collection[id][key] === value);
+
   onReorder = items => {
     const { items: result } = this.props;
     items.forEach((item, index) => {
@@ -51,6 +57,15 @@ class Component extends React.PureComponent {
     });
     console.log('onReorder', result);
   };
+
+  renderGroup = id => (
+    <Group
+      id={id}
+      items={this.filterCollection(this.props.items, 'groupId', id)}
+      onReorder={this.onReorder}
+      renderItem={this.renderItem}
+    />
+  );
 
   renderItem = (id, index) => (
     <Draggable draggableId={id} key={id} index={index}>
@@ -66,12 +81,12 @@ class Component extends React.PureComponent {
     </Draggable>
   );
 
-  sortItems = (items, key, direction = false) =>
-    Object.keys(items).sort((a, b) => {
+  sortCollection = (collection, key, direction = false) =>
+    Object.keys(collection).sort((a, b) => {
       if (direction) {
-        return items[a][key] - items[b][key];
+        return collection[a][key] - collection[b][key];
       }
-      return items[b][key] - items[a][key];
+      return collection[b][key] - collection[a][key];
     });
 
   updateField = (event, key) => {
@@ -81,7 +96,7 @@ class Component extends React.PureComponent {
     this.setState({ [key]: event.target.value }, () => {
       this.timeouts[key] = setTimeout(() => {
         console.log(key, this.state[key]);
-      }, 3000);
+      }, 2000);
     });
   };
 
@@ -90,9 +105,8 @@ class Component extends React.PureComponent {
   updateTitle = event => this.updateField(event, 'title');
 
   render() {
-    const { intl, items } = this.props;
+    const { groups, intl } = this.props;
     const { context, title } = this.state;
-    const sortedItems = this.sortItems(items, 'upvotes');
     return (
       <Section>
         <Container>
@@ -106,20 +120,7 @@ class Component extends React.PureComponent {
             placeholder={intl.formatMessage(messages.context)}
             value={context}
           />
-          <Columns>
-            <Group
-              id={uuidv4()}
-              items={sortedItems}
-              onReorder={this.onReorder}
-              renderItem={this.renderItem}
-            />
-            <Group
-              id={uuidv4()}
-              items={sortedItems}
-              onReorder={this.onReorder}
-              renderItem={this.renderItem}
-            />
-          </Columns>
+          <Columns>{Object.keys(groups).map(this.renderGroup)}</Columns>
         </Container>
       </Section>
     );
@@ -127,17 +128,20 @@ class Component extends React.PureComponent {
 }
 
 Component.defaultProps = {
+  groups: {},
   info: {},
   items: {},
 };
 
 Component.propTypes = {
-  info: PropTypes.object, // eslint-disable-line react/no-unused-prop-types
+  groups: PropTypes.object,
+  info: PropTypes.object,
   intl: intlShape.isRequired,
   items: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
+  groups: selectBoardGroups(),
   info: selectBoardInfo(),
   items: selectBoardItems(),
 });
