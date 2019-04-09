@@ -28,12 +28,10 @@ class Component extends React.PureComponent {
             {item.upvotes !== 1 && 's'}
           </div>
         </Footer>
-        {id !== '1f1b3df0-867f-4f35-8971-27b65f8f5c2c' && (
-          <Data color={`${item.color}60`}>
-            {`"${id}":`}
-            {JSON.stringify(item, null, 2)}
-          </Data>
-        )}
+        <Data color={`${item.color}60`}>
+          {`"${id}": `}
+          {JSON.stringify(item, null, 2)}
+        </Data>
       </Wrapper>
     );
   }

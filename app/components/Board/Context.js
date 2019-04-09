@@ -4,6 +4,7 @@ const Component = styled.input`
   display: block;
   font-size: 1.4em;
   margin-bottom: 1.33em;
+  width: 100%;
 
   &:focus {
     outline: none;

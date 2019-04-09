@@ -3,6 +3,7 @@ import { fromJS } from 'immutable';
 import { isGUID, isType } from 'utils/validate';
 
 import {
+  BOARD_SNAPSHOT,
   BOARD_ITEM_ADDED,
   BOARD_ITEM_MODIFIED,
   BOARD_ITEM_DELETED,
@@ -16,6 +17,8 @@ export const initialState = fromJS({
 
 function reducer(state = initialState, action) {
   switch (action.type) {
+    case BOARD_SNAPSHOT:
+      return setBoardInfo(state, action);
     case BOARD_ITEM_ADDED:
       return setBoardItem(state, action);
     case BOARD_ITEM_MODIFIED:
@@ -27,14 +30,20 @@ function reducer(state = initialState, action) {
   }
 }
 
+function setBoardInfo(state, action) {
+  if (isType(action.params, 'Object')) {
+    const { params: doc } = action;
+    if (isType(doc.data, 'Object') && isGUID(doc.id, 'String')) {
+      return state.merge(doc.data);
+    }
+  }
+  return state;
+}
+
 function setBoardItem(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: doc } = action;
-    if (
-      isType(doc, 'Object') &&
-      isType(doc.data, 'Object') &&
-      isGUID(doc.id, 'String')
-    ) {
+    if (isType(doc.data, 'Object') && isGUID(doc.id, 'String')) {
       return state.setIn(['items', doc.id], doc.data);
     }
   }
