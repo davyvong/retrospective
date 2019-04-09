@@ -5,8 +5,10 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { injectIntl, intlShape } from 'react-intl';
 
-import BoardItem from 'components/Board/BoardItem';
+import Column from 'components/Board/Column';
+import Columns from 'components/Board/Columns';
 import Context from 'components/Board/Context';
+import Item from 'components/Board/Item';
 import Title from 'components/Board/Title';
 import Container from 'components/Bulma/Container';
 import Section from 'components/Bulma/Section';
@@ -29,7 +31,7 @@ class Component extends React.PureComponent {
     });
 
   renderItems = items =>
-    items.map(id => <BoardItem id={id} item={this.props.items[id]} key={id} />);
+    items.map(id => <Item id={id} item={this.props.items[id]} key={id} />);
 
   render() {
     const { intl, items } = this.props;
@@ -39,7 +41,10 @@ class Component extends React.PureComponent {
         <Container>
           <Title placeholder={intl.formatMessage(messages.title)} />
           <Context placeholder={intl.formatMessage(messages.context)} />
-          {this.renderItems(sortedItems)}
+          <Columns>
+            <Column>{this.renderItems(sortedItems)}</Column>
+            <Column>{this.renderItems(sortedItems)}</Column>
+          </Columns>
         </Container>
       </Section>
     );
