@@ -23,7 +23,9 @@ import injectSaga from 'utils/injectSaga';
 
 import {
   initializeBoard as initializeBoardAction,
+  updateBoardGroup as updateBoardGroupAction,
   updateBoardInfo as updateBoardInfoAction,
+  updateBoardItem as updateBoardItemAction,
 } from './actions';
 import messages from './messages';
 import reducer from './reducer';
@@ -80,16 +82,20 @@ class Component extends React.PureComponent {
       return collection[b][key] - collection[a][key];
     });
 
-  updateBoardGroup = doc => console.log(doc);
+  updateBoardGroup = doc => {
+    this.props.updateBoardGroup(doc);
+  };
 
   updateBoardInfo = data => {
     this.props.updateBoardInfo({
       data,
       id: this.props.id,
     });
-  }
+  };
 
-  updateBoardItem = doc => console.log(doc);
+  updateBoardItem = doc => {
+    this.props.updateBoardItem(doc);
+  };
 
   render() {
     const { context, title } = this.props.info;
@@ -133,7 +139,9 @@ Component.propTypes = {
   info: PropTypes.object,
   intl: intlShape.isRequired,
   items: PropTypes.object,
+  updateBoardGroup: PropTypes.func,
   updateBoardInfo: PropTypes.func,
+  updateBoardItem: PropTypes.func,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -145,7 +153,9 @@ const mapStateToProps = createStructuredSelector({
 
 export const mapDispatchToProps = dispatch => ({
   initializeBoard: params => dispatch(initializeBoardAction.request(params)),
+  updateBoardGroup: params => dispatch(updateBoardGroupAction.request(params)),
   updateBoardInfo: params => dispatch(updateBoardInfoAction.request(params)),
+  updateBoardItem: params => dispatch(updateBoardItemAction.request(params)),
 });
 
 const withConnect = connect(

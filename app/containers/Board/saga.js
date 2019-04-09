@@ -1,19 +1,28 @@
-import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
+import { all, call, fork, put, select, takeLatest } from 'redux-saga/effects';
 
 import { firestore } from 'configureFirebase';
 
 import {
   initializeBoard as initializeBoardAction,
+  updateBoardGroup as updateBoardGroupAction,
   updateBoardInfo as updateBoardInfoAction,
+  updateBoardItem as updateBoardItemAction,
 } from './actions';
 
-import { INITIALIZE_BOARD, UPDATE_BOARD_INFO } from './constants';
+import {
+  INITIALIZE_BOARD,
+  UPDATE_BOARD_GROUP,
+  UPDATE_BOARD_INFO,
+  UPDATE_BOARD_ITEM,
+} from './constants';
 
 import {
   boardInfoListener,
   boardGroupListener,
   boardItemListener,
 } from './listeners';
+
+import { selectBoardId } from './selectors';
 
 export function* initializeBoard(action) {
   try {
@@ -34,10 +43,27 @@ export function* initializeBoard(action) {
   }
 }
 
+export function* updateBoardGroup(action) {
+  try {
+    const { params: doc } = action;
+    const boardId = yield select(selectBoardId());
+    const ref = firestore
+      .collection('boards')
+      .doc(boardId)
+      .collection('groups')
+      .doc(doc.id);
+    yield call([ref, ref.set], doc.data, { merge: true });
+    yield put(updateBoardGroupAction.success());
+  } catch (error) {
+    yield put(updateBoardGroupAction.failure(error));
+  }
+}
+
 export function* updateBoardInfo(action) {
   try {
     const { params: doc } = action;
-    const ref = firestore.collection('boards').doc(doc.id);
+    const boardId = yield select(selectBoardId());
+    const ref = firestore.collection('boards').doc(boardId);
     yield call([ref, ref.set], doc.data, { merge: true });
     yield put(updateBoardInfoAction.success());
   } catch (error) {
@@ -45,7 +71,25 @@ export function* updateBoardInfo(action) {
   }
 }
 
+export function* updateBoardItem(action) {
+  try {
+    const { params: doc } = action;
+    const boardId = yield select(selectBoardId());
+    const ref = firestore
+      .collection('boards')
+      .doc(boardId)
+      .collection('items')
+      .doc(doc.id);
+    yield call([ref, ref.set], doc.data, { merge: true });
+    yield put(updateBoardItemAction.success());
+  } catch (error) {
+    yield put(updateBoardItemAction.failure(error));
+  }
+}
+
 export default function* saga() {
   yield takeLatest(INITIALIZE_BOARD.REQUEST, initializeBoard);
+  yield takeLatest(UPDATE_BOARD_GROUP.REQUEST, updateBoardGroup);
   yield takeLatest(UPDATE_BOARD_INFO.REQUEST, updateBoardInfo);
+  yield takeLatest(UPDATE_BOARD_ITEM.REQUEST, updateBoardItem);
 }
