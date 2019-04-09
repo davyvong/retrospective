@@ -12,10 +12,6 @@ const Component = styled.div`
       0 1px 3px 1px rgba(60, 64, 67, 0.149);
   }
 
-  &:not(:last-child) {
-    margin-bottom: 1.25rem;
-  }
-
   & > *:not(:last-child) {
     margin-bottom: 0.75rem;
   }

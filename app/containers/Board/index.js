@@ -5,6 +5,8 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { injectIntl, intlShape } from 'react-intl';
 
+import { Draggable } from 'react-beautiful-dnd';
+
 import Columns from 'components/Board/Columns';
 import Context from 'components/Board/Context';
 import Group from 'components/Board/Group';
@@ -46,7 +48,19 @@ class Component extends React.PureComponent {
       return items[b][key] - items[a][key];
     });
 
-  renderItem = id => <Item id={id} item={this.props.items[id]} key={id} />;
+  renderItem = (id, index) => (
+    <Draggable draggableId={id} key={id} index={index}>
+      {provided => (
+        <div
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}
+        >
+          <Item id={id} item={this.props.items[id]} />
+        </div>
+      )}
+    </Draggable>
+  );
 
   updateContext = event => this.setState({ context: event.target.value });
 
