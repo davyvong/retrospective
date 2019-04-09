@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 import Item from './Item';
+import Lock from './Lock';
 import Name from './Name';
 import Wrapper from './Wrapper';
 
@@ -44,7 +45,8 @@ class Component extends React.PureComponent {
     const { group, id, renderItem } = this.props;
     return (
       <Wrapper>
-        <Name defaultValue={group.name} />
+        <Name defaultValue={group.name} disabled={group.locked} />
+        {group.locked && <Lock />}
         <DragDropContext onDragEnd={this.onDragEnd}>
           <Droppable droppableId={id}>
             {provided => (
