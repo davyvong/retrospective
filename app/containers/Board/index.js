@@ -31,7 +31,6 @@ import reducer from './reducer';
 import saga from './saga';
 import {
   selectBoardGroups,
-  selectBoardId,
   selectBoardInfo,
   selectBoardItems,
 } from './selectors';
@@ -86,10 +85,7 @@ class Component extends React.PureComponent {
   };
 
   updateBoardInfo = data => {
-    this.props.updateBoardInfo({
-      data,
-      id: this.props.id,
-    });
+    this.props.updateBoardInfo({ data });
   };
 
   updateBoardItem = doc => {
@@ -105,9 +101,9 @@ class Component extends React.PureComponent {
         </FullScreen>
       );
     }
-    const { groups, id, intl } = this.props;
+    const { groups, intl } = this.props;
     return (
-      <Section id={id}>
+      <Section>
         <Container>
           <Title
             onChange={this.updateBoardInfo}
@@ -134,7 +130,6 @@ Component.defaultProps = {
 
 Component.propTypes = {
   groups: PropTypes.object,
-  id: PropTypes.string,
   info: PropTypes.object,
   intl: intlShape.isRequired,
   items: PropTypes.object,
@@ -145,7 +140,6 @@ Component.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   groups: selectBoardGroups(),
-  id: selectBoardId(),
   info: selectBoardInfo(),
   items: selectBoardItems(),
 });
