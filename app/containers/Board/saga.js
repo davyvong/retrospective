@@ -1,4 +1,4 @@
-import { call, fork, put, takeLatest } from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 
 import { firestore } from 'configureFirebase';
 
@@ -24,9 +24,11 @@ export function* initializeBoard(action) {
       throw new Error('Board does not exist.');
     }
     yield put(initializeBoardAction.success(id));
-    yield fork(boardInfoListener);
-    yield fork(boardGroupListener);
-    yield fork(boardItemListener);
+    yield all([
+      fork(boardInfoListener),
+      fork(boardGroupListener),
+      fork(boardItemListener),
+    ]);
   } catch (error) {
     yield put(initializeBoardAction.failure(error));
   }

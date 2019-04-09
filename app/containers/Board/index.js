@@ -15,6 +15,8 @@ import Item from 'components/Board/Item';
 import Title from 'components/Board/Title';
 import Container from 'components/Bulma/Container';
 import Section from 'components/Bulma/Section';
+import FullScreen from 'components/FullScreen';
+import Spinner from 'components/Spinner';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
@@ -37,8 +39,8 @@ class Component extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      context: '',
-      title: '',
+      context: null,
+      title: null,
     };
   }
 
@@ -120,8 +122,15 @@ class Component extends React.PureComponent {
   updateTitle = event => this.updateField(event, 'title');
 
   render() {
-    const { groups, id, intl } = this.props;
     const { context, title } = this.state;
+    if (!context && !title) {
+      return (
+        <FullScreen>
+          <Spinner size="5rem" />
+        </FullScreen>
+      );
+    }
+    const { groups, id, intl } = this.props;
     return (
       <Section id={id}>
         <Container>

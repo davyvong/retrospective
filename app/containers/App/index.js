@@ -8,12 +8,10 @@ import GlobalStyle from '../../globalStyles';
 
 export default function App() {
   return (
-    <div>
-      <Switch>
-        <Route path="/board/:boardId" component={Board} />
-        <Route component={NotFound} />
-      </Switch>
+    <Switch>
+      <Route path="/board/:boardId" component={Board} />
+      <Route component={NotFound} />
       <GlobalStyle />
-    </div>
+    </Switch>
   );
 }
