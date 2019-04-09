@@ -9,7 +9,7 @@ const selectBoardId = () =>
   createSelector(selectState, state => state.get('id'));
 
 const selectBoardInfo = () =>
-  createSelector(selectState, state => state.get('info'));
+  createSelector(selectState, state => state.get('info').toJS());
 
 const selectBoardItems = () =>
   createSelector(selectState, state => state.get('items').toJS());

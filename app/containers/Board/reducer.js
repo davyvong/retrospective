@@ -47,7 +47,7 @@ function setBoardInfo(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: doc } = action;
     if (isType(doc.data, 'Object') && isGUID(doc.id)) {
-      return state.set('info', doc.data);
+      return state.set('info', fromJS(doc.data));
     }
   }
   return state;
