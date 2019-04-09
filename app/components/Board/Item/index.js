@@ -19,7 +19,7 @@ class Component extends React.PureComponent {
     return (
       <Wrapper color={`${item.color}80`}>
         <Hoverable>
-          <Message value={item.message} />
+          <Message disabled value={item.message} />
         </Hoverable>
         {item.isLocked && <Lock />}
         <Footer>

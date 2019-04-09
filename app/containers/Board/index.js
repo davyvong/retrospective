@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { injectIntl, intlShape } from 'react-intl';
+import uuidv4 from 'uuid/v4';
 
 import { Draggable } from 'react-beautiful-dnd';
 
@@ -30,6 +31,7 @@ class Component extends React.PureComponent {
       context: '',
       title: '',
     };
+    this.timeouts = {};
   }
 
   componentWillReceiveProps(newProps) {
@@ -40,13 +42,15 @@ class Component extends React.PureComponent {
     });
   }
 
-  sortItems = (items, key, direction = false) =>
-    Object.keys(items).sort((a, b) => {
-      if (direction) {
-        return items[a][key] - items[b][key];
+  onReorder = items => {
+    const { items: result } = this.props;
+    items.forEach((item, index) => {
+      if (result[item]) {
+        result[item].order = index;
       }
-      return items[b][key] - items[a][key];
     });
+    console.log('onReorder', result);
+  };
 
   renderItem = (id, index) => (
     <Draggable draggableId={id} key={id} index={index}>
@@ -62,9 +66,28 @@ class Component extends React.PureComponent {
     </Draggable>
   );
 
-  updateContext = event => this.setState({ context: event.target.value });
+  sortItems = (items, key, direction = false) =>
+    Object.keys(items).sort((a, b) => {
+      if (direction) {
+        return items[a][key] - items[b][key];
+      }
+      return items[b][key] - items[a][key];
+    });
 
-  updateTitle = event => this.setState({ title: event.target.value });
+  updateField = (event, key) => {
+    if (this.timeouts[key]) {
+      clearTimeout(this.timeouts[key]);
+    }
+    this.setState({ [key]: event.target.value }, () => {
+      this.timeouts[key] = setTimeout(() => {
+        console.log(key, this.state[key]);
+      }, 3000);
+    });
+  };
+
+  updateContext = event => this.updateField(event, 'context');
+
+  updateTitle = event => this.updateField(event, 'title');
 
   render() {
     const { intl, items } = this.props;
@@ -84,8 +107,18 @@ class Component extends React.PureComponent {
             value={context}
           />
           <Columns>
-            <Group items={sortedItems} renderItem={this.renderItem} />
-            <Group items={sortedItems} renderItem={this.renderItem} />
+            <Group
+              id={uuidv4()}
+              items={sortedItems}
+              onReorder={this.onReorder}
+              renderItem={this.renderItem}
+            />
+            <Group
+              id={uuidv4()}
+              items={sortedItems}
+              onReorder={this.onReorder}
+              renderItem={this.renderItem}
+            />
           </Columns>
         </Container>
       </Section>

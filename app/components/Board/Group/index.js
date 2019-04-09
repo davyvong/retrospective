@@ -19,32 +19,36 @@ class Component extends React.PureComponent {
     if (!result.destination) {
       return;
     }
-    this.setState(prevState => ({
-      items: this.reorder(
-        prevState.items,
-        result.source.index,
-        result.destination.index,
-      ),
-    }));
+    this.setState(
+      prevState => ({
+        items: this.reorder(
+          prevState.items,
+          result.source.index,
+          result.destination.index,
+        ),
+      }),
+      () => this.props.onReorder(this.state.items),
+    );
   };
 
-  reorder = (list, startIndex, endIndex) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
+  reorder = (items, start, end) => {
+    const result = Array.from(items);
+    const [removed] = result.splice(start, 1);
+    result.splice(end, 0, removed);
     return result;
   };
 
   render() {
     const { items } = this.state;
-    const { renderItem } = this.props;
+    const { id, renderItem } = this.props;
     return (
       <Wrapper>
         <DragDropContext onDragEnd={this.onDragEnd}>
-          <Droppable droppableId="droppable">
+          <Droppable droppableId={id}>
             {provided => (
               <Item {...provided.droppableProps} ref={provided.innerRef}>
                 {items.map(renderItem)}
+                {provided.placeholder}
               </Item>
             )}
           </Droppable>
@@ -56,11 +60,14 @@ class Component extends React.PureComponent {
 
 Component.defaultProps = {
   items: [],
+  onReorder: () => null,
   renderItem: () => null,
 };
 
 Component.propTypes = {
+  id: PropTypes.string.isRequired,
   items: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
+  onReorder: PropTypes.func,
   renderItem: PropTypes.func,
 };
 
