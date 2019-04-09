@@ -1,8 +1,20 @@
-import { call, put, take } from 'redux-saga/effects';
+import { call, put, select, take } from 'redux-saga/effects';
 
 import { createDocumentChannel, createSubCollectionChannel } from './channels';
 
+import {
+  boardSnapshot,
+  boardGroupAdded,
+  boardGroupModified,
+  boardGroupDeleted,
+  boardItemAdded,
+  boardItemModified,
+  boardItemDeleted,
+} from './actions';
+
 import { CHANGE_TYPES } from './constants';
+
+import { selectBoardId } from './selectors';
 
 export function* createDocumentListener(collectionId, documentId, action) {
   const channel = yield call(createDocumentChannel, collectionId, documentId);
@@ -50,4 +62,27 @@ export function* createSubCollectionListener(
   } finally {
     //
   }
+}
+
+export function* boardInfoListener() {
+  const id = yield select(selectBoardId());
+  yield call(createDocumentListener, 'boards', id, boardSnapshot);
+}
+
+export function* boardGroupListener() {
+  const id = yield select(selectBoardId());
+  yield call(createSubCollectionListener, 'boards', id, 'groups', {
+    [CHANGE_TYPES.ADDED]: boardGroupAdded,
+    [CHANGE_TYPES.MODIFIED]: boardGroupModified,
+    [CHANGE_TYPES.DELETED]: boardGroupDeleted,
+  });
+}
+
+export function* boardItemListener() {
+  const id = yield select(selectBoardId());
+  yield call(createSubCollectionListener, 'boards', id, 'items', {
+    [CHANGE_TYPES.ADDED]: boardItemAdded,
+    [CHANGE_TYPES.MODIFIED]: boardItemModified,
+    [CHANGE_TYPES.DELETED]: boardItemDeleted,
+  });
 }

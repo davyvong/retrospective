@@ -1,61 +1,49 @@
-import { call, fork } from 'redux-saga/effects';
+import { call, fork, put, takeLatest } from 'redux-saga/effects';
+
+import { firestore } from 'configureFirebase';
 
 import {
-  boardSnapshot,
-  boardGroupAdded,
-  boardGroupModified,
-  boardGroupDeleted,
-  boardItemAdded,
-  boardItemModified,
-  boardItemDeleted,
+  initializeBoard as initializeBoardAction,
+  updateBoardInfo as updateBoardInfoAction,
 } from './actions';
 
-import { CHANGE_TYPES } from './constants';
+import { INITIALIZE_BOARD, UPDATE_BOARD_INFO } from './constants';
 
 import {
-  createDocumentListener,
-  createSubCollectionListener,
+  boardInfoListener,
+  boardGroupListener,
+  boardItemListener,
 } from './listeners';
 
-export function* boardInfoListener() {
-  yield call(
-    createDocumentListener,
-    'boards',
-    'd9965f7c-0437-4bc3-8647-40e313058fee',
-    boardSnapshot,
-  );
+export function* initializeBoard(action) {
+  try {
+    const { params: id } = action;
+    const ref = firestore.collection('boards').doc(id);
+    const doc = yield call([ref, ref.get]);
+    if (!doc.exists) {
+      throw new Error('Board does not exist.');
+    }
+    yield put(initializeBoardAction.success(id));
+    yield fork(boardInfoListener);
+    yield fork(boardGroupListener);
+    yield fork(boardItemListener);
+  } catch (error) {
+    yield put(initializeBoardAction.failure(error));
+  }
 }
 
-function* boardGroupListener() {
-  yield call(
-    createSubCollectionListener,
-    'boards',
-    'd9965f7c-0437-4bc3-8647-40e313058fee',
-    'groups',
-    {
-      [CHANGE_TYPES.ADDED]: boardGroupAdded,
-      [CHANGE_TYPES.MODIFIED]: boardGroupModified,
-      [CHANGE_TYPES.DELETED]: boardGroupDeleted,
-    },
-  );
-}
-
-function* boardItemListener() {
-  yield call(
-    createSubCollectionListener,
-    'boards',
-    'd9965f7c-0437-4bc3-8647-40e313058fee',
-    'items',
-    {
-      [CHANGE_TYPES.ADDED]: boardItemAdded,
-      [CHANGE_TYPES.MODIFIED]: boardItemModified,
-      [CHANGE_TYPES.DELETED]: boardItemDeleted,
-    },
-  );
+export function* updateBoardInfo(action) {
+  try {
+    const { params: doc } = action;
+    const ref = firestore.collection('boards').doc(doc.id);
+    yield call([ref, ref.set], doc.data, { merge: true });
+    yield put(updateBoardInfoAction.success());
+  } catch (error) {
+    yield put(updateBoardInfoAction.failure(error));
+  }
 }
 
 export default function* saga() {
-  yield fork(boardInfoListener);
-  yield fork(boardGroupListener);
-  yield fork(boardItemListener);
+  yield takeLatest(INITIALIZE_BOARD.REQUEST, initializeBoard);
+  yield takeLatest(UPDATE_BOARD_INFO.REQUEST, updateBoardInfo);
 }

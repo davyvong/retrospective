@@ -1,3 +1,5 @@
+import createRequestTypes from 'utils/createRequestTypes';
+
 const scope = 'APP/BOARD';
 
 export const BOARD_SNAPSHOT = `${scope}/BOARD_SNAPSHOT`;
@@ -15,3 +17,9 @@ export const CHANGE_TYPES = {
   MODIFIED: 'modified',
   DELETED: 'deleted',
 };
+
+export const INITIALIZE_BOARD = createRequestTypes(`${scope}/INITIALIZE_BOARD`);
+
+export const UPDATE_BOARD_INFO = createRequestTypes(
+  `${scope}/UPDATE_BOARD_INFO`,
+);

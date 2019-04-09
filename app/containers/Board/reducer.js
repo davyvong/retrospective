@@ -10,13 +10,14 @@ import {
   BOARD_ITEM_ADDED,
   BOARD_ITEM_MODIFIED,
   BOARD_ITEM_DELETED,
+  INITIALIZE_BOARD,
 } from './constants';
 
 export const initialState = fromJS({
-  context: '',
-  groups: {},
+  id: '',
+  info: {},
   items: {},
-  title: '',
+  groups: {},
 });
 
 function reducer(state = initialState, action) {
@@ -35,6 +36,8 @@ function reducer(state = initialState, action) {
       return setBoardItem(state, action);
     case BOARD_ITEM_DELETED:
       return deleteBoardItem(state, action);
+    case INITIALIZE_BOARD.SUCCESS:
+      return initializeBoard(state, action);
     default:
       return state;
   }
@@ -43,8 +46,8 @@ function reducer(state = initialState, action) {
 function setBoardInfo(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: doc } = action;
-    if (isType(doc.data, 'Object') && isGUID(doc.id, 'String')) {
-      return state.merge(doc.data);
+    if (isType(doc.data, 'Object') && isGUID(doc.id)) {
+      return state.set('info', doc.data);
     }
   }
   return state;
@@ -53,7 +56,7 @@ function setBoardInfo(state, action) {
 function setBoardGroup(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: doc } = action;
-    if (isType(doc.data, 'Object') && isGUID(doc.id, 'String')) {
+    if (isType(doc.data, 'Object') && isGUID(doc.id)) {
       return state.setIn(['groups', doc.id], doc.data);
     }
   }
@@ -63,7 +66,7 @@ function setBoardGroup(state, action) {
 function deleteBoardGroup(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: doc } = action;
-    if (isType(doc, 'Object') && isGUID(doc.id, 'String')) {
+    if (isType(doc, 'Object') && isGUID(doc.id)) {
       return state.get('groups').delete(doc.id);
     }
   }
@@ -73,7 +76,7 @@ function deleteBoardGroup(state, action) {
 function setBoardItem(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: doc } = action;
-    if (isType(doc.data, 'Object') && isGUID(doc.id, 'String')) {
+    if (isType(doc.data, 'Object') && isGUID(doc.id)) {
       return state.setIn(['items', doc.id], doc.data);
     }
   }
@@ -83,9 +86,17 @@ function setBoardItem(state, action) {
 function deleteBoardItem(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: doc } = action;
-    if (isType(doc, 'Object') && isGUID(doc.id, 'String')) {
+    if (isType(doc, 'Object') && isGUID(doc.id)) {
       return state.get('items').delete(doc.id);
     }
+  }
+  return state;
+}
+
+function initializeBoard(state, action) {
+  const { payload: id } = action;
+  if (isGUID(id)) {
+    return state.set('id', id);
   }
   return state;
 }

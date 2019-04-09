@@ -10,7 +10,7 @@ export default function App() {
   return (
     <div>
       <Switch>
-        <Route exact path="/" component={Board} />
+        <Route path="/board/:boardId" component={Board} />
         <Route component={NotFound} />
       </Switch>
       <GlobalStyle />

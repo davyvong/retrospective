@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { injectIntl, intlShape } from 'react-intl';
+import { isEmpty, isEqual } from 'lodash';
 
 import { Draggable } from 'react-beautiful-dnd';
 
@@ -18,12 +19,17 @@ import Section from 'components/Bulma/Section';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 
+import {
+  initializeBoard as initializeBoardAction,
+  updateBoardInfo as updateBoardInfoAction,
+} from './actions';
 import messages from './messages';
 import reducer from './reducer';
 import saga from './saga';
 import {
-  selectBoardInfo,
   selectBoardGroups,
+  selectBoardId,
+  selectBoardInfo,
   selectBoardItems,
 } from './selectors';
 
@@ -34,15 +40,20 @@ class Component extends React.PureComponent {
       context: '',
       title: '',
     };
-    this.timeouts = {};
+  }
+
+  componentDidMount() {
+    this.props.initializeBoard(this.props.match.params.boardId);
   }
 
   componentWillReceiveProps(newProps) {
     const { info } = newProps;
-    this.setState({
-      context: info.context,
-      title: info.title,
-    });
+    if (!isEmpty(info) && !isEqual(this.state, info)) {
+      this.setState({
+        context: info.context,
+        title: info.title,
+      });
+    }
   }
 
   filterCollection = (collection, key, value) =>
@@ -62,6 +73,7 @@ class Component extends React.PureComponent {
     <Group
       id={id}
       items={this.filterCollection(this.props.items, 'groupId', id)}
+      key={id}
       onReorder={this.onReorder}
       renderItem={this.renderItem}
     />
@@ -90,12 +102,15 @@ class Component extends React.PureComponent {
     });
 
   updateField = (event, key) => {
-    if (this.timeouts[key]) {
-      clearTimeout(this.timeouts[key]);
+    if (this.updateTimeout) {
+      clearTimeout(this.updateTimeout);
     }
     this.setState({ [key]: event.target.value }, () => {
-      this.timeouts[key] = setTimeout(() => {
-        console.log(key, this.state[key]);
+      this.updateTimeout = setTimeout(() => {
+        this.props.updateBoardInfo({
+          data: this.state,
+          id: this.props.id,
+        });
       }, 2000);
     });
   };
@@ -105,10 +120,10 @@ class Component extends React.PureComponent {
   updateTitle = event => this.updateField(event, 'title');
 
   render() {
-    const { groups, intl } = this.props;
+    const { groups, id, intl } = this.props;
     const { context, title } = this.state;
     return (
-      <Section>
+      <Section id={id}>
         <Container>
           <Title
             onChange={this.updateTitle}
@@ -135,19 +150,23 @@ Component.defaultProps = {
 
 Component.propTypes = {
   groups: PropTypes.object,
+  id: PropTypes.string,
   info: PropTypes.object,
   intl: intlShape.isRequired,
   items: PropTypes.object,
+  updateBoardInfo: PropTypes.func,
 };
 
 const mapStateToProps = createStructuredSelector({
   groups: selectBoardGroups(),
+  id: selectBoardId(),
   info: selectBoardInfo(),
   items: selectBoardItems(),
 });
 
-export const mapDispatchToProps = () => ({
-  //
+export const mapDispatchToProps = dispatch => ({
+  initializeBoard: params => dispatch(initializeBoardAction.request(params)),
+  updateBoardInfo: params => dispatch(updateBoardInfoAction.request(params)),
 });
 
 const withConnect = connect(
