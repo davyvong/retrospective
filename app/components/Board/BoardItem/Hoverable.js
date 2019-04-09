@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
 const Component = styled.div`
+  margin-bottom: 0.25rem !important;
+
   &:hover {
     background-color: #00000014;
     border-radius: 6px;

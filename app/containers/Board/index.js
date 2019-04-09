@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { FormattedMessage } from 'react-intl';
+import { injectIntl, intlShape } from 'react-intl';
 
 import BoardItem from 'components/Board/BoardItem';
+import Context from 'components/Board/Context';
+import Title from 'components/Board/Title';
 import Container from 'components/Bulma/Container';
 import Section from 'components/Bulma/Section';
 
@@ -30,13 +32,13 @@ class Component extends React.PureComponent {
     items.map(id => <BoardItem id={id} item={this.props.items[id]} key={id} />);
 
   render() {
-    const sortedItems = this.sortItems(this.props.items, 'upvotes');
+    const { intl, items } = this.props;
+    const sortedItems = this.sortItems(items, 'upvotes');
     return (
       <Section>
         <Container>
-          <h1>
-            <FormattedMessage {...messages.header} />
-          </h1>
+          <Title placeholder={intl.formatMessage(messages.title)} />
+          <Context placeholder={intl.formatMessage(messages.context)} />
           {this.renderItems(sortedItems)}
         </Container>
       </Section>
@@ -45,6 +47,7 @@ class Component extends React.PureComponent {
 }
 
 Component.propTypes = {
+  intl: intlShape.isRequired,
   items: PropTypes.object,
 };
 
@@ -68,4 +71,5 @@ export default compose(
   withReducer,
   withSaga,
   withConnect,
+  injectIntl,
 )(Component);
