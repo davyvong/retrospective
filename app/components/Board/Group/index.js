@@ -4,7 +4,9 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 import { isType } from 'utils/validate';
 
+import Create from './Create';
 import Item from './Item';
+import List from './List';
 import Lock from './Lock';
 import Name from './Name';
 import Wrapper from './Wrapper';
@@ -82,16 +84,19 @@ class Component extends React.PureComponent {
           onChange={this.onChange}
         />
         {group.locked && <Lock />}
-        <DragDropContext onDragEnd={this.onDragEnd}>
-          <Droppable droppableId={id}>
-            {provided => (
-              <Item {...provided.droppableProps} ref={provided.innerRef}>
-                {items.map(renderItem)}
-                {provided.placeholder}
-              </Item>
-            )}
-          </Droppable>
-        </DragDropContext>
+        <Create>Create</Create>
+        <List>
+          <DragDropContext onDragEnd={this.onDragEnd}>
+            <Droppable droppableId={id}>
+              {provided => (
+                <Item {...provided.droppableProps} ref={provided.innerRef}>
+                  {items.map(renderItem)}
+                  {provided.placeholder}
+                </Item>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </List>
       </Wrapper>
     );
   }
