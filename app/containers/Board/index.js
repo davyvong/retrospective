@@ -73,6 +73,7 @@ class Component extends React.PureComponent {
 
   renderGroup = id => (
     <Group
+      group={this.props.groups[id]}
       id={id}
       items={this.filterCollection(this.props.items, 'groupId', id)}
       key={id}

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 import Item from './Item';
+import Name from './Name';
 import Wrapper from './Wrapper';
 
 class Component extends React.PureComponent {
@@ -40,9 +41,10 @@ class Component extends React.PureComponent {
 
   render() {
     const { items } = this.state;
-    const { id, renderItem } = this.props;
+    const { group, id, renderItem } = this.props;
     return (
       <Wrapper>
+        <Name defaultValue={group.name} />
         <DragDropContext onDragEnd={this.onDragEnd}>
           <Droppable droppableId={id}>
             {provided => (
@@ -59,12 +61,14 @@ class Component extends React.PureComponent {
 }
 
 Component.defaultProps = {
+  group: {},
   items: [],
   onReorder: () => null,
   renderItem: () => null,
 };
 
 Component.propTypes = {
+  group: PropTypes.object,
   id: PropTypes.string.isRequired,
   items: PropTypes.array,
   onReorder: PropTypes.func,

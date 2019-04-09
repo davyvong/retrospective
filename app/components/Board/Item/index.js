@@ -7,6 +7,8 @@ import Lock from './Lock';
 import Message from './Message';
 import Wrapper from './Wrapper';
 
+import { BOARD_ITEM_COLORS } from './constants';
+
 class Component extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -16,11 +18,11 @@ class Component extends React.PureComponent {
   render() {
     const { item } = this.props;
     return (
-      <Wrapper color={`${item.color}80`}>
+      <Wrapper color={item.color ? `${item.color}80` : BOARD_ITEM_COLORS.GREY}>
         <Hoverable>
-          <Message disabled value={item.message} />
+          <Message disabled={item.locked} value={item.message} />
         </Hoverable>
-        {item.isLocked && <Lock />}
+        {item.locked && <Lock />}
         <Footer>
           <div>
             {item.upvotes > 0 ? item.upvotes : 'No'} Upvote
