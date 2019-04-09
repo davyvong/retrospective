@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
 const Component = styled.button`
-  background-color: #00000010;
+  background-color: #dfe6e980;
   border-radius: 6px;
   font-size: 1em;
-  margin-top: 0.75rem;
+  margin-top: 1.5rem;
   padding: 0.5rem;
   text-align: center;
   width: 100%;
@@ -14,7 +14,9 @@ const Component = styled.button`
   }
 
   &:hover {
-    background-color: #00000020;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302),
+      0 1px 3px 1px rgba(60, 64, 67, 0.149);
+    cursor: pointer;
   }
 `;
 

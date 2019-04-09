@@ -21,7 +21,7 @@ class Component extends React.PureComponent {
     }
     this.setState({ value: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
-        this.props.onChange({ context: this.state.value });
+        this.props.onChange({ subtitle: this.state.value });
       }, 2000);
     });
   };

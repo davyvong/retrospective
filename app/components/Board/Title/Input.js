@@ -3,7 +3,8 @@ import styled from 'styled-components';
 const Component = styled.input`
   display: block;
   font-size: 2em;
-  margin: 0.67em 0;
+  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
   width: 100%;
 
   &:focus {

@@ -8,9 +8,9 @@ import { injectIntl, intlShape } from 'react-intl';
 import { Draggable } from 'react-beautiful-dnd';
 
 import Columns from 'components/Board/Columns';
-import Context from 'components/Board/Context';
 import Group from 'components/Board/Group';
 import Item from 'components/Board/Item';
+import Subtitle from 'components/Board/Subtitle';
 import Title from 'components/Board/Title';
 import Container from 'components/Bulma/Container';
 import Section from 'components/Bulma/Section';
@@ -19,6 +19,7 @@ import Spinner from 'components/Spinner';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
+import { isType } from 'utils/validate';
 
 import {
   initializeBoard as initializeBoardAction,
@@ -93,8 +94,8 @@ class Component extends React.PureComponent {
   };
 
   render() {
-    const { context, title } = this.props.info;
-    if (!context && !title) {
+    const { subtitle, title } = this.props.info;
+    if (!isType(subtitle, 'String') && !isType(title, 'String')) {
       return (
         <FullScreen>
           <Spinner size="5rem" />
@@ -110,10 +111,10 @@ class Component extends React.PureComponent {
             placeholder={intl.formatMessage(messages.title)}
             value={title}
           />
-          <Context
+          <Subtitle
             onChange={this.updateBoardInfo}
-            placeholder={intl.formatMessage(messages.context)}
-            value={context}
+            placeholder={intl.formatMessage(messages.subtitle)}
+            value={subtitle}
           />
           <Columns>{Object.keys(groups).map(this.renderGroup)}</Columns>
         </Container>

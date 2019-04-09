@@ -3,9 +3,9 @@ import { defineMessages } from 'react-intl';
 export const scope = 'app.containers.Board';
 
 export default defineMessages({
-  context: {
-    id: `${scope}.context`,
-    defaultMessage: 'Meeting Context',
+  subtitle: {
+    id: `${scope}.subtitle`,
+    defaultMessage: 'Description',
   },
   title: {
     id: `${scope}.title`,

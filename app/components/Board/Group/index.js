@@ -90,7 +90,6 @@ class Component extends React.PureComponent {
       <Wrapper>
         <Name disabled={locked} onChange={this.onChange} value={name} />
         {locked && <Lock />}
-        <Create>Create</Create>
         <List>
           <DragDropContext onDragEnd={this.onDragEnd}>
             <Droppable droppableId={id}>
@@ -103,6 +102,7 @@ class Component extends React.PureComponent {
             </Droppable>
           </DragDropContext>
         </List>
+        <Create>Create</Create>
       </Wrapper>
     );
   }

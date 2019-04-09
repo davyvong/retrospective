@@ -1,5 +1,5 @@
 {
-  "app.containers.Board.context": "Meeting Context",
+  "app.containers.Board.subtitle": "Description",
   "app.containers.Board.title": "Board Name",
   "app.containers.NotFound.description": "The page you requested does not exist.",
   "app.containers.NotFound.title": "Not Found"
