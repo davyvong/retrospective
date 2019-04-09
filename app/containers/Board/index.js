@@ -43,16 +43,6 @@ class Component extends React.PureComponent {
   filterCollection = (collection, key, value) =>
     Object.keys(collection).filter(id => collection[id][key] === value);
 
-  onReorder = items => {
-    const { items: result } = this.props;
-    items.forEach((item, index) => {
-      if (result[item]) {
-        result[item].order = index;
-      }
-    });
-    console.log('onReorder', result);
-  };
-
   renderGroup = id => (
     <Group
       group={this.props.groups[id]}
@@ -60,7 +50,6 @@ class Component extends React.PureComponent {
       items={this.filterCollection(this.props.items, 'groupId', id)}
       key={id}
       onChange={this.updateBoardGroup}
-      onReorder={this.onReorder}
       renderItem={this.renderItem}
     />
   );

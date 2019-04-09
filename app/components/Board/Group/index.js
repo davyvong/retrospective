@@ -55,16 +55,13 @@ class Component extends React.PureComponent {
     if (!result.destination) {
       return;
     }
-    this.setState(
-      prevState => ({
-        items: this.reorder(
-          prevState.items,
-          result.source.index,
-          result.destination.index,
-        ),
-      }),
-      () => this.props.onReorder(this.state.items),
-    );
+    this.setState(prevState => ({
+      items: this.reorder(
+        prevState.items,
+        result.source.index,
+        result.destination.index,
+      ),
+    }));
   };
 
   reorder = (items, start, end) => {
@@ -104,7 +101,6 @@ Component.defaultProps = {
   group: {},
   items: [],
   onChange: () => null,
-  onReorder: () => null,
   renderItem: () => null,
 };
 
@@ -113,7 +109,6 @@ Component.propTypes = {
   id: PropTypes.string.isRequired,
   items: PropTypes.array,
   onChange: PropTypes.func,
-  onReorder: PropTypes.func,
   renderItem: PropTypes.func,
 };
 
