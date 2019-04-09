@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { injectIntl, intlShape } from 'react-intl';
-import { isEmpty, isEqual } from 'lodash';
 
 import { Draggable } from 'react-beautiful-dnd';
 
