@@ -66,8 +66,12 @@ class Component extends React.PureComponent {
         {locked && <Lock />}
         <Footer>
           <div>
-            {item.upvotes > 0 ? item.upvotes : 'No'} Upvote
-            {item.upvotes !== 1 && 's'}
+            {item.upvotes === 0 ? 'No' : item.upvotes} Upvote
+            {Math.abs(item.upvotes) !== 1 && 's'}
+          </div>
+          <div>
+            {item.comments === 0 ? 'No' : item.comments} Comment
+            {item.comments !== 1 && 's'}
           </div>
         </Footer>
       </Wrapper>
