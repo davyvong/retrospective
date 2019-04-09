@@ -1,19 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Body from './Body';
 import Data from './Data';
 import Footer from './Footer';
+import Hoverable from './Hoverable';
 import Lock from './Lock';
-import Subject from './Subject';
+import Message from './Message';
 import Wrapper from './Wrapper';
 
 function Component(props) {
   const { id, item } = props;
   return (
     <Wrapper color={`${item.color}80`}>
-      <Subject>{item.subject}</Subject>
-      <Body defaultValue={item.body} />
+      <Hoverable>
+        <Message defaultValue={item.message} />
+      </Hoverable>
       {item.isLocked && <Lock />}
       <Footer>
         <div>
@@ -21,10 +22,12 @@ function Component(props) {
           {item.upvotes !== 1 && 's'}
         </div>
       </Footer>
-      <Data color={`${item.color}60`}>
-        {`"${id}":`}
-        {JSON.stringify(item, null, 2)}
-      </Data>
+      {id !== '1f1b3df0-867f-4f35-8971-27b65f8f5c2c' && (
+        <Data color={`${item.color}60`}>
+          {`"${id}":`}
+          {JSON.stringify(item, null, 2)}
+        </Data>
+      )}
     </Wrapper>
   );
 }
