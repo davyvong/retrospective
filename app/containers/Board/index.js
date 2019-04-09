@@ -36,26 +36,8 @@ import {
 } from './selectors';
 
 class Component extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      context: null,
-      title: null,
-    };
-  }
-
   componentDidMount() {
     this.props.initializeBoard(this.props.match.params.boardId);
-  }
-
-  componentWillReceiveProps(newProps) {
-    const { info } = newProps;
-    if (!isEmpty(info) && !isEqual(this.state, info)) {
-      this.setState({
-        context: info.context,
-        title: info.title,
-      });
-    }
   }
 
   filterCollection = (collection, key, value) =>
@@ -77,6 +59,7 @@ class Component extends React.PureComponent {
       id={id}
       items={this.filterCollection(this.props.items, 'groupId', id)}
       key={id}
+      onChange={this.updateBoardGroup}
       onReorder={this.onReorder}
       renderItem={this.renderItem}
     />
@@ -90,7 +73,11 @@ class Component extends React.PureComponent {
           {...provided.dragHandleProps}
           ref={provided.innerRef}
         >
-          <Item id={id} item={this.props.items[id]} />
+          <Item
+            id={id}
+            item={this.props.items[id]}
+            onChange={this.updateBoardItem}
+          />
         </div>
       )}
     </Draggable>
@@ -104,26 +91,19 @@ class Component extends React.PureComponent {
       return collection[b][key] - collection[a][key];
     });
 
-  updateField = (event, key) => {
-    if (this.updateTimeout) {
-      clearTimeout(this.updateTimeout);
-    }
-    this.setState({ [key]: event.target.value }, () => {
-      this.updateTimeout = setTimeout(() => {
-        this.props.updateBoardInfo({
-          data: this.state,
-          id: this.props.id,
-        });
-      }, 2000);
+  updateBoardGroup = doc => console.log(doc);
+
+  updateBoardInfo = data => {
+    this.props.updateBoardInfo({
+      data,
+      id: this.props.id,
     });
-  };
+  }
 
-  updateContext = event => this.updateField(event, 'context');
-
-  updateTitle = event => this.updateField(event, 'title');
+  updateBoardItem = doc => console.log(doc);
 
   render() {
-    const { context, title } = this.state;
+    const { context, title } = this.props.info;
     if (!context && !title) {
       return (
         <FullScreen>
@@ -136,12 +116,12 @@ class Component extends React.PureComponent {
       <Section id={id}>
         <Container>
           <Title
-            onChange={this.updateTitle}
+            onChange={this.updateBoardInfo}
             placeholder={intl.formatMessage(messages.title)}
             value={title}
           />
           <Context
-            onChange={this.updateContext}
+            onChange={this.updateBoardInfo}
             placeholder={intl.formatMessage(messages.context)}
             value={context}
           />
