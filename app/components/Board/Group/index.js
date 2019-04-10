@@ -7,7 +7,7 @@ import { isType } from 'utils/validate';
 import Create from './Create';
 import Item from './Item';
 import List from './List';
-import Lock from './Lock';
+import Lock from '../Lock';
 import Name from './Name';
 import Wrapper from './Wrapper';
 
@@ -89,7 +89,12 @@ class Component extends React.PureComponent {
     return (
       <Wrapper>
         <Name disabled={locked} onChange={this.onChange} value={name} />
-        {locked && <Lock />}
+        {locked && (
+          <Lock
+            message="A user is editting this group's name"
+            padding="0.5rem"
+          />
+        )}
         <List>
           <DragDropContext onDragEnd={this.onDragEnd}>
             <Droppable droppableId={id}>

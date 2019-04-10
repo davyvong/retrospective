@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { COLORS } from 'constants/colors';
+
 import Bounce from './Bounce';
 import DelayedBounce from './DelayedBounce';
 import Spinner from './Spinner';
@@ -15,7 +17,7 @@ function Component(props) {
 }
 
 Component.defaultProps = {
-  color: '#74b9ff',
+  color: COLORS.BLUE,
   size: '40px',
 };
 

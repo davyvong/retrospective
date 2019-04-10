@@ -1,14 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { BOARD_ITEM_COLORS } from 'constants/colors';
+import { BOARD_ITEM_COLORS, COLORS } from 'constants/colors';
 
 import { isType } from 'utils/validate';
 
 import Content from './Content';
 import Footer from './Footer';
 import Hoverable from './Hoverable';
-import Lock from './Lock';
+import Icon from './Icon';
+import Lock from '../Lock';
 import Message from './Message';
 import Vote from './Vote';
 import Wrapper from './Wrapper';
@@ -56,6 +57,22 @@ class Component extends React.PureComponent {
     });
   };
 
+  onDownvote = event => {
+    event.preventDefault(event);
+    this.props.onChange({
+      data: { votes: this.props.item.votes - 1 },
+      id: this.props.id,
+    });
+  };
+
+  onUpvote = event => {
+    event.preventDefault(event);
+    this.props.onChange({
+      data: { votes: this.props.item.votes + 1 },
+      id: this.props.id,
+    });
+  };
+
   render() {
     const { item } = this.props;
     const { message } = this.state;
@@ -63,8 +80,13 @@ class Component extends React.PureComponent {
     return (
       <Wrapper color={item.color ? `${item.color}80` : BOARD_ITEM_COLORS.GREY}>
         <Vote>
-          <div>U</div>
-          <div>D</div>
+          <Icon hover={COLORS.RED} onClick={this.onUpvote}>
+            keyboard_arrow_up
+          </Icon>
+          <div>{item.votes}</div>
+          <Icon hover={COLORS.BLUE} onClick={this.onDownvote}>
+            keyboard_arrow_down
+          </Icon>
         </Vote>
         <Content>
           <Hoverable>
@@ -74,12 +96,8 @@ class Component extends React.PureComponent {
               value={message}
             />
           </Hoverable>
-          {locked && <Lock />}
+          {locked && <Lock message="A user is editting this item" />}
           <Footer>
-            <div>
-              {item.upvotes === 0 ? 'No' : item.upvotes} Upvote
-              {Math.abs(item.upvotes) !== 1 && 's'}
-            </div>
             <div>
               {item.comments === 0 ? 'No' : item.comments} Comment
               {item.comments !== 1 && 's'}

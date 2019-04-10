@@ -94,7 +94,7 @@ class Component extends React.PureComponent {
   };
 
   render() {
-    const { subtitle, title } = this.props.info;
+    const { subtitle, subtitleLocked, title, titleLocked } = this.props.info;
     if (!isType(subtitle, 'String') && !isType(title, 'String')) {
       return (
         <FullScreen>
@@ -107,11 +107,13 @@ class Component extends React.PureComponent {
       <Section>
         <Container>
           <Title
+            locked={titleLocked}
             onChange={this.updateBoardInfo}
             placeholder={intl.formatMessage(messages.title)}
             value={title}
           />
           <Subtitle
+            locked={subtitleLocked}
             onChange={this.updateBoardInfo}
             placeholder={intl.formatMessage(messages.subtitle)}
             value={subtitle}

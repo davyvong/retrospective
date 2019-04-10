@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { isType } from 'utils/validate';
+
 import Input from './Input';
+import Lock from '../Lock';
+import Wrapper from './Wrapper';
 
 class Component extends React.PureComponent {
   constructor(props) {
@@ -10,7 +14,11 @@ class Component extends React.PureComponent {
   }
 
   componentWillReceiveProps(newProps) {
-    if (this.state.value !== newProps.value && !this.updateTimeout) {
+    if (
+      isType(newProps.value, 'String') &&
+      this.state.value !== newProps.value &&
+      !this.updateTimeout
+    ) {
       this.setState({ value: newProps.value });
     }
   }
@@ -21,18 +29,31 @@ class Component extends React.PureComponent {
     }
     this.setState({ value: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
-        this.props.onChange({ subtitle: this.state.value });
+        this.props.onChange({
+          subtitle: this.state.value,
+          subtitleLocked: false,
+        });
       }, 2000);
+      if (!this.props.locked) {
+        this.props.onChange({ subtitleLocked: true });
+      }
     });
   };
 
   render() {
+    const locked = Boolean(this.props.locked && !this.updateTimeout);
     return (
-      <Input
-        {...this.props}
-        onChange={this.onChange}
-        value={this.state.value}
-      />
+      <Wrapper>
+        <Input
+          {...this.props}
+          disabled={locked}
+          onChange={this.onChange}
+          value={this.state.value}
+        />
+        {locked && (
+          <Lock message="A user is editting the subtitle" padding="0.5rem 0" />
+        )}
+      </Wrapper>
     );
   }
 }
