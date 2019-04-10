@@ -10,6 +10,7 @@ import Content from './Content';
 import Footer from './Footer';
 import Hoverable from './Hoverable';
 import Icon from './Icon';
+import Lightbox from '../Lightbox';
 import Message from './Message';
 import Vote from './Vote';
 import Wrapper from './Wrapper';
@@ -17,7 +18,10 @@ import Wrapper from './Wrapper';
 class Component extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = { message: '' };
+    this.state = {
+      lightbox: false,
+      message: '',
+    };
   }
 
   componentDidMount() {
@@ -33,6 +37,16 @@ class Component extends React.PureComponent {
       this.setState({ message: newProps.item.message });
     }
   }
+
+  closeLightbox = event => {
+    event.preventDefault();
+    this.setState({ lightbox: false });
+  };
+
+  openLightbox = event => {
+    event.preventDefault();
+    this.setState({ lightbox: true });
+  };
 
   onChange = event => {
     if (this.updateTimeout) {
@@ -50,7 +64,7 @@ class Component extends React.PureComponent {
   };
 
   onDownvote = event => {
-    event.preventDefault(event);
+    event.preventDefault();
     this.props.onChange({
       data: { votes: this.props.item.votes - 1 },
       id: this.props.id,
@@ -58,7 +72,7 @@ class Component extends React.PureComponent {
   };
 
   onUpvote = event => {
-    event.preventDefault(event);
+    event.preventDefault();
     this.props.onChange({
       data: { votes: this.props.item.votes + 1 },
       id: this.props.id,
@@ -67,7 +81,7 @@ class Component extends React.PureComponent {
 
   render() {
     const { item } = this.props;
-    const { message } = this.state;
+    const { lightbox, message } = this.state;
     return (
       <Wrapper color={item.color ? `${item.color}80` : BOARD_ITEM_COLORS.GREY}>
         <Vote>
@@ -88,8 +102,18 @@ class Component extends React.PureComponent {
               {item.comments === 0 ? 'No' : item.comments} Comment
               {item.comments !== 1 && 's'}
             </div>
+            <button onClick={this.openLightbox} type="button">
+              Expand
+            </button>
           </Footer>
         </Content>
+        <Lightbox
+          close={this.closeLightbox}
+          color={this.props.item.color}
+          visible={lightbox}
+        >
+          <div>hello world</div>
+        </Lightbox>
       </Wrapper>
     );
   }
