@@ -5,10 +5,12 @@ import { BOARD_ITEM_COLORS } from 'constants/colors';
 
 import { isType } from 'utils/validate';
 
+import Content from './Content';
 import Footer from './Footer';
 import Hoverable from './Hoverable';
 import Lock from './Lock';
 import Message from './Message';
+import Vote from './Vote';
 import Wrapper from './Wrapper';
 
 class Component extends React.PureComponent {
@@ -60,20 +62,30 @@ class Component extends React.PureComponent {
     const locked = Boolean(item.locked && !this.updateTimeout);
     return (
       <Wrapper color={item.color ? `${item.color}80` : BOARD_ITEM_COLORS.GREY}>
-        <Hoverable>
-          <Message disabled={locked} onChange={this.onChange} value={message} />
-        </Hoverable>
-        {locked && <Lock />}
-        <Footer>
-          <div>
-            {item.upvotes === 0 ? 'No' : item.upvotes} Upvote
-            {Math.abs(item.upvotes) !== 1 && 's'}
-          </div>
-          <div>
-            {item.comments === 0 ? 'No' : item.comments} Comment
-            {item.comments !== 1 && 's'}
-          </div>
-        </Footer>
+        <Vote>
+          <div>U</div>
+          <div>D</div>
+        </Vote>
+        <Content>
+          <Hoverable>
+            <Message
+              disabled={locked}
+              onChange={this.onChange}
+              value={message}
+            />
+          </Hoverable>
+          {locked && <Lock />}
+          <Footer>
+            <div>
+              {item.upvotes === 0 ? 'No' : item.upvotes} Upvote
+              {Math.abs(item.upvotes) !== 1 && 's'}
+            </div>
+            <div>
+              {item.comments === 0 ? 'No' : item.comments} Comment
+              {item.comments !== 1 && 's'}
+            </div>
+          </Footer>
+        </Content>
       </Wrapper>
     );
   }

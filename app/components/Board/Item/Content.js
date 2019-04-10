@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const Component = styled.div`
-  margin-top: 1rem;
+  width: 100%;
 `;
 
 export default Component;
