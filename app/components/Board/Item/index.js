@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { BOARD_ITEM_COLORS, COLORS } from 'constants/colors';
+import { UPDATE_DELAY } from 'constants/timings';
 
 import { isType } from 'utils/validate';
 
@@ -9,7 +10,6 @@ import Content from './Content';
 import Footer from './Footer';
 import Hoverable from './Hoverable';
 import Icon from './Icon';
-import Lock from '../Lock';
 import Message from './Message';
 import Vote from './Vote';
 import Wrapper from './Wrapper';
@@ -41,19 +41,11 @@ class Component extends React.PureComponent {
     this.setState({ message: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
         this.props.onChange({
-          data: {
-            locked: false,
-            message: this.state.message,
-          },
+          data: { message: this.state.message },
           id: this.props.id,
         });
-      }, 2000);
-      if (!this.props.item.locked) {
-        this.props.onChange({
-          data: { locked: true },
-          id: this.props.id,
-        });
-      }
+        this.updateTimeout = undefined;
+      }, UPDATE_DELAY);
     });
   };
 
@@ -76,7 +68,6 @@ class Component extends React.PureComponent {
   render() {
     const { item } = this.props;
     const { message } = this.state;
-    const locked = Boolean(item.locked && !this.updateTimeout);
     return (
       <Wrapper color={item.color ? `${item.color}80` : BOARD_ITEM_COLORS.GREY}>
         <Vote>
@@ -90,13 +81,8 @@ class Component extends React.PureComponent {
         </Vote>
         <Content>
           <Hoverable>
-            <Message
-              disabled={locked}
-              onChange={this.onChange}
-              value={message}
-            />
+            <Message onChange={this.onChange} value={message} />
           </Hoverable>
-          {locked && <Lock message="A user is editting this item" />}
           <Footer>
             <div>
               {item.comments === 0 ? 'No' : item.comments} Comment

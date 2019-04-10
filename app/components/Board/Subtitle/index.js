@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { UPDATE_DELAY } from 'constants/timings';
+
 import { isType } from 'utils/validate';
 
 import Input from './Input';
-import Lock from '../Lock';
 import Wrapper from './Wrapper';
 
 class Component extends React.PureComponent {
@@ -29,30 +30,20 @@ class Component extends React.PureComponent {
     }
     this.setState({ value: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
-        this.props.onChange({
-          subtitle: this.state.value,
-          subtitleLocked: false,
-        });
-      }, 2000);
-      if (!this.props.locked) {
-        this.props.onChange({ subtitleLocked: true });
-      }
+        this.props.onChange({ subtitle: this.state.value });
+        this.updateTimeout = undefined;
+      }, UPDATE_DELAY);
     });
   };
 
   render() {
-    const locked = Boolean(this.props.locked && !this.updateTimeout);
     return (
       <Wrapper>
         <Input
           {...this.props}
-          disabled={locked}
           onChange={this.onChange}
           value={this.state.value}
         />
-        {locked && (
-          <Lock message="A user is editting the subtitle" padding="0.5rem 0" />
-        )}
       </Wrapper>
     );
   }
