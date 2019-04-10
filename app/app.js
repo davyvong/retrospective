@@ -9,6 +9,7 @@ import 'styles/bulma.css';
 import 'sanitize.css/sanitize.css';
 
 import App from 'containers/App';
+import AuthProvider from 'containers/AuthProvider';
 
 import LanguageProvider from 'containers/LanguageProvider';
 
@@ -32,7 +33,9 @@ const render = messages => {
     <Provider store={store}>
       <LanguageProvider messages={messages}>
         <ConnectedRouter history={history}>
-          <App />
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </ConnectedRouter>
       </LanguageProvider>
     </Provider>,

@@ -6,7 +6,7 @@ import { IntlProvider } from 'react-intl';
 
 import { makeSelectLocale } from './selectors';
 
-export class LanguageProvider extends React.PureComponent {
+export class Component extends React.PureComponent {
   render() {
     return (
       <IntlProvider
@@ -20,7 +20,7 @@ export class LanguageProvider extends React.PureComponent {
   }
 }
 
-LanguageProvider.propTypes = {
+Component.propTypes = {
   locale: PropTypes.string,
   messages: PropTypes.object,
   children: PropTypes.element.isRequired,
@@ -39,4 +39,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(LanguageProvider);
+)(Component);
