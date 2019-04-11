@@ -9,7 +9,7 @@ const Component = posed.div({
 const StyledComponent = styled(Component)`
   left: 50%;
   position: fixed;
-  top: 50%;
+  top: 30%;
   transform: translate(-50%, -50%) !important;
   z-index: 2;
 `;

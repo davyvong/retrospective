@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { injectIntl, intlShape } from 'react-intl';
-import uuidv4 from 'uuid/v4';
 
 import { Draggable } from 'react-beautiful-dnd';
 
 import Columns from 'components/Board/Columns';
 import Group from 'components/Board/Group';
 import Item from 'components/Board/Item';
+import NewItem from 'components/Board/NewItem';
 import Subtitle from 'components/Board/Subtitle';
 import Title from 'components/Board/Title';
 import Container from 'components/Bulma/Container';
@@ -19,6 +19,7 @@ import FullScreen from 'components/FullScreen';
 import Spinner from 'components/Spinner';
 
 import { openModal as openModalAction } from 'containers/Modal/actions';
+import { selectAuthUID } from 'containers/AuthProvider/selectors';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
@@ -44,20 +45,31 @@ class Component extends React.PureComponent {
     this.props.initializeBoard(this.props.match.params.boardId);
   }
 
-  createItem = () => {
+  createItem = ({ groupId }) => {
     this.props.openModal({
-      content: <Item id={uuidv4()} onChange={this.updateBoardItem} />,
+      content: (
+        <Container>
+          <NewItem
+            authorId={this.props.uid}
+            groupId={groupId}
+            saveBoardItem={this.updateBoardItem}
+          />
+        </Container>
+      ),
     });
   };
 
   openItem = id => {
     this.props.openModal({
       content: (
-        <Item
-          id={id}
-          item={this.props.items[id]}
-          onChange={this.updateBoardItem}
-        />
+        <Container>
+          <Item
+            id={id}
+            item={this.props.items[id]}
+            onChange={this.updateBoardItem}
+            showPopup={false}
+          />
+        </Container>
       ),
     });
   };
@@ -168,6 +180,7 @@ const mapStateToProps = createStructuredSelector({
   groups: selectBoardGroups(),
   info: selectBoardInfo(),
   items: selectBoardItems(),
+  uid: selectAuthUID(),
 });
 
 export const mapDispatchToProps = dispatch => ({

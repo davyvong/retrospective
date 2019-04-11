@@ -42,7 +42,7 @@ class Component extends React.PureComponent {
 
   createItem = event => {
     event.preventDefault();
-    this.props.createItem();
+    this.props.createItem({ groupId: this.props.id });
   };
 
   onChange = event => {

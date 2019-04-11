@@ -8,7 +8,6 @@ import { isType } from 'utils/validate';
 
 import Content from './Content';
 import Footer from './Footer';
-import Hoverable from './Hoverable';
 import Icon from './Icon';
 import Message from './Message';
 import Vote from './Vote';
@@ -71,7 +70,7 @@ class Component extends React.PureComponent {
   };
 
   render() {
-    const { item } = this.props;
+    const { item, showPopup } = this.props;
     const { message } = this.state;
     return (
       <Wrapper color={item.color || BOARD_ITEM_COLORS.GREY}>
@@ -85,17 +84,17 @@ class Component extends React.PureComponent {
           </Icon>
         </Vote>
         <Content>
-          <Hoverable>
-            <Message onChange={this.onChange} value={message} />
-          </Hoverable>
+          <Message
+            onChange={this.onChange}
+            placeholder="Type a message here"
+            value={message}
+          />
           <Footer>
             <div>
               {item.comments === 0 ? 'No' : item.comments} Comment
               {item.comments !== 1 && 's'}
             </div>
-            <button onClick={this.openItem} type="button">
-              Expand
-            </button>
+            {showPopup && <div onClick={this.openItem}>OPEN_MODAL</div>}
           </Footer>
         </Content>
       </Wrapper>
@@ -107,6 +106,7 @@ Component.defaultProps = {
   item: {},
   onChange: () => {},
   openItem: () => {},
+  showPopup: true,
 };
 
 Component.propTypes = {
@@ -114,6 +114,7 @@ Component.propTypes = {
   item: PropTypes.object,
   onChange: PropTypes.func,
   openItem: PropTypes.func,
+  showPopup: PropTypes.bool,
 };
 
 export default Component;
