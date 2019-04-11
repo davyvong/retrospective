@@ -4,7 +4,7 @@ const Component = styled.button`
   background-color: #dfe6e980;
   border-radius: 6px;
   font-size: 1em;
-  margin-top: 1.5rem;
+  margin-top: 0.75rem;
   padding: 0.5rem;
   text-align: center;
   width: 100%;

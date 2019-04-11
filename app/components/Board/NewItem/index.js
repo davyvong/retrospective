@@ -9,6 +9,7 @@ import { isAuthUID, isGUID, isType } from 'utils/validate';
 import Button from './Button';
 import Close from './Close';
 import Footer from './Footer';
+import Group from './Group';
 import Message from './Message';
 import Wrapper from './Wrapper';
 
@@ -52,8 +53,10 @@ class Component extends React.PureComponent {
 
   render() {
     const { message } = this.state;
+    const { color, name } = this.props.group;
     return (
-      <Wrapper color={this.props.group.color || BOARD_ITEM_COLORS.GREY}>
+      <Wrapper color={color || BOARD_ITEM_COLORS.GREY}>
+        <Group>{name}</Group>
         <Message
           onChange={this.updateMessage}
           placeholder="Type a message here"
