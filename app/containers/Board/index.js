@@ -15,6 +15,7 @@ import Subtitle from 'components/Board/Subtitle';
 import Title from 'components/Board/Title';
 import Container from 'components/Bulma/Container';
 import Section from 'components/Bulma/Section';
+import SmallContainer from 'components/Bulma/SmallContainer';
 import FullScreen from 'components/FullScreen';
 import Spinner from 'components/Spinner';
 
@@ -51,14 +52,14 @@ class Component extends React.PureComponent {
   createItem = ({ groupId }) => {
     this.props.openModal({
       content: (
-        <Container>
+        <SmallContainer>
           <NewItem
             authorId={this.props.uid}
             closeModal={this.props.closeModal}
             groupId={groupId}
             saveBoardItem={this.updateBoardItem}
           />
-        </Container>
+        </SmallContainer>
       ),
     });
   };
@@ -66,7 +67,7 @@ class Component extends React.PureComponent {
   openItem = id => {
     this.props.openModal({
       content: (
-        <Container>
+        <SmallContainer>
           <Item
             closeModal={this.props.closeModal}
             id={id}
@@ -75,7 +76,7 @@ class Component extends React.PureComponent {
             showPopup={false}
             showShadow
           />
-        </Container>
+        </SmallContainer>
       ),
     });
   };
