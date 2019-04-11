@@ -137,7 +137,13 @@ class Component extends React.PureComponent {
   };
 
   updateBoardInfo = data => {
-    this.props.updateBoardInfo({ data });
+    this.props.updateBoardInfo({
+      data: {
+        ...data,
+        dateModified: new Date().getTime(),
+        modifiedBy: this.props.uid,
+      },
+    });
   };
 
   updateBoardItem = doc => {
