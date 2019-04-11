@@ -18,7 +18,10 @@ import Section from 'components/Bulma/Section';
 import FullScreen from 'components/FullScreen';
 import Spinner from 'components/Spinner';
 
-import { openModal as openModalAction } from 'containers/Modal/actions';
+import {
+  closeModal as closeModalAction,
+  openModal as openModalAction,
+} from 'containers/Modal/actions';
 import { selectAuthUID } from 'containers/AuthProvider/selectors';
 
 import injectReducer from 'utils/injectReducer';
@@ -51,6 +54,7 @@ class Component extends React.PureComponent {
         <Container>
           <NewItem
             authorId={this.props.uid}
+            closeModal={this.props.closeModal}
             groupId={groupId}
             saveBoardItem={this.updateBoardItem}
           />
@@ -64,6 +68,7 @@ class Component extends React.PureComponent {
       content: (
         <Container>
           <Item
+            closeModal={this.props.closeModal}
             id={id}
             item={this.props.items[id]}
             onChange={this.updateBoardItem}
@@ -167,6 +172,7 @@ Component.defaultProps = {
 };
 
 Component.propTypes = {
+  closeModal: PropTypes.func,
   groups: PropTypes.object,
   info: PropTypes.object,
   intl: intlShape.isRequired,
@@ -186,6 +192,7 @@ const mapStateToProps = createStructuredSelector({
 
 export const mapDispatchToProps = dispatch => ({
   initializeBoard: params => dispatch(initializeBoardAction.request(params)),
+  closeModal: params => dispatch(closeModalAction(params)),
   openModal: params => dispatch(openModalAction(params)),
   updateBoardGroup: params => dispatch(updateBoardGroupAction.request(params)),
   updateBoardInfo: params => dispatch(updateBoardInfoAction.request(params)),

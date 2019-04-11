@@ -6,6 +6,7 @@ import { BOARD_ITEM_COLORS } from 'constants/colors';
 
 import { isGUID, isType } from 'utils/validate';
 
+import Button from './Button';
 import Footer from './Footer';
 import Message from './Message';
 import Wrapper from './Wrapper';
@@ -18,15 +19,8 @@ class Component extends React.PureComponent {
 
   saveBoardItem = event => {
     event.preventDefault();
-    if (
-      isType(this.props.authorId, 'String') &&
-      this.props.authorId.length === 28 &&
-      isGUID(this.props.groupId) &&
-      isType(this.state.message, 'String') &&
-      this.state.message.length > 0
-    ) {
-      // this.props.saveBoardItem({
-      console.log({
+    if (this.validateBoardItem()) {
+      this.props.saveBoardItem({
         data: {
           authorId: this.props.authorId,
           comments: 0,
@@ -37,8 +31,17 @@ class Component extends React.PureComponent {
         },
         id: uuidv4(),
       });
+      this.props.closeModal();
     }
   };
+
+  validateBoardItem = () =>
+    isType(this.props.authorId, 'String') &&
+    this.props.authorId.length === 28 &&
+    isGUID(this.props.groupId) &&
+    isType(this.state.message, 'String') &&
+    this.state.message.length > 0 &&
+    true === false;
 
   updateMessage = event => {
     event.preventDefault();
@@ -55,7 +58,8 @@ class Component extends React.PureComponent {
           value={message}
         />
         <Footer>
-          <div onClick={this.saveBoardItem}>SAVE_THIS_ITEM</div>
+          <Button onClick={this.saveBoardItem}>Create</Button>
+          <Button onClick={this.props.closeModal}>Discard</Button>
         </Footer>
       </Wrapper>
     );
@@ -63,11 +67,13 @@ class Component extends React.PureComponent {
 }
 
 Component.defaultProps = {
+  closeModal: () => {},
   saveBoardItem: () => {},
 };
 
 Component.propTypes = {
   authorId: PropTypes.string,
+  closeModal: PropTypes.func,
   groupId: PropTypes.string,
   saveBoardItem: PropTypes.func,
 };

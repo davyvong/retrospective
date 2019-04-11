@@ -6,6 +6,7 @@ import { UPDATE_DELAY } from 'constants/timings';
 
 import { isType } from 'utils/validate';
 
+import Button from './Button';
 import Content from './Content';
 import Footer from './Footer';
 import Icon from './Icon';
@@ -90,11 +91,15 @@ class Component extends React.PureComponent {
             value={message}
           />
           <Footer>
-            <div>
+            <Button>
               {item.comments === 0 ? 'No' : item.comments} Comment
               {item.comments !== 1 && 's'}
-            </div>
-            {showPopup && <div onClick={this.openItem}>OPEN_MODAL</div>}
+            </Button>
+            {showPopup ? (
+              <Button onClick={this.openItem}>Open</Button>
+            ) : (
+              <Button onClick={this.props.closeModal}>Close</Button>
+            )}
           </Footer>
         </Content>
       </Wrapper>
@@ -103,6 +108,7 @@ class Component extends React.PureComponent {
 }
 
 Component.defaultProps = {
+  closeModal: () => {},
   item: {},
   onChange: () => {},
   openItem: () => {},
@@ -111,6 +117,7 @@ Component.defaultProps = {
 };
 
 Component.propTypes = {
+  closeModal: PropTypes.func,
   id: PropTypes.string.isRequired,
   item: PropTypes.object,
   onChange: PropTypes.func,

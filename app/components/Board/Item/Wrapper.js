@@ -10,7 +10,7 @@ const Component = styled.div`
   border-radius: 6px;
   display: flex;
   flex-direction: row;
-  padding: 1.25rem 1.5rem 1.25rem 1rem;
+  padding: 1.25rem 1.5rem 1rem 1rem;
 
   & > *:not(:last-child) {
     margin-bottom: 0.75rem;

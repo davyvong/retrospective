@@ -9,7 +9,7 @@ const Component = styled.div`
     0 1px 3px 1px rgba(60, 64, 67, 0.149);
   display: flex;
   flex-direction: column;
-  padding: 1.25rem 1.5rem;
+  padding: 1.25rem 1.5rem 1rem 1.5rem;
   width: 100%;
 
   & > *:not(:last-child) {
