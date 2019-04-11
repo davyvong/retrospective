@@ -6,22 +6,25 @@ import uuidv4 from 'uuid/v4';
 import { BOARD_ITEM_COLORS } from 'constants/colors';
 
 import Backdrop from './Backdrop';
-import BackgroundColor from './BackgroundColor';
+import Inner from './Inner';
+import Hidden from './Hidden';
 import Modal from './Modal';
 
 class Component extends React.PureComponent {
   render() {
     return (
-      <PoseGroup>
-        {this.props.visible && [
-          <Backdrop key={uuidv4()} onClick={this.props.close} />,
-          <Modal key={uuidv4()}>
-            <BackgroundColor color={`${this.props.color}80`}>
-              {this.props.children}
-            </BackgroundColor>
-          </Modal>,
-        ]}
-      </PoseGroup>
+      <Hidden>
+        <PoseGroup>
+          {this.props.visible && [
+            <Backdrop key={uuidv4()} onClick={this.props.close} />,
+            <Modal key={uuidv4()}>
+              <Inner color={`${this.props.color}80`}>
+                {this.props.children}
+              </Inner>
+            </Modal>,
+          ]}
+        </PoseGroup>
+      </Hidden>
     );
   }
 }

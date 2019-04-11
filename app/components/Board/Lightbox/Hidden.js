@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 
 const Component = styled.div`
-  background-color: ${props => props.color};
-  border-radius: 6px;
-  height: 100%;
-  width: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
 `;
 
 export default Component;
