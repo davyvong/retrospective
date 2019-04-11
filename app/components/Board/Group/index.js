@@ -89,7 +89,11 @@ class Component extends React.PureComponent {
     const { id, renderItem } = this.props;
     return (
       <Wrapper>
-        <Name onChange={this.onChange} value={name} />
+        <Name
+          onChange={this.onChange}
+          placeholder="Type a column name"
+          value={name}
+        />
         <Create onClick={this.createItem}>Create</Create>
         <List>
           <DragDropContext onDragEnd={this.onDragEnd}>
