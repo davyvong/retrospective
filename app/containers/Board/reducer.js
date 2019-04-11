@@ -6,10 +6,10 @@ import {
   BOARD_SNAPSHOT,
   BOARD_GROUP_ADDED,
   BOARD_GROUP_MODIFIED,
-  BOARD_GROUP_DELETED,
+  BOARD_GROUP_REMOVED,
   BOARD_ITEM_ADDED,
   BOARD_ITEM_MODIFIED,
-  BOARD_ITEM_DELETED,
+  BOARD_ITEM_REMOVED,
   INITIALIZE_BOARD,
 } from './constants';
 
@@ -28,14 +28,14 @@ function reducer(state = initialState, action) {
       return setBoardGroup(state, action);
     case BOARD_GROUP_MODIFIED:
       return setBoardGroup(state, action);
-    case BOARD_GROUP_DELETED:
-      return deleteBoardGroup(state, action);
+    case BOARD_GROUP_REMOVED:
+      return removeBoardGroup(state, action);
     case BOARD_ITEM_ADDED:
       return setBoardItem(state, action);
     case BOARD_ITEM_MODIFIED:
       return setBoardItem(state, action);
-    case BOARD_ITEM_DELETED:
-      return deleteBoardItem(state, action);
+    case BOARD_ITEM_REMOVED:
+      return removeBoardItem(state, action);
     case INITIALIZE_BOARD.SUCCESS:
       return initializeBoard(state, action);
     default:
@@ -63,11 +63,11 @@ function setBoardGroup(state, action) {
   return state;
 }
 
-function deleteBoardGroup(state, action) {
+function removeBoardGroup(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: doc } = action;
     if (isType(doc, 'Object') && isGUID(doc.id)) {
-      return state.get('groups').delete(doc.id);
+      return state.set('groups', state.get('groups').delete(doc.id));
     }
   }
   return state;
@@ -83,11 +83,11 @@ function setBoardItem(state, action) {
   return state;
 }
 
-function deleteBoardItem(state, action) {
+function removeBoardItem(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: doc } = action;
     if (isType(doc, 'Object') && isGUID(doc.id)) {
-      return state.get('items').delete(doc.id);
+      return state.set('items', state.get('items').delete(doc.id));
     }
   }
   return state;

@@ -6,10 +6,10 @@ import {
   boardSnapshot,
   boardGroupAdded,
   boardGroupModified,
-  boardGroupDeleted,
+  boardGroupRemoved,
   boardItemAdded,
   boardItemModified,
-  boardItemDeleted,
+  boardItemRemoved,
 } from './actions';
 
 import { CHANGE_TYPES } from './constants';
@@ -53,9 +53,9 @@ export function* createSubCollectionListener(
         if (actions[CHANGE_TYPES.MODIFIED]) {
           yield put(actions[CHANGE_TYPES.MODIFIED](doc));
         }
-      } else if (doc.type === CHANGE_TYPES.DELETED) {
-        if (actions[CHANGE_TYPES.DELETED]) {
-          yield put(actions[CHANGE_TYPES.DELETED](doc));
+      } else if (doc.type === CHANGE_TYPES.REMOVED) {
+        if (actions[CHANGE_TYPES.REMOVED]) {
+          yield put(actions[CHANGE_TYPES.REMOVED](doc));
         }
       }
     }
@@ -74,7 +74,7 @@ export function* boardGroupListener() {
   yield call(createSubCollectionListener, 'boards', id, 'groups', {
     [CHANGE_TYPES.ADDED]: boardGroupAdded,
     [CHANGE_TYPES.MODIFIED]: boardGroupModified,
-    [CHANGE_TYPES.DELETED]: boardGroupDeleted,
+    [CHANGE_TYPES.REMOVED]: boardGroupRemoved,
   });
 }
 
@@ -83,6 +83,6 @@ export function* boardItemListener() {
   yield call(createSubCollectionListener, 'boards', id, 'items', {
     [CHANGE_TYPES.ADDED]: boardItemAdded,
     [CHANGE_TYPES.MODIFIED]: boardItemModified,
-    [CHANGE_TYPES.DELETED]: boardItemDeleted,
+    [CHANGE_TYPES.REMOVED]: boardItemRemoved,
   });
 }
