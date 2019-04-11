@@ -57,6 +57,7 @@ class Component extends React.PureComponent {
             authorId={this.props.uid}
             closeModal={this.props.closeModal}
             group={this.props.groups[groupId]}
+            groupId={groupId}
             saveBoardItem={this.updateBoardItem}
           />
         </SmallContainer>
@@ -108,6 +109,7 @@ class Component extends React.PureComponent {
           ref={provided.innerRef}
         >
           <Item
+            group={this.props.groups[this.props.items[id].groupId]}
             id={id}
             item={this.props.items[id]}
             onChange={this.updateBoardItem}

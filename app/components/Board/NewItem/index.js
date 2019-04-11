@@ -4,7 +4,7 @@ import uuidv4 from 'uuid/v4';
 
 import { BOARD_ITEM_COLORS } from 'constants/colors';
 
-import { isGUID, isType } from 'utils/validate';
+import { isAuthUID, isGUID, isType } from 'utils/validate';
 
 import Button from './Button';
 import Close from './Close';
@@ -24,10 +24,9 @@ class Component extends React.PureComponent {
       this.props.saveBoardItem({
         data: {
           authorId: this.props.authorId,
-          color: this.props.group.color,
           comments: 0,
           created: new Date().getTime(),
-          groupId: this.props.group.id,
+          groupId: this.props.groupId,
           message: this.state.message,
           votes: 0,
         },
@@ -38,12 +37,10 @@ class Component extends React.PureComponent {
   };
 
   validateBoardItem = () =>
-    isType(this.props.authorId, 'String') &&
-    this.props.authorId.length === 28 &&
-    isGUID(this.props.group.id) &&
+    isAuthUID(this.props.authorId) &&
+    isGUID(this.props.groupId) &&
     isType(this.state.message, 'String') &&
-    this.state.message.length > 0 &&
-    true === false;
+    this.state.message.length > 0;
 
   updateMessage = event => {
     event.preventDefault();
@@ -78,6 +75,7 @@ Component.propTypes = {
   authorId: PropTypes.string,
   closeModal: PropTypes.func,
   group: PropTypes.object,
+  groupId: PropTypes.string,
   saveBoardItem: PropTypes.func,
 };
 

@@ -12,3 +12,13 @@ export function isGUID(str = '') {
   }
   return true;
 }
+
+export function isAuthUID(str = '') {
+  if (!isType(str, 'String')) {
+    return false;
+  }
+  if (str.length !== 28) {
+    return false;
+  }
+  return true;
+}
