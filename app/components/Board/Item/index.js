@@ -70,10 +70,10 @@ class Component extends React.PureComponent {
   };
 
   render() {
-    const { item, showPopup } = this.props;
+    const { item, showPopup, showShadow } = this.props;
     const { message } = this.state;
     return (
-      <Wrapper color={item.color || BOARD_ITEM_COLORS.GREY}>
+      <Wrapper color={item.color || BOARD_ITEM_COLORS.GREY} shadow={showShadow}>
         <Vote>
           <Icon hover={COLORS.RED} onClick={this.onUpvote}>
             keyboard_arrow_up
@@ -107,6 +107,7 @@ Component.defaultProps = {
   onChange: () => {},
   openItem: () => {},
   showPopup: true,
+  showShadow: false,
 };
 
 Component.propTypes = {
@@ -115,6 +116,7 @@ Component.propTypes = {
   onChange: PropTypes.func,
   openItem: PropTypes.func,
   showPopup: PropTypes.bool,
+  showShadow: PropTypes.bool,
 };
 
 export default Component;

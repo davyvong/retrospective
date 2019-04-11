@@ -68,6 +68,7 @@ class Component extends React.PureComponent {
             item={this.props.items[id]}
             onChange={this.updateBoardItem}
             showPopup={false}
+            showShadow
           />
         </Container>
       ),
