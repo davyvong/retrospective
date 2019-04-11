@@ -51,6 +51,7 @@ class Component extends React.PureComponent {
 
   createItem = ({ groupId }) => {
     this.props.openModal({
+      closeOnBackdrop: false,
       content: (
         <SmallContainer>
           <NewItem

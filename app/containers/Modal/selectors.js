@@ -2,6 +2,9 @@ import { createSelector } from 'reselect';
 
 const selectState = state => state.get('modal');
 
+const selectCloseOnBackdrop = () =>
+  createSelector(selectState, state => state.get('closeOnBackdrop'));
+
 const selectContent = () =>
   createSelector(selectState, state => {
     const content = state.get('content');
@@ -14,4 +17,4 @@ const selectOnClose = () =>
 const selectVisible = () =>
   createSelector(selectState, state => state.get('visible'));
 
-export { selectContent, selectOnClose, selectVisible };
+export { selectCloseOnBackdrop, selectContent, selectOnClose, selectVisible };

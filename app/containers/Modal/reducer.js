@@ -6,6 +6,7 @@ import { isType } from 'utils/validate';
 import { CLOSE_MODAL, OPEN_MODAL } from './constants';
 
 export const initialState = fromJS({
+  closeOnBackdrop: true,
   content: null,
   onClose: null,
   visible: false,
@@ -26,6 +27,9 @@ function openModal(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: modal } = action;
     const newState = { visible: true };
+    if (isType(modal.closeOnBackdrop, 'Boolean')) {
+      newState.closeOnBackdrop = modal.closeOnBackdrop;
+    }
     if (isType(modal.onClose, 'Function')) {
       newState.onClose = modal.onClose;
     }

@@ -15,14 +15,21 @@ import { isType } from 'utils/validate';
 
 import { closeModal as closeModalAction } from './actions';
 import reducer from './reducer';
-import { selectContent, selectOnClose, selectVisible } from './selectors';
+import {
+  selectContent,
+  selectOnClose,
+  selectCloseOnBackdrop,
+  selectVisible,
+} from './selectors';
 
 class Component extends React.PureComponent {
-  closeModal = () => {
-    if (isType(this.props.onClose, 'Function')) {
-      this.props.onClose();
+  onBackdropClick = () => {
+    if (this.props.closeOnBackdrop) {
+      if (isType(this.props.onClose, 'Function')) {
+        this.props.onClose();
+      }
+      this.props.closeModal();
     }
-    this.props.closeModal();
   };
 
   render() {
@@ -31,7 +38,7 @@ class Component extends React.PureComponent {
       <Hidden>
         <PoseGroup>
           {visible && [
-            <Backdrop key={uuidv4()} onClick={this.closeModal} />,
+            <Backdrop key={uuidv4()} onClick={this.onBackdropClick} />,
             <Content key={uuidv4()}>{content}</Content>,
           ]}
         </PoseGroup>
@@ -41,12 +48,14 @@ class Component extends React.PureComponent {
 }
 
 Component.defaultProps = {
+  closeOnBackdrop: true,
   content: null,
   visible: false,
 };
 
 Component.propTypes = {
   closeModal: PropTypes.func,
+  closeOnBackdrop: PropTypes.bool,
   content: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
@@ -56,6 +65,7 @@ Component.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  closeOnBackdrop: selectCloseOnBackdrop(),
   content: selectContent(),
   onClose: selectOnClose(),
   visible: selectVisible(),
