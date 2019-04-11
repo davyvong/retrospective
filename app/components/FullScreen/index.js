@@ -3,10 +3,10 @@ import styled from 'styled-components';
 const Component = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
   justify-content: center;
+  min-height: 100vh;
+  min-width: 100vw;
   text-align: center;
-  width: 100vw;
 `;
 
 export default Component;

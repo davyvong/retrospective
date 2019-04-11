@@ -40,6 +40,11 @@ class Component extends React.PureComponent {
     this.setState(newState);
   }
 
+  createItem = event => {
+    event.preventDefault();
+    this.props.createItem();
+  };
+
   onChange = event => {
     if (this.updateTimeout) {
       clearTimeout(this.updateTimeout);
@@ -93,20 +98,22 @@ class Component extends React.PureComponent {
             </Droppable>
           </DragDropContext>
         </List>
-        <Create>Create</Create>
+        <Create onClick={this.createItem}>Create</Create>
       </Wrapper>
     );
   }
 }
 
 Component.defaultProps = {
+  createItem: () => {},
   group: {},
   items: [],
-  onChange: () => null,
+  onChange: () => {},
   renderItem: () => null,
 };
 
 Component.propTypes = {
+  createItem: PropTypes.func,
   group: PropTypes.object,
   id: PropTypes.string.isRequired,
   items: PropTypes.array,

@@ -2,17 +2,16 @@ import styled from 'styled-components';
 import posed from 'react-pose';
 
 const Component = posed.div({
-  enter: { opacity: 0.75 },
+  enter: { opacity: 1 },
   exit: { opacity: 0 },
 });
 
 const StyledComponent = styled(Component)`
-  background-color: #000000;
-  bottom: 0;
-  left: 0;
+  left: 50%;
   position: fixed;
-  right: 0;
-  top: 0;
+  top: 50%;
+  transform: translate(-50%, -50%) !important;
+  z-index: 2;
 `;
 
 export default StyledComponent;

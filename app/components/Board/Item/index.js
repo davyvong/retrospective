@@ -65,11 +65,16 @@ class Component extends React.PureComponent {
     });
   };
 
+  openItem = event => {
+    event.preventDefault();
+    this.props.openItem(this.props.id);
+  };
+
   render() {
     const { item } = this.props;
     const { message } = this.state;
     return (
-      <Wrapper color={item.color ? `${item.color}80` : BOARD_ITEM_COLORS.GREY}>
+      <Wrapper color={item.color || BOARD_ITEM_COLORS.GREY}>
         <Vote>
           <Icon hover={COLORS.RED} onClick={this.onUpvote}>
             keyboard_arrow_up
@@ -88,6 +93,9 @@ class Component extends React.PureComponent {
               {item.comments === 0 ? 'No' : item.comments} Comment
               {item.comments !== 1 && 's'}
             </div>
+            <button onClick={this.openItem} type="button">
+              Expand
+            </button>
           </Footer>
         </Content>
       </Wrapper>
@@ -97,13 +105,15 @@ class Component extends React.PureComponent {
 
 Component.defaultProps = {
   item: {},
-  onChange: () => null,
+  onChange: () => {},
+  openItem: () => {},
 };
 
 Component.propTypes = {
   id: PropTypes.string.isRequired,
   item: PropTypes.object,
   onChange: PropTypes.func,
+  openItem: PropTypes.func,
 };
 
 export default Component;

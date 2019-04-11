@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { injectIntl, intlShape } from 'react-intl';
+import uuidv4 from 'uuid/v4';
 
 import { Draggable } from 'react-beautiful-dnd';
 
@@ -16,6 +17,8 @@ import Container from 'components/Bulma/Container';
 import Section from 'components/Bulma/Section';
 import FullScreen from 'components/FullScreen';
 import Spinner from 'components/Spinner';
+
+import { openModal as openModalAction } from 'containers/Modal/actions';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
@@ -41,16 +44,36 @@ class Component extends React.PureComponent {
     this.props.initializeBoard(this.props.match.params.boardId);
   }
 
+  createItem = () => {
+    this.props.openModal({
+      content: <Item id={uuidv4()} onChange={this.updateBoardItem} />,
+    });
+  };
+
+  openItem = id => {
+    this.props.openModal({
+      content: (
+        <Item
+          id={id}
+          item={this.props.items[id]}
+          onChange={this.updateBoardItem}
+        />
+      ),
+    });
+  };
+
   filterCollection = (collection, key, value) =>
     Object.keys(collection).filter(id => collection[id][key] === value);
 
   renderGroup = id => (
     <Group
+      createItem={this.createItem}
       group={this.props.groups[id]}
       id={id}
       items={this.filterCollection(this.props.items, 'groupId', id)}
       key={id}
       onChange={this.updateBoardGroup}
+      openItem={this.openItem}
       renderItem={this.renderItem}
     />
   );
@@ -67,6 +90,7 @@ class Component extends React.PureComponent {
             id={id}
             item={this.props.items[id]}
             onChange={this.updateBoardItem}
+            openItem={this.openItem}
           />
         </div>
       )}
@@ -134,6 +158,7 @@ Component.propTypes = {
   info: PropTypes.object,
   intl: intlShape.isRequired,
   items: PropTypes.object,
+  openModal: PropTypes.func,
   updateBoardGroup: PropTypes.func,
   updateBoardInfo: PropTypes.func,
   updateBoardItem: PropTypes.func,
@@ -147,6 +172,7 @@ const mapStateToProps = createStructuredSelector({
 
 export const mapDispatchToProps = dispatch => ({
   initializeBoard: params => dispatch(initializeBoardAction.request(params)),
+  openModal: params => dispatch(openModalAction(params)),
   updateBoardGroup: params => dispatch(updateBoardGroupAction.request(params)),
   updateBoardInfo: params => dispatch(updateBoardInfoAction.request(params)),
   updateBoardItem: params => dispatch(updateBoardItemAction.request(params)),

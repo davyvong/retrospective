@@ -20,7 +20,7 @@ const Component = styled.div`
 `;
 
 Component.defaultProps = {
-  color: `${BOARD_ITEM_COLORS.GREY}80`,
+  color: BOARD_ITEM_COLORS.GREY,
 };
 
 export default Component;
