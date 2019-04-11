@@ -7,6 +7,7 @@ import { BOARD_ITEM_COLORS } from 'constants/colors';
 import { isGUID, isType } from 'utils/validate';
 
 import Button from './Button';
+import Close from './Close';
 import Footer from './Footer';
 import Message from './Message';
 import Wrapper from './Wrapper';
@@ -23,9 +24,10 @@ class Component extends React.PureComponent {
       this.props.saveBoardItem({
         data: {
           authorId: this.props.authorId,
+          color: this.props.group.color,
           comments: 0,
           created: new Date().getTime(),
-          groupId: this.props.groupId,
+          groupId: this.props.group.id,
           message: this.state.message,
           votes: 0,
         },
@@ -38,7 +40,7 @@ class Component extends React.PureComponent {
   validateBoardItem = () =>
     isType(this.props.authorId, 'String') &&
     this.props.authorId.length === 28 &&
-    isGUID(this.props.groupId) &&
+    isGUID(this.props.group.id) &&
     isType(this.state.message, 'String') &&
     this.state.message.length > 0 &&
     true === false;
@@ -51,7 +53,7 @@ class Component extends React.PureComponent {
   render() {
     const { message } = this.state;
     return (
-      <Wrapper color={BOARD_ITEM_COLORS.GREY}>
+      <Wrapper color={this.props.group.color || BOARD_ITEM_COLORS.GREY}>
         <Message
           onChange={this.updateMessage}
           placeholder="Type a message here"
@@ -59,7 +61,7 @@ class Component extends React.PureComponent {
         />
         <Footer>
           <Button onClick={this.saveBoardItem}>Create</Button>
-          <Button onClick={this.props.closeModal}>Discard</Button>
+          <Close onClick={this.props.closeModal}>Discard</Close>
         </Footer>
       </Wrapper>
     );
@@ -68,13 +70,14 @@ class Component extends React.PureComponent {
 
 Component.defaultProps = {
   closeModal: () => {},
+  group: {},
   saveBoardItem: () => {},
 };
 
 Component.propTypes = {
   authorId: PropTypes.string,
   closeModal: PropTypes.func,
-  groupId: PropTypes.string,
+  group: PropTypes.object,
   saveBoardItem: PropTypes.func,
 };
 

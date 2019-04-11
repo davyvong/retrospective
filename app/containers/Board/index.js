@@ -56,7 +56,7 @@ class Component extends React.PureComponent {
           <NewItem
             authorId={this.props.uid}
             closeModal={this.props.closeModal}
-            groupId={groupId}
+            group={this.props.groups[groupId]}
             saveBoardItem={this.updateBoardItem}
           />
         </SmallContainer>
@@ -65,13 +65,15 @@ class Component extends React.PureComponent {
   };
 
   openItem = id => {
+    const item = this.props.items[id];
     this.props.openModal({
       content: (
         <SmallContainer>
           <Item
             closeModal={this.props.closeModal}
+            group={this.props.groups[item.groupId]}
             id={id}
-            item={this.props.items[id]}
+            item={item}
             onChange={this.updateBoardItem}
             showPopup={false}
             showShadow

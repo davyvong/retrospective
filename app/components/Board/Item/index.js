@@ -7,6 +7,7 @@ import { UPDATE_DELAY } from 'constants/timings';
 import { isType } from 'utils/validate';
 
 import Button from './Button';
+import Close from './Close';
 import Content from './Content';
 import Footer from './Footer';
 import Icon from './Icon';
@@ -71,10 +72,13 @@ class Component extends React.PureComponent {
   };
 
   render() {
-    const { item, showPopup, showShadow } = this.props;
+    const { group, item, showPopup, showShadow } = this.props;
     const { message } = this.state;
     return (
-      <Wrapper color={item.color || BOARD_ITEM_COLORS.GREY} shadow={showShadow}>
+      <Wrapper
+        color={item.color || group.color || BOARD_ITEM_COLORS.GREY}
+        shadow={showShadow}
+      >
         <Vote>
           <Icon hover={COLORS.RED} onClick={this.onUpvote}>
             keyboard_arrow_up
@@ -91,15 +95,11 @@ class Component extends React.PureComponent {
             value={message}
           />
           <Footer>
-            <Button>
+            <Button onClick={this.openItem}>
               {item.comments === 0 ? 'No' : item.comments} Comment
               {item.comments !== 1 && 's'}
             </Button>
-            {showPopup ? (
-              <Button onClick={this.openItem}>Open</Button>
-            ) : (
-              <Button onClick={this.props.closeModal}>Close</Button>
-            )}
+            {!showPopup && <Close onClick={this.props.closeModal}>Close</Close>}
           </Footer>
         </Content>
       </Wrapper>
@@ -109,6 +109,7 @@ class Component extends React.PureComponent {
 
 Component.defaultProps = {
   closeModal: () => {},
+  group: {},
   item: {},
   onChange: () => {},
   openItem: () => {},
@@ -118,6 +119,7 @@ Component.defaultProps = {
 
 Component.propTypes = {
   closeModal: PropTypes.func,
+  group: PropTypes.object,
   id: PropTypes.string.isRequired,
   item: PropTypes.object,
   onChange: PropTypes.func,

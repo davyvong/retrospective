@@ -5,6 +5,7 @@ const Component = styled.div`
   flex-direction: row;
   font-size: 0.8em;
   margin: 0 -0.5rem;
+  position: relative;
 
   & > div:not(:last-child) {
     margin-right: 0.75rem;
