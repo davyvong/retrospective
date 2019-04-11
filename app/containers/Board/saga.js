@@ -27,7 +27,7 @@ import { selectBoardId } from './selectors';
 export function* initializeBoard(action) {
   try {
     const { params: id } = action;
-    const ref = firestore.collection('boards').doc(id);
+    const ref = firestore.doc(`boards/${id}`);
     const doc = yield call([ref, ref.get]);
     if (!doc.exists) {
       throw new Error('Board does not exist.');
@@ -47,11 +47,7 @@ export function* updateBoardGroup(action) {
   try {
     const { params: doc } = action;
     const boardId = yield select(selectBoardId());
-    const ref = firestore
-      .collection('boards')
-      .doc(boardId)
-      .collection('groups')
-      .doc(doc.id);
+    const ref = firestore.doc(`boards/${boardId}/groups/${doc.id}`);
     yield call([ref, ref.set], doc.data, { merge: true });
     yield put(updateBoardGroupAction.success());
   } catch (error) {
@@ -63,7 +59,7 @@ export function* updateBoardInfo(action) {
   try {
     const { params: doc } = action;
     const boardId = yield select(selectBoardId());
-    const ref = firestore.collection('boards').doc(boardId);
+    const ref = firestore.doc(`boards/${boardId}`);
     yield call([ref, ref.set], doc.data, { merge: true });
     yield put(updateBoardInfoAction.success());
   } catch (error) {
@@ -75,11 +71,7 @@ export function* updateBoardItem(action) {
   try {
     const { params: doc } = action;
     const boardId = yield select(selectBoardId());
-    const ref = firestore
-      .collection('boards')
-      .doc(boardId)
-      .collection('items')
-      .doc(doc.id);
+    const ref = firestore.doc(`boards/${boardId}/items/${doc.id}`);
     yield call([ref, ref.set], doc.data, { merge: true });
     yield put(updateBoardItemAction.success());
   } catch (error) {
