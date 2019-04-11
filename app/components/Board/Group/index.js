@@ -52,7 +52,11 @@ class Component extends React.PureComponent {
     this.setState({ name: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
         this.props.onChange({
-          data: { name: this.state.name },
+          data: {
+            dateModified: new Date().getTime(),
+            modifiedBy: this.props.userId,
+            name: this.state.name,
+          },
           id: this.props.id,
         });
         this.updateTimeout = undefined;
@@ -119,6 +123,7 @@ Component.propTypes = {
   items: PropTypes.array,
   onChange: PropTypes.func,
   renderItem: PropTypes.func,
+  userId: PropTypes.string.isRequired,
 };
 
 export default Component;

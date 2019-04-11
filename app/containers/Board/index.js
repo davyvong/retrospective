@@ -54,11 +54,11 @@ class Component extends React.PureComponent {
       content: (
         <SmallContainer>
           <NewItem
-            authorId={this.props.uid}
             closeModal={this.props.closeModal}
             group={this.props.groups[groupId]}
             groupId={groupId}
             saveBoardItem={this.updateBoardItem}
+            userId={this.props.uid}
           />
         </SmallContainer>
       ),
@@ -78,6 +78,7 @@ class Component extends React.PureComponent {
             onChange={this.updateBoardItem}
             showPopup={false}
             showShadow
+            userId={this.props.uid}
           />
         </SmallContainer>
       ),
@@ -97,6 +98,7 @@ class Component extends React.PureComponent {
       onChange={this.updateBoardGroup}
       openItem={this.openItem}
       renderItem={this.renderItem}
+      userId={this.props.uid}
     />
   );
 
@@ -114,6 +116,7 @@ class Component extends React.PureComponent {
             item={this.props.items[id]}
             onChange={this.updateBoardItem}
             openItem={this.openItem}
+            userId={this.props.uid}
           />
         </div>
       )}

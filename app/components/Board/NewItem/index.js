@@ -20,14 +20,17 @@ class Component extends React.PureComponent {
 
   saveBoardItem = event => {
     event.preventDefault();
+    const timestamp = new Date().getTime();
     if (this.validateBoardItem()) {
       this.props.saveBoardItem({
         data: {
-          authorId: this.props.authorId,
           comments: 0,
-          created: new Date().getTime(),
+          createdBy: this.props.userId,
+          dateCreated: timestamp,
+          dateModified: timestamp,
           groupId: this.props.groupId,
           message: this.state.message,
+          modifiedBy: this.props.userId,
           votes: 0,
         },
         id: uuidv4(),
@@ -37,7 +40,7 @@ class Component extends React.PureComponent {
   };
 
   validateBoardItem = () =>
-    isAuthUID(this.props.authorId) &&
+    isAuthUID(this.props.userId) &&
     isGUID(this.props.groupId) &&
     isType(this.state.message, 'String') &&
     this.state.message.length > 0;
@@ -72,11 +75,11 @@ Component.defaultProps = {
 };
 
 Component.propTypes = {
-  authorId: PropTypes.string,
   closeModal: PropTypes.func,
   group: PropTypes.object,
   groupId: PropTypes.string,
   saveBoardItem: PropTypes.func,
+  userId: PropTypes.string,
 };
 
 export default Component;

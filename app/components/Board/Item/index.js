@@ -53,7 +53,11 @@ class Component extends React.PureComponent {
   onDownvote = event => {
     event.preventDefault();
     this.props.onChange({
-      data: { votes: this.props.item.votes - 1 },
+      data: {
+        dateModified: new Date().getTime(),
+        modifiedBy: this.props.userId,
+        votes: this.props.item.votes - 1,
+      },
       id: this.props.id,
     });
   };
@@ -61,7 +65,11 @@ class Component extends React.PureComponent {
   onUpvote = event => {
     event.preventDefault();
     this.props.onChange({
-      data: { votes: this.props.item.votes + 1 },
+      data: {
+        dateModified: new Date().getTime(),
+        modifiedBy: this.props.userId,
+        votes: this.props.item.votes + 1,
+      },
       id: this.props.id,
     });
   };
@@ -126,6 +134,7 @@ Component.propTypes = {
   openItem: PropTypes.func,
   showPopup: PropTypes.bool,
   showShadow: PropTypes.bool,
+  userId: PropTypes.string.isRequired,
 };
 
 export default Component;
