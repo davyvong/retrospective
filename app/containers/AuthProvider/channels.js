@@ -3,9 +3,7 @@ import { auth } from 'configureFirebase';
 
 export function createAuthChannel() {
   return eventChannel(emitter => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      emitter(user || {});
-    });
+    const unsubscribe = auth.onAuthStateChanged(user => emitter(user || {}));
     return unsubscribe;
   });
 }

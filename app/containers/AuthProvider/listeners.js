@@ -1,4 +1,5 @@
 import { call, put, take } from 'redux-saga/effects';
+import { isEmpty } from 'lodash';
 
 import { createAuthChannel } from './channels';
 
@@ -9,7 +10,7 @@ export function* createAuthListener() {
   try {
     while (true) {
       const user = yield take(channel);
-      if (user) {
+      if (!isEmpty(user)) {
         yield put(setAuthUID({ uid: user.uid }));
       } else {
         yield put(authorizeAnonymously.request());
