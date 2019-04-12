@@ -6,6 +6,7 @@ const Component = styled.i.attrs({ className: 'material-icons' })`
 
   &:hover {
     color: ${props => props.hover};
+    cursor: pointer;
   }
 `;
 

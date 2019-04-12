@@ -15,7 +15,7 @@ import Title from 'components/Board/Title';
 import Columns from 'components/Bulma/Columns';
 import Container from 'components/Bulma/Container';
 import Section from 'components/Bulma/Section';
-import SmallContainer from 'components/Bulma/SmallContainer';
+import SMContainer from 'components/Bulma/SMContainer';
 import FullScreen from 'components/FullScreen';
 import Spinner from 'components/Spinner';
 
@@ -54,7 +54,7 @@ class Component extends React.PureComponent {
     const item = this.props.items[id];
     this.props.openModal({
       content: (
-        <SmallContainer>
+        <SMContainer>
           <Item
             closeModal={this.props.closeModal}
             group={this.props.groups[item.groupId]}
@@ -65,7 +65,7 @@ class Component extends React.PureComponent {
             showShadow
             userId={this.props.uid}
           />
-        </SmallContainer>
+        </SMContainer>
       ),
     });
   };

@@ -16,6 +16,10 @@ const Component = styled.i.attrs({ className: 'material-icons' })`
   top: -10px;
   visibility: visible !important;
   width: 28px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export default Component;

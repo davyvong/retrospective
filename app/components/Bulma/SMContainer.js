@@ -4,6 +4,11 @@ const Component = styled.div`
   margin: 0 auto;
   position: relative;
 
+  @media screen and (min-width: 760px) {
+    max-width: 430px;
+    width: 430px;
+  }
+
   @media screen and (min-width: 1088px) {
     max-width: 480px;
     width: 480px;

@@ -6,6 +6,7 @@ const Component = styled.div`
 
   &:hover {
     background-color: #00000010;
+    cursor: pointer;
   }
 `;
 

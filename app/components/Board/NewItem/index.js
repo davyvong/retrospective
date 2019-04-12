@@ -58,7 +58,7 @@ class Component extends React.PureComponent {
           value={message}
         />
         <Footer>
-          <Button onClick={this.saveBoardItem}>Create</Button>
+          <Button onClick={this.saveBoardItem}>Save</Button>
           <Close onClick={this.props.destroy}>Discard</Close>
         </Footer>
       </Wrapper>
