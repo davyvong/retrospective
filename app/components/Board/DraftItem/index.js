@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 
 import constructDoc from 'utils/constructDoc';
-import { isAuthUID, isGUID, isType } from 'utils/validate';
+import { isAuthUID, isGUID, isType } from 'utils/validators';
 
 import Button from './Button';
 import CloseButton from './CloseButton';

@@ -27,7 +27,7 @@ import { selectAuthUID } from 'containers/AuthProvider/selectors';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
-import { isGUID, isType } from 'utils/validate';
+import { isGUID, isType } from 'utils/validators';
 
 import {
   initializeBoard as initializeBoardAction,

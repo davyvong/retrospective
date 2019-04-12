@@ -1,7 +1,7 @@
 import React from 'react';
 import { fromJS } from 'immutable';
 
-import { isType } from 'utils/validate';
+import { isType } from 'utils/validators';
 
 import { CLOSE_MODAL, OPEN_MODAL } from './constants';
 

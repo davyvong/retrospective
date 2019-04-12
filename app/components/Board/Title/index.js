@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { UPDATE_DELAY } from 'constants/timings';
 
-import { isType } from 'utils/validate';
+import { isType } from 'utils/validators';
 
 import Input from './Input';
 import Wrapper from './Wrapper';

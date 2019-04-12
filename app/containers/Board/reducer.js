@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 
-import { isGUID, isType } from 'utils/validate';
+import { isGUID, isType } from 'utils/validators';
 
 import {
   BOARD_SNAPSHOT,

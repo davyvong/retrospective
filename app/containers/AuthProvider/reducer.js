@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 
-import { isType } from 'utils/validate';
+import { isType } from 'utils/validators';
 
 import { SET_AUTH_UID } from './constants';
 

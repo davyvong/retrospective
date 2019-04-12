@@ -11,7 +11,7 @@ import Content from 'components/Modal/Content';
 import Hidden from 'components/Modal/Hidden';
 
 import injectReducer from 'utils/injectReducer';
-import { isType } from 'utils/validate';
+import { isType } from 'utils/validators';
 
 import { closeModal as closeModalAction } from './actions';
 import reducer from './reducer';

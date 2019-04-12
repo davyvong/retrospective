@@ -5,7 +5,7 @@ import { BOARD_ITEM_COLORS, COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
 import constructDoc from 'utils/constructDoc';
-import { isType } from 'utils/validate';
+import { isType } from 'utils/validators';
 
 import Button from './Button';
 import CloseButton from './CloseButton';
