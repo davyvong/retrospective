@@ -7,13 +7,13 @@ import { injectIntl, intlShape } from 'react-intl';
 
 import { Draggable } from 'react-beautiful-dnd';
 
+import Container from 'components/Board/Container';
 import Group from 'components/Board/Group';
 import Item from 'components/Board/Item';
 import DraftItem from 'components/Board/DraftItem';
 import Subtitle from 'components/Board/Subtitle';
 import Title from 'components/Board/Title';
 import Columns from 'components/Bulma/Columns';
-import Container from 'components/Bulma/Container';
 import Section from 'components/Bulma/Section';
 import FullScreen from 'components/FullScreen';
 import ModalContainer from 'components/Modal/Container';
