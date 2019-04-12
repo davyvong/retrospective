@@ -86,22 +86,32 @@ class Component extends React.PureComponent {
     });
   };
 
-  filterCollection = (collection, key, value) =>
-    Object.keys(collection).filter(id => collection[id][key] === value);
+  filterCollection = (collection, key, value) => {
+    const filteredCollection = Object.assign({}, collection);
+    Object.keys(collection).forEach(id => {
+      if (filteredCollection[id][key] !== value) {
+        delete filteredCollection[id];
+      }
+    });
+    return filteredCollection;
+  };
 
-  renderGroup = id => (
-    <Group
-      createItem={this.createItem}
-      group={this.props.groups[id]}
-      id={id}
-      items={this.filterCollection(this.props.items, 'groupId', id)}
-      key={id}
-      onChange={this.updateBoardGroup}
-      openItem={this.openItem}
-      renderItem={this.renderItem}
-      userId={this.props.uid}
-    />
-  );
+  renderGroup = id => {
+    const groupItems = this.filterCollection(this.props.items, 'groupId', id);
+    return (
+      <Group
+        createItem={this.createItem}
+        group={this.props.groups[id]}
+        id={id}
+        items={this.sortCollection(groupItems, 'dateCreated', true)}
+        key={id}
+        onChange={this.updateBoardGroup}
+        openItem={this.openItem}
+        renderItem={this.renderItem}
+        userId={this.props.uid}
+      />
+    );
+  };
 
   renderItem = (id, index) => (
     <Draggable draggableId={id} key={id} index={index}>
@@ -160,6 +170,7 @@ class Component extends React.PureComponent {
       );
     }
     const { groups, intl } = this.props;
+    const sortedGroups = this.sortCollection(groups, 'dateCreated', true);
     return (
       <Section>
         <Container>
@@ -173,7 +184,7 @@ class Component extends React.PureComponent {
             placeholder={intl.formatMessage(messages.subtitle)}
             value={subtitle}
           />
-          <Columns>{Object.keys(groups).map(this.renderGroup)}</Columns>
+          <Columns>{sortedGroups.map(this.renderGroup)}</Columns>
         </Container>
       </Section>
     );
