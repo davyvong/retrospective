@@ -9,6 +9,7 @@ import { isType } from 'utils/validate';
 import Button from './Button';
 import Close from './Close';
 import Content from './Content';
+import Delete from './Delete';
 import Footer from './Footer';
 import Icon from './Icon';
 import Message from './Message';
@@ -48,6 +49,11 @@ class Component extends React.PureComponent {
         this.updateTimeout = undefined;
       }, UPDATE_DELAY);
     });
+  };
+
+  onDelete = event => {
+    event.preventDefault();
+    this.props.removeBoardItem({ id: this.props.id });
   };
 
   onDownvote = event => {
@@ -110,6 +116,7 @@ class Component extends React.PureComponent {
             {!showPopup && <Close onClick={this.props.closeModal}>Close</Close>}
           </Footer>
         </Content>
+        <Delete onClick={this.onDelete}>close</Delete>
       </Wrapper>
     );
   }
@@ -121,6 +128,7 @@ Component.defaultProps = {
   item: {},
   onChange: () => {},
   openItem: () => {},
+  removeBoardItem: () => {},
   showPopup: true,
   showShadow: false,
 };
@@ -132,6 +140,7 @@ Component.propTypes = {
   item: PropTypes.object,
   onChange: PropTypes.func,
   openItem: PropTypes.func,
+  removeBoardItem: PropTypes.func,
   showPopup: PropTypes.bool,
   showShadow: PropTypes.bool,
   userId: PropTypes.string.isRequired,

@@ -4,15 +4,19 @@ import { firestore } from 'configureFirebase';
 
 import {
   initializeBoard as initializeBoardAction,
+  removeBoardGroup as removeBoardGroupAction,
   updateBoardGroup as updateBoardGroupAction,
   updateBoardInfo as updateBoardInfoAction,
+  removeBoardItem as removeBoardItemAction,
   updateBoardItem as updateBoardItemAction,
 } from './actions';
 
 import {
   INITIALIZE_BOARD,
+  REMOVE_BOARD_GROUP,
   UPDATE_BOARD_GROUP,
   UPDATE_BOARD_INFO,
+  REMOVE_BOARD_ITEM,
   UPDATE_BOARD_ITEM,
 } from './constants';
 
@@ -43,6 +47,18 @@ export function* initializeBoard(action) {
   }
 }
 
+export function* removeBoardGroup(action) {
+  try {
+    const { params: doc } = action;
+    const boardId = yield select(selectBoardId());
+    const ref = firestore.doc(`boards/${boardId}/groups/${doc.id}`);
+    yield call([ref, ref.delete]);
+    yield put(removeBoardGroupAction.success());
+  } catch (error) {
+    yield put(removeBoardGroupAction.failure(error));
+  }
+}
+
 export function* updateBoardGroup(action) {
   try {
     const { params: doc } = action;
@@ -67,6 +83,18 @@ export function* updateBoardInfo(action) {
   }
 }
 
+export function* removeBoardItem(action) {
+  try {
+    const { params: doc } = action;
+    const boardId = yield select(selectBoardId());
+    const ref = firestore.doc(`boards/${boardId}/items/${doc.id}`);
+    yield call([ref, ref.delete]);
+    yield put(removeBoardItemAction.success());
+  } catch (error) {
+    yield put(removeBoardItemAction.failure(error));
+  }
+}
+
 export function* updateBoardItem(action) {
   try {
     const { params: doc } = action;
@@ -81,7 +109,9 @@ export function* updateBoardItem(action) {
 
 export default function* saga() {
   yield takeLatest(INITIALIZE_BOARD.REQUEST, initializeBoard);
+  yield takeLatest(REMOVE_BOARD_GROUP.REQUEST, removeBoardGroup);
   yield takeLatest(UPDATE_BOARD_GROUP.REQUEST, updateBoardGroup);
   yield takeLatest(UPDATE_BOARD_INFO.REQUEST, updateBoardInfo);
+  yield takeLatest(REMOVE_BOARD_ITEM.REQUEST, removeBoardItem);
   yield takeLatest(UPDATE_BOARD_ITEM.REQUEST, updateBoardItem);
 }

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { BOARD_ITEM_COLORS } from 'constants/colors';
 
 const Component = styled.div`
-  background-color: ${props => props.color};
+  background-color: ${BOARD_ITEM_COLORS.GREY};
   border-radius: 6px;
   display: flex;
   flex-direction: column;
@@ -20,9 +20,5 @@ const Component = styled.div`
     margin-bottom: 0.75rem;
   }
 `;
-
-Component.defaultProps = {
-  color: BOARD_ITEM_COLORS.GREY,
-};
 
 export default Component;

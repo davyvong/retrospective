@@ -33,6 +33,7 @@ import {
   initializeBoard as initializeBoardAction,
   updateBoardGroup as updateBoardGroupAction,
   updateBoardInfo as updateBoardInfoAction,
+  removeBoardItem as removeBoardItemAction,
   updateBoardItem as updateBoardItemAction,
 } from './actions';
 import messages from './messages';
@@ -111,6 +112,7 @@ class Component extends React.PureComponent {
             item={this.props.items[id]}
             onChange={this.updateBoardItem}
             openItem={this.openItem}
+            removeBoardItem={this.props.removeBoardItem}
             userId={this.props.uid}
           />
         </div>
@@ -203,6 +205,7 @@ Component.propTypes = {
   intl: intlShape.isRequired,
   items: PropTypes.object,
   openModal: PropTypes.func,
+  removeBoardItem: PropTypes.func,
   updateBoardGroup: PropTypes.func,
   updateBoardInfo: PropTypes.func,
   updateBoardItem: PropTypes.func,
@@ -219,6 +222,7 @@ export const mapDispatchToProps = dispatch => ({
   initializeBoard: params => dispatch(initializeBoardAction.request(params)),
   closeModal: params => dispatch(closeModalAction(params)),
   openModal: params => dispatch(openModalAction(params)),
+  removeBoardItem: params => dispatch(removeBoardItemAction.request(params)),
   updateBoardGroup: params => dispatch(updateBoardGroupAction.request(params)),
   updateBoardInfo: params => dispatch(updateBoardInfoAction.request(params)),
   updateBoardItem: params => dispatch(updateBoardItemAction.request(params)),

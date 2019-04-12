@@ -20,11 +20,19 @@ export const CHANGE_TYPES = {
 
 export const INITIALIZE_BOARD = createRequestTypes(`${scope}/INITIALIZE_BOARD`);
 
+export const REMOVE_BOARD_GROUP = createRequestTypes(
+  `${scope}/REMOVE_BOARD_GROUP`,
+);
 export const UPDATE_BOARD_GROUP = createRequestTypes(
   `${scope}/UPDATE_BOARD_GROUP`,
 );
+
 export const UPDATE_BOARD_INFO = createRequestTypes(
   `${scope}/UPDATE_BOARD_INFO`,
+);
+
+export const REMOVE_BOARD_ITEM = createRequestTypes(
+  `${scope}/REMOVE_BOARD_ITEM`,
 );
 export const UPDATE_BOARD_ITEM = createRequestTypes(
   `${scope}/UPDATE_BOARD_ITEM`,

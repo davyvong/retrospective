@@ -10,8 +10,10 @@ import {
   BOARD_ITEM_MODIFIED,
   BOARD_ITEM_REMOVED,
   INITIALIZE_BOARD,
+  REMOVE_BOARD_GROUP,
   UPDATE_BOARD_GROUP,
   UPDATE_BOARD_INFO,
+  REMOVE_BOARD_ITEM,
   UPDATE_BOARD_ITEM,
 } from './constants';
 
@@ -27,6 +29,10 @@ export const boardItemRemoved = createAction(BOARD_ITEM_REMOVED);
 
 export const initializeBoard = createAsyncAction(INITIALIZE_BOARD);
 
+export const removeBoardGroup = createAsyncAction(REMOVE_BOARD_GROUP);
 export const updateBoardGroup = createAsyncAction(UPDATE_BOARD_GROUP);
+
 export const updateBoardInfo = createAsyncAction(UPDATE_BOARD_INFO);
+
+export const removeBoardItem = createAsyncAction(REMOVE_BOARD_ITEM);
 export const updateBoardItem = createAsyncAction(UPDATE_BOARD_ITEM);

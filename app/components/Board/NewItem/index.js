@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 
-import { BOARD_ITEM_COLORS } from 'constants/colors';
-
 import { isAuthUID, isGUID, isType } from 'utils/validate';
 
 import Button from './Button';
@@ -53,7 +51,7 @@ class Component extends React.PureComponent {
   render() {
     const { message } = this.state;
     return (
-      <Wrapper color={BOARD_ITEM_COLORS.GREY}>
+      <Wrapper>
         <Message
           onChange={this.updateMessage}
           placeholder="Type a message here"

@@ -12,12 +12,19 @@ const Component = styled.div`
   flex-direction: row;
   min-width: 250px;
   padding: 1.25rem 1.5rem 1rem 0.5rem;
-
-  & > *:not(:last-child) {
-    margin-bottom: 0.75rem;
-  }
+  position: relative;
 
   ${props => (props.shadow ? boxShadow : `&:hover { ${boxShadow} }`)};
+
+  & > *:last-child {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  &:hover > *:last-child {
+    opacity: 1;
+    visibility: visible;
+  }
 `;
 
 Component.defaultProps = {
