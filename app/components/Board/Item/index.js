@@ -44,11 +44,7 @@ class Component extends React.PureComponent {
     this.setState({ message: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
         this.props.updateBoardItem(
-          constructDoc(this.props.id, {
-            dateModified: new Date().getTime(),
-            message: this.state.message,
-            modifiedBy: this.props.userId,
-          }),
+          constructDoc(this.props.id, { message: this.state.message }),
         );
         this.updateTimeout = undefined;
       }, UPDATE_DELAY);
@@ -58,33 +54,16 @@ class Component extends React.PureComponent {
   onDelete = event => {
     event.preventDefault();
     const node = this.props.item;
-    const timestamp = new Date().getTime();
     const updateQueue = [];
     if (isGUID(node.prev)) {
-      updateQueue.push(
-        constructDoc(node.prev, {
-          dateModified: timestamp,
-          modifiedBy: this.props.userId,
-          next: node.next,
-        }),
-      );
+      updateQueue.push(constructDoc(node.prev, { next: node.next }));
     } else {
       this.props.updateBoardGroup(
-        constructDoc(node.groupId, {
-          dateModified: timestamp,
-          first: node.next,
-          modifiedBy: this.props.userId,
-        }),
+        constructDoc(node.groupId, { first: node.next }),
       );
     }
     if (isGUID(node.next)) {
-      updateQueue.push(
-        constructDoc(node.next, {
-          dateModified: timestamp,
-          modifiedBy: this.props.userId,
-          prev: node.prev,
-        }),
-      );
+      updateQueue.push(constructDoc(node.next, { prev: node.prev }));
     }
     updateQueue.forEach(update => this.props.updateBoardItem(update));
     this.props.removeBoardItem({ id: this.props.id });
@@ -93,22 +72,14 @@ class Component extends React.PureComponent {
   onDownvote = event => {
     event.preventDefault();
     this.props.updateBoardItem(
-      constructDoc(this.props.id, {
-        dateModified: new Date().getTime(),
-        modifiedBy: this.props.userId,
-        votes: this.props.item.votes - 1,
-      }),
+      constructDoc(this.props.id, { votes: this.props.item.votes - 1 }),
     );
   };
 
   onUpvote = event => {
     event.preventDefault();
     this.props.updateBoardItem(
-      constructDoc(this.props.id, {
-        dateModified: new Date().getTime(),
-        modifiedBy: this.props.userId,
-        votes: this.props.item.votes + 1,
-      }),
+      constructDoc(this.props.id, { votes: this.props.item.votes + 1 }),
     );
   };
 
@@ -180,7 +151,6 @@ Component.propTypes = {
   showShadow: PropTypes.bool,
   updateBoardGroup: PropTypes.func,
   updateBoardItem: PropTypes.func,
-  userId: PropTypes.string.isRequired,
 };
 
 export default Component;

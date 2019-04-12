@@ -25,6 +25,7 @@ import {
 } from 'containers/Modal/actions';
 import { selectAuthUID } from 'containers/AuthProvider/selectors';
 
+import constructDoc from 'utils/constructDoc';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 import { isGUID, isType } from 'utils/validators';
@@ -64,7 +65,6 @@ class Component extends React.PureComponent {
             showPopup={false}
             showShadow
             updateBoardItem={this.updateBoardItem}
-            userId={this.props.uid}
           />
         </ModalContainer>
       ),
@@ -146,7 +146,6 @@ class Component extends React.PureComponent {
               removeBoardItem={this.props.removeBoardItem}
               updateBoardGroup={this.updateBoardGroup}
               updateBoardItem={this.updateBoardItem}
-              userId={this.props.uid}
             />
           </div>
         )}
@@ -169,13 +168,7 @@ class Component extends React.PureComponent {
   };
 
   updateBoardInfo = data => {
-    this.props.updateBoardInfo({
-      data: {
-        ...data,
-        dateModified: new Date().getTime(),
-        modifiedBy: this.props.uid,
-      },
-    });
+    this.props.updateBoardInfo(constructDoc(undefined, data));
   };
 
   updateBoardItem = doc => {

@@ -58,11 +58,7 @@ class Component extends React.PureComponent {
     this.setState({ name: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
         this.props.updateBoardGroup(
-          constructDoc(this.props.id, {
-            dateModified: new Date().getTime(),
-            modifiedBy: this.props.userId,
-            name: this.state.name,
-          }),
+          constructDoc(this.props.id, { name: this.state.name }),
         );
         this.updateTimeout = undefined;
       }, UPDATE_DELAY);
@@ -73,33 +69,20 @@ class Component extends React.PureComponent {
     event.preventDefault();
     const newId = uuidv4();
     const node = this.props.group;
-    const timestamp = new Date().getTime();
     const updateQueue = [
       constructDoc(newId, {
         color: BOARD_ITEM_COLORS.GREY,
         createdBy: this.props.userId,
-        dateCreated: timestamp,
-        dateModified: timestamp,
+        dateCreated: new Date().getTime(),
         first: null,
-        modifiedBy: this.props.userId,
         name: '',
         next: node.next,
         prev: this.props.id,
       }),
-      constructDoc(this.props.id, {
-        dateModified: timestamp,
-        modifiedBy: this.props.userId,
-        next: newId,
-      }),
+      constructDoc(this.props.id, { next: newId }),
     ];
     if (isGUID(node.next)) {
-      updateQueue.push(
-        constructDoc(node.next, {
-          dateModified: timestamp,
-          modifiedBy: this.props.userId,
-          prev: newId,
-        }),
-      );
+      updateQueue.push(constructDoc(node.next, { prev: newId }));
     }
     updateQueue.forEach(update => this.props.updateBoardGroup(update));
   };
@@ -107,27 +90,14 @@ class Component extends React.PureComponent {
   onDelete = event => {
     event.preventDefault();
     const node = this.props.group;
-    const timestamp = new Date().getTime();
     const updateQueue = [];
     if (isGUID(node.prev)) {
-      updateQueue.push(
-        constructDoc(node.prev, {
-          dateModified: timestamp,
-          modifiedBy: this.props.userId,
-          next: node.next,
-        }),
-      );
+      updateQueue.push(constructDoc(node.prev, { next: node.next }));
     } else {
       this.props.updateBoardInfo({ first: node.next });
     }
     if (isGUID(node.next)) {
-      updateQueue.push(
-        constructDoc(node.next, {
-          dateModified: timestamp,
-          modifiedBy: this.props.userId,
-          prev: node.prev,
-        }),
-      );
+      updateQueue.push(constructDoc(node.next, { prev: node.prev }));
     }
     updateQueue.forEach(update => this.props.updateBoardGroup(update));
     this.props.removeBoardGroup({ id: this.props.id });

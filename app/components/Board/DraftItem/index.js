@@ -20,39 +20,26 @@ class Component extends React.PureComponent {
   saveBoardItem = event => {
     event.preventDefault();
     const newId = uuidv4();
-    const timestamp = new Date().getTime();
     if (this.validateBoardItem()) {
       const updateQueue = [
         constructDoc(newId, {
           comments: 0,
           createdBy: this.props.userId,
-          dateCreated: timestamp,
-          dateModified: timestamp,
+          dateCreated: new Date().getTime(),
           first: null,
           groupId: this.props.groupId,
           message: this.state.message,
-          modifiedBy: this.props.userId,
           next: this.props.group.first,
           prev: null,
           votes: 0,
         }),
       ];
       if (isGUID(this.props.group.first)) {
-        updateQueue.push(
-          constructDoc(this.props.group.first, {
-            dateModified: timestamp,
-            modifiedBy: this.props.userId,
-            prev: newId,
-          }),
-        );
+        updateQueue.push(constructDoc(this.props.group.first, { prev: newId }));
       }
       updateQueue.forEach(update => this.props.updateBoardItem(update));
       this.props.updateBoardGroup(
-        constructDoc(this.props.groupId, {
-          dateModified: timestamp,
-          modifiedBy: this.props.userId,
-          first: newId,
-        }),
+        constructDoc(this.props.groupId, { first: newId }),
       );
       this.props.disableCreateMode();
     }
