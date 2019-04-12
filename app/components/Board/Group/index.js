@@ -6,8 +6,10 @@ import { UPDATE_DELAY } from 'constants/timings';
 
 import { isType } from 'utils/validate';
 
-import Create from './Create';
-import Item from './Item';
+import CreateButton from './CreateButton';
+import DeleteButton from './DeleteButton';
+import Header from './Header';
+import Items from './Items';
 import List from './List';
 import Name from './Name';
 import Wrapper from './Wrapper';
@@ -30,13 +32,17 @@ class Component extends React.PureComponent {
   }
 
   componentWillReceiveProps(newProps) {
-    const newState = { items: newProps.items };
+    const newState = {};
+    const { group, items } = newProps;
+    if (isType(items, 'Array')) {
+      newState.items = items;
+    }
     if (
-      isType(newProps.group.name, 'String') &&
-      this.state.name !== newProps.group.name &&
+      isType(group.name, 'String') &&
+      this.state.name !== group.name &&
       !this.updateTimeout
     ) {
-      newState.name = newProps.group.name;
+      newState.name = group.name;
     }
     this.setState(newState);
   }
@@ -69,6 +75,11 @@ class Component extends React.PureComponent {
     });
   };
 
+  onDelete = event => {
+    event.preventDefault();
+    this.props.removeBoardGroup({ id: this.props.id });
+  };
+
   onDragEnd = result => {
     if (!result.destination) {
       return;
@@ -91,27 +102,30 @@ class Component extends React.PureComponent {
 
   render() {
     const { create, items, name } = this.state;
-    const { group, id, renderNewItem, renderItem } = this.props;
+    const { group, id, renderDraftItem, renderItem } = this.props;
     return (
       <Wrapper color={group.color}>
-        <Name
-          onChange={this.onChange}
-          placeholder="Type a column name"
-          value={name}
-        />
+        <Header>
+          <Name
+            onChange={this.onChange}
+            placeholder="Type a column name"
+            value={name}
+          />
+          <DeleteButton onClick={this.onDelete}>delete</DeleteButton>
+        </Header>
         {create ? (
-          renderNewItem({ destroy: this.disableCreateMode, groupId: id })
+          renderDraftItem({ destroy: this.disableCreateMode, groupId: id })
         ) : (
-          <Create onClick={this.enableCreateMode}>Create</Create>
+          <CreateButton onClick={this.enableCreateMode}>Create</CreateButton>
         )}
         <List>
           <DragDropContext onDragEnd={this.onDragEnd}>
             <Droppable droppableId={id}>
               {provided => (
-                <Item {...provided.droppableProps} ref={provided.innerRef}>
+                <Items {...provided.droppableProps} ref={provided.innerRef}>
                   {items.map(renderItem)}
                   {provided.placeholder}
-                </Item>
+                </Items>
               )}
             </Droppable>
           </DragDropContext>
@@ -126,7 +140,8 @@ Component.defaultProps = {
   group: {},
   items: [],
   onChange: () => {},
-  renderNewItem: () => null,
+  removeBoardGroup: () => {},
+  renderDraftItem: () => null,
   renderItem: () => null,
 };
 
@@ -136,7 +151,8 @@ Component.propTypes = {
   id: PropTypes.string.isRequired,
   items: PropTypes.array,
   onChange: PropTypes.func,
-  renderNewItem: PropTypes.func,
+  removeBoardGroup: PropTypes.func,
+  renderDraftItem: PropTypes.func,
   renderItem: PropTypes.func,
   userId: PropTypes.string.isRequired,
 };

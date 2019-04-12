@@ -5,7 +5,7 @@ import uuidv4 from 'uuid/v4';
 import { isAuthUID, isGUID, isType } from 'utils/validate';
 
 import Button from './Button';
-import Close from './Close';
+import CloseButton from './CloseButton';
 import Footer from './Footer';
 import Message from './Message';
 import Wrapper from './Wrapper';
@@ -59,7 +59,7 @@ class Component extends React.PureComponent {
         />
         <Footer>
           <Button onClick={this.saveBoardItem}>Save</Button>
-          <Close onClick={this.props.destroy}>Discard</Close>
+          <CloseButton onClick={this.props.destroy}>Discard</CloseButton>
         </Footer>
       </Wrapper>
     );

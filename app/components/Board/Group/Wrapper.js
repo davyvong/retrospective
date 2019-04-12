@@ -10,6 +10,7 @@ const Component = styled.div`
   flex-shrink: 1;
   margin-top: 0.75rem;
   padding: 0.75rem;
+  position: relative;
 
   &:hover {
     background-color: ${props => props.color}40;

@@ -7,9 +7,9 @@ import { UPDATE_DELAY } from 'constants/timings';
 import { isType } from 'utils/validate';
 
 import Button from './Button';
-import Close from './Close';
+import CloseButton from './CloseButton';
 import Content from './Content';
-import Delete from './Delete';
+import DeleteButton from './DeleteButton';
 import Footer from './Footer';
 import Icon from './Icon';
 import Message from './Message';
@@ -116,9 +116,9 @@ class Component extends React.PureComponent {
           </Footer>
         </Content>
         {showPopup ? (
-          <Delete onClick={this.onDelete}>delete</Delete>
+          <DeleteButton onClick={this.onDelete}>delete</DeleteButton>
         ) : (
-          <Close onClick={this.props.closeModal}>close</Close>
+          <CloseButton onClick={this.props.closeModal}>close</CloseButton>
         )}
       </Wrapper>
     );

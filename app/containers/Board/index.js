@@ -9,14 +9,14 @@ import { Draggable } from 'react-beautiful-dnd';
 
 import Group from 'components/Board/Group';
 import Item from 'components/Board/Item';
-import NewItem from 'components/Board/NewItem';
+import DraftItem from 'components/Board/DraftItem';
 import Subtitle from 'components/Board/Subtitle';
 import Title from 'components/Board/Title';
 import Columns from 'components/Bulma/Columns';
 import Container from 'components/Bulma/Container';
 import Section from 'components/Bulma/Section';
-import SMContainer from 'components/Bulma/SMContainer';
 import FullScreen from 'components/FullScreen';
+import ModalContainer from 'components/Modal/Container';
 import Spinner from 'components/Spinner';
 
 import {
@@ -31,6 +31,7 @@ import { isType } from 'utils/validate';
 
 import {
   initializeBoard as initializeBoardAction,
+  removeBoardGroup as removeBoardGroupAction,
   updateBoardGroup as updateBoardGroupAction,
   updateBoardInfo as updateBoardInfoAction,
   removeBoardItem as removeBoardItemAction,
@@ -54,7 +55,7 @@ class Component extends React.PureComponent {
     const item = this.props.items[id];
     this.props.openModal({
       content: (
-        <SMContainer>
+        <ModalContainer>
           <Item
             closeModal={this.props.closeModal}
             group={this.props.groups[item.groupId]}
@@ -65,7 +66,7 @@ class Component extends React.PureComponent {
             showShadow
             userId={this.props.uid}
           />
-        </SMContainer>
+        </ModalContainer>
       ),
     });
   };
@@ -91,37 +92,44 @@ class Component extends React.PureComponent {
         key={id}
         onChange={this.updateBoardGroup}
         openItem={this.openItem}
-        renderNewItem={this.renderNewItem}
+        removeBoardGroup={this.props.removeBoardGroup}
+        renderDraftItem={this.renderDraftItem}
         renderItem={this.renderItem}
         userId={this.props.uid}
       />
     );
   };
 
-  renderItem = (id, index) => (
-    <Draggable draggableId={id} key={id} index={index}>
-      {provided => (
-        <div
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          ref={provided.innerRef}
-        >
-          <Item
-            group={this.props.groups[this.props.items[id].groupId]}
-            id={id}
-            item={this.props.items[id]}
-            onChange={this.updateBoardItem}
-            openItem={this.openItem}
-            removeBoardItem={this.props.removeBoardItem}
-            userId={this.props.uid}
-          />
-        </div>
-      )}
-    </Draggable>
-  );
+  renderItem = (id, index) => {
+    const item = this.props.items[id];
+    if (!item) {
+      return null;
+    }
+    return (
+      <Draggable draggableId={id} key={id} index={index}>
+        {provided => (
+          <div
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            ref={provided.innerRef}
+          >
+            <Item
+              group={this.props.groups[item.groupId]}
+              id={id}
+              item={item}
+              onChange={this.updateBoardItem}
+              openItem={this.openItem}
+              removeBoardItem={this.props.removeBoardItem}
+              userId={this.props.uid}
+            />
+          </div>
+        )}
+      </Draggable>
+    );
+  };
 
-  renderNewItem = ({ destroy, groupId }) => (
-    <NewItem
+  renderDraftItem = ({ destroy, groupId }) => (
+    <DraftItem
       destroy={destroy}
       groupId={groupId}
       saveBoardItem={this.updateBoardItem}
@@ -205,9 +213,10 @@ Component.propTypes = {
   intl: intlShape.isRequired,
   items: PropTypes.object,
   openModal: PropTypes.func,
-  removeBoardItem: PropTypes.func,
+  removeBoardGroup: PropTypes.func,
   updateBoardGroup: PropTypes.func,
   updateBoardInfo: PropTypes.func,
+  removeBoardItem: PropTypes.func,
   updateBoardItem: PropTypes.func,
 };
 
@@ -222,9 +231,10 @@ export const mapDispatchToProps = dispatch => ({
   initializeBoard: params => dispatch(initializeBoardAction.request(params)),
   closeModal: params => dispatch(closeModalAction(params)),
   openModal: params => dispatch(openModalAction(params)),
-  removeBoardItem: params => dispatch(removeBoardItemAction.request(params)),
+  removeBoardGroup: params => dispatch(removeBoardGroupAction.request(params)),
   updateBoardGroup: params => dispatch(updateBoardGroupAction.request(params)),
   updateBoardInfo: params => dispatch(updateBoardInfoAction.request(params)),
+  removeBoardItem: params => dispatch(removeBoardItemAction.request(params)),
   updateBoardItem: params => dispatch(updateBoardItemAction.request(params)),
 });
 
