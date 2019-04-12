@@ -15,6 +15,16 @@ const Component = styled.div`
   &:hover {
     background-color: ${props => props.color}40;
   }
+
+  & > div:first-child > *:not(:first-child) {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  &:hover > div:first-child > *:not(:first-child) {
+    opacity: 1;
+    visibility: visible;
+  }
 `;
 
 Component.defaultProps = {
