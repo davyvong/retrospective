@@ -27,7 +27,7 @@ import { selectAuthUID } from 'containers/AuthProvider/selectors';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
-import { isType } from 'utils/validate';
+import { isGUID, isType } from 'utils/validate';
 
 import {
   initializeBoard as initializeBoardAction,
@@ -81,6 +81,14 @@ class Component extends React.PureComponent {
     return filteredCollection;
   };
 
+  sortCollection = (collection, key, direction = false) =>
+    Object.keys(collection).sort((a, b) => {
+      if (direction) {
+        return collection[a][key] - collection[b][key];
+      }
+      return collection[b][key] - collection[a][key];
+    });
+
   renderGroup = id => {
     const groupItems = this.filterCollection(this.props.items, 'groupId', id);
     return (
@@ -98,6 +106,16 @@ class Component extends React.PureComponent {
         userId={this.props.uid}
       />
     );
+  };
+
+  renderGroupList = (groups, first) => {
+    const list = [];
+    let current = first;
+    while (isGUID(current, 'String') && groups[current]) {
+      list.push(current);
+      current = groups[current].next;
+    }
+    return list.map(this.renderGroup);
   };
 
   renderItem = (id, index) => {
@@ -137,14 +155,6 @@ class Component extends React.PureComponent {
     />
   );
 
-  sortCollection = (collection, key, direction = false) =>
-    Object.keys(collection).sort((a, b) => {
-      if (direction) {
-        return collection[a][key] - collection[b][key];
-      }
-      return collection[b][key] - collection[a][key];
-    });
-
   updateBoardGroup = doc => {
     this.props.updateBoardGroup(doc);
   };
@@ -172,8 +182,7 @@ class Component extends React.PureComponent {
         </FullScreen>
       );
     }
-    const { groups, intl } = this.props;
-    const sortedGroups = this.sortCollection(groups, 'dateCreated', true);
+    const { groups, info, intl } = this.props;
     return (
       <div>
         <Section style={{ paddingBottom: 0 }}>
@@ -192,7 +201,7 @@ class Component extends React.PureComponent {
         </Section>
         <Section style={{ paddingTop: 0 }}>
           <Container>
-            <Columns>{sortedGroups.map(this.renderGroup)}</Columns>
+            <Columns>{this.renderGroupList(groups, info.firstGroup)}</Columns>
           </Container>
         </Section>
       </div>

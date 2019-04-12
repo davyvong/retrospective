@@ -6,7 +6,7 @@ import uuidv4 from 'uuid/v4';
 import { BOARD_ITEM_COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
-import { isType } from 'utils/validate';
+import { isGUID, isType } from 'utils/validate';
 
 import AddButton from './AddButton';
 import CreateButton from './CreateButton';
@@ -80,6 +80,7 @@ class Component extends React.PureComponent {
 
   onAdd = event => {
     event.preventDefault();
+    const newId = uuidv4();
     const timestamp = new Date().getTime();
     this.props.onChange({
       data: {
@@ -89,13 +90,52 @@ class Component extends React.PureComponent {
         dateModified: timestamp,
         modifiedBy: this.props.userId,
         name: '',
+        next: this.props.group.next,
+        prev: this.props.id,
       },
-      id: uuidv4(),
+      id: newId,
     });
+    this.props.onChange({
+      data: {
+        dateModified: timestamp,
+        modifiedBy: this.props.userId,
+        next: newId,
+      },
+      id: this.props.id,
+    });
+    if (isGUID(this.props.group.next)) {
+      this.props.onChange({
+        data: {
+          dateModified: timestamp,
+          modifiedBy: this.props.userId,
+          prev: newId,
+        },
+        id: this.props.group.next,
+      });
+    }
   };
 
   onDelete = event => {
     event.preventDefault();
+    const timestamp = new Date().getTime();
+    this.props.onChange({
+      data: {
+        dateModified: timestamp,
+        modifiedBy: this.props.userId,
+        next: this.props.group.next,
+      },
+      id: this.props.group.prev,
+    });
+    if (isGUID(this.props.group.next)) {
+      this.props.onChange({
+        data: {
+          dateModified: timestamp,
+          modifiedBy: this.props.userId,
+          prev: this.props.group.prev,
+        },
+        id: this.props.group.next,
+      });
+    }
     this.props.removeBoardGroup({ id: this.props.id });
   };
 
