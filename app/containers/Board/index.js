@@ -51,7 +51,7 @@ class Component extends React.PureComponent {
     this.props.initializeBoard(this.props.match.params.boardId);
   }
 
-  openItem = id => {
+  openModalItem = id => {
     const item = this.props.items[id];
     this.props.openModal({
       content: (
@@ -61,9 +61,9 @@ class Component extends React.PureComponent {
             group={this.props.groups[item.groupId]}
             id={id}
             item={item}
-            onChange={this.updateBoardItem}
             showPopup={false}
             showShadow
+            updateBoardItem={this.updateBoardItem}
             userId={this.props.uid}
           />
         </ModalContainer>
@@ -89,33 +89,39 @@ class Component extends React.PureComponent {
       return collection[b][key] - collection[a][key];
     });
 
+  renderDraftItem = ({ disableCreateMode, groupId }) => (
+    <DraftItem
+      disableCreateMode={disableCreateMode}
+      group={this.props.groups[groupId]}
+      groupId={groupId}
+      updateBoardGroup={this.updateBoardGroup}
+      updateBoardItem={this.updateBoardItem}
+      userId={this.props.uid}
+    />
+  );
+
   renderGroup = id => {
-    const groupItems = this.filterCollection(this.props.items, 'groupId', id);
+    const filteredItems = this.filterCollection(
+      this.props.items,
+      'groupId',
+      id,
+    );
+    const group = this.props.groups[id];
+    const renderItemList = () =>
+      this.renderLinkedList(filteredItems, group.first, this.renderItem);
     return (
       <Group
         createItem={this.createItem}
-        group={this.props.groups[id]}
+        group={group}
         id={id}
-        items={this.sortCollection(groupItems, 'dateCreated', true)}
         key={id}
-        onChange={this.updateBoardGroup}
-        openItem={this.openItem}
         removeBoardGroup={this.props.removeBoardGroup}
         renderDraftItem={this.renderDraftItem}
-        renderItem={this.renderItem}
+        renderItemList={renderItemList}
+        updateBoardGroup={this.updateBoardGroup}
         userId={this.props.uid}
       />
     );
-  };
-
-  renderGroupList = (groups, first) => {
-    const list = [];
-    let current = first;
-    while (isGUID(current, 'String') && groups[current]) {
-      list.push(current);
-      current = groups[current].next;
-    }
-    return list.map(this.renderGroup);
   };
 
   renderItem = (id, index) => {
@@ -135,9 +141,9 @@ class Component extends React.PureComponent {
               group={this.props.groups[item.groupId]}
               id={id}
               item={item}
-              onChange={this.updateBoardItem}
-              openItem={this.openItem}
+              openModalItem={this.openModalItem}
               removeBoardItem={this.props.removeBoardItem}
+              updateBoardItem={this.updateBoardItem}
               userId={this.props.uid}
             />
           </div>
@@ -146,14 +152,15 @@ class Component extends React.PureComponent {
     );
   };
 
-  renderDraftItem = ({ destroy, groupId }) => (
-    <DraftItem
-      destroy={destroy}
-      groupId={groupId}
-      saveBoardItem={this.updateBoardItem}
-      userId={this.props.uid}
-    />
-  );
+  renderLinkedList = (map, first, renderer) => {
+    const list = [];
+    let current = first;
+    while (isGUID(current, 'String') && isType(map[current], 'Object')) {
+      list.push(current);
+      current = map[current].next;
+    }
+    return list.map(renderer);
+  };
 
   updateBoardGroup = doc => {
     this.props.updateBoardGroup(doc);
@@ -201,7 +208,9 @@ class Component extends React.PureComponent {
         </Section>
         <Section style={{ paddingTop: 0 }}>
           <Container>
-            <Columns>{this.renderGroupList(groups, info.firstGroup)}</Columns>
+            <Columns>
+              {this.renderLinkedList(groups, info.first, this.renderGroup)}
+            </Columns>
           </Container>
         </Section>
       </div>

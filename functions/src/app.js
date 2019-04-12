@@ -7,7 +7,7 @@ const firestore = require('./firestore.js');
 
 exports.onDeleteGroup = functions.firestore
   .document('boards/{boardId}/groups/{groupId}')
-  .onDelete(({ context }) => {
+  .onDelete((snap, context) => {
     const { boardId, groupId } = context.params;
     return firestore
       .collection(`boards/${boardId}/items`)

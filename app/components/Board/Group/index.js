@@ -6,6 +6,7 @@ import uuidv4 from 'uuid/v4';
 import { BOARD_ITEM_COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
+import constructDoc from 'utils/constructDoc';
 import { isGUID, isType } from 'utils/validate';
 
 import AddButton from './AddButton';
@@ -21,42 +22,33 @@ class Component extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      create: false,
-      items: [],
+      createMode: false,
       name: '',
     };
   }
 
   componentDidMount() {
-    this.setState({
-      items: this.props.items,
-      name: this.props.group.name,
-    });
+    this.setState({ name: this.props.group.name });
   }
 
   componentWillReceiveProps(newProps) {
-    const newState = {};
-    const { group, items } = newProps;
-    if (isType(items, 'Array')) {
-      newState.items = items;
-    }
+    const { group } = newProps;
     if (
       isType(group.name, 'String') &&
       this.state.name !== group.name &&
       !this.updateTimeout
     ) {
-      newState.name = group.name;
+      this.setState({ name: group.name });
     }
-    this.setState(newState);
   }
 
   enableCreateMode = event => {
     event.preventDefault();
-    this.setState({ create: true });
+    this.setState({ createMode: true });
   };
 
   disableCreateMode = () => {
-    this.setState({ create: false });
+    this.setState({ createMode: false });
   };
 
   onChange = event => {
@@ -65,14 +57,13 @@ class Component extends React.PureComponent {
     }
     this.setState({ name: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
-        this.props.onChange({
-          data: {
+        this.props.updateBoardGroup(
+          constructDoc(this.props.id, {
             dateModified: new Date().getTime(),
             modifiedBy: this.props.userId,
             name: this.state.name,
-          },
-          id: this.props.id,
-        });
+          }),
+        );
         this.updateTimeout = undefined;
       }, UPDATE_DELAY);
     });
@@ -82,60 +73,56 @@ class Component extends React.PureComponent {
     event.preventDefault();
     const newId = uuidv4();
     const timestamp = new Date().getTime();
-    this.props.onChange({
-      data: {
+    const updateQueue = [
+      constructDoc(newId, {
         color: BOARD_ITEM_COLORS.GREY,
         createdBy: this.props.userId,
         dateCreated: timestamp,
         dateModified: timestamp,
+        first: null,
         modifiedBy: this.props.userId,
         name: '',
         next: this.props.group.next,
         prev: this.props.id,
-      },
-      id: newId,
-    });
-    this.props.onChange({
-      data: {
+      }),
+      constructDoc(this.props.id, {
         dateModified: timestamp,
         modifiedBy: this.props.userId,
         next: newId,
-      },
-      id: this.props.id,
-    });
+      }),
+    ];
     if (isGUID(this.props.group.next)) {
-      this.props.onChange({
-        data: {
+      updateQueue.push(
+        constructDoc(this.props.group.next, {
           dateModified: timestamp,
           modifiedBy: this.props.userId,
           prev: newId,
-        },
-        id: this.props.group.next,
-      });
+        }),
+      );
     }
+    updateQueue.forEach(update => this.props.updateBoardGroup(update));
   };
 
   onDelete = event => {
     event.preventDefault();
     const timestamp = new Date().getTime();
-    this.props.onChange({
-      data: {
+    const updateQueue = [
+      constructDoc(this.props.group.prev, {
         dateModified: timestamp,
         modifiedBy: this.props.userId,
         next: this.props.group.next,
-      },
-      id: this.props.group.prev,
-    });
+      }),
+    ];
     if (isGUID(this.props.group.next)) {
-      this.props.onChange({
-        data: {
+      updateQueue.push(
+        constructDoc(this.props.group.next, {
           dateModified: timestamp,
           modifiedBy: this.props.userId,
           prev: this.props.group.prev,
-        },
-        id: this.props.group.next,
-      });
+        }),
+      );
     }
+    updateQueue.forEach(update => this.props.updateBoardGroup(update));
     this.props.removeBoardGroup({ id: this.props.id });
   };
 
@@ -143,25 +130,12 @@ class Component extends React.PureComponent {
     if (!result.destination) {
       return;
     }
-    this.setState(prevState => ({
-      items: this.reorder(
-        prevState.items,
-        result.source.index,
-        result.destination.index,
-      ),
-    }));
-  };
-
-  reorder = (items, start, end) => {
-    const result = Array.from(items);
-    const [removed] = result.splice(start, 1);
-    result.splice(end, 0, removed);
-    return result;
+    console.log(result);
   };
 
   render() {
-    const { create, items, name } = this.state;
-    const { group, id, renderDraftItem, renderItem } = this.props;
+    const { createMode, name } = this.state;
+    const { group, id, renderDraftItem, renderItemList } = this.props;
     return (
       <Wrapper color={group.color}>
         <Header>
@@ -173,8 +147,11 @@ class Component extends React.PureComponent {
           <AddButton onClick={this.onAdd}>add</AddButton>
           <DeleteButton onClick={this.onDelete}>delete</DeleteButton>
         </Header>
-        {create ? (
-          renderDraftItem({ destroy: this.disableCreateMode, groupId: id })
+        {createMode ? (
+          renderDraftItem({
+            disableCreateMode: this.disableCreateMode,
+            groupId: id,
+          })
         ) : (
           <CreateButton onClick={this.enableCreateMode}>Create</CreateButton>
         )}
@@ -183,7 +160,7 @@ class Component extends React.PureComponent {
             <Droppable droppableId={id}>
               {provided => (
                 <Items {...provided.droppableProps} ref={provided.innerRef}>
-                  {items.map(renderItem)}
+                  {renderItemList()}
                   {provided.placeholder}
                 </Items>
               )}
@@ -198,22 +175,20 @@ class Component extends React.PureComponent {
 Component.defaultProps = {
   createItem: () => {},
   group: {},
-  items: [],
-  onChange: () => {},
   removeBoardGroup: () => {},
   renderDraftItem: () => null,
-  renderItem: () => null,
+  renderItemList: () => null,
+  updateBoardGroup: () => {},
 };
 
 Component.propTypes = {
   createItem: PropTypes.func,
   group: PropTypes.object,
   id: PropTypes.string.isRequired,
-  items: PropTypes.array,
-  onChange: PropTypes.func,
   removeBoardGroup: PropTypes.func,
   renderDraftItem: PropTypes.func,
-  renderItem: PropTypes.func,
+  renderItemList: PropTypes.func,
+  updateBoardGroup: PropTypes.func,
   userId: PropTypes.string.isRequired,
 };
 

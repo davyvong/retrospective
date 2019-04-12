@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 
+import constructDoc from 'utils/constructDoc';
 import { isAuthUID, isGUID, isType } from 'utils/validate';
 
 import Button from './Button';
@@ -18,22 +19,42 @@ class Component extends React.PureComponent {
 
   saveBoardItem = event => {
     event.preventDefault();
+    const newId = uuidv4();
     const timestamp = new Date().getTime();
     if (this.validateBoardItem()) {
-      this.props.saveBoardItem({
-        data: {
+      const updateQueue = [
+        constructDoc(newId, {
           comments: 0,
           createdBy: this.props.userId,
           dateCreated: timestamp,
           dateModified: timestamp,
+          first: null,
           groupId: this.props.groupId,
           message: this.state.message,
           modifiedBy: this.props.userId,
+          next: this.props.group.first,
+          prev: null,
           votes: 0,
-        },
-        id: uuidv4(),
-      });
-      this.props.destroy();
+        }),
+      ];
+      if (isGUID(this.props.group.first)) {
+        updateQueue.push(
+          constructDoc(this.props.group.first, {
+            dateModified: timestamp,
+            modifiedBy: this.props.userId,
+            prev: newId,
+          }),
+        );
+      }
+      updateQueue.forEach(update => this.props.updateBoardItem(update));
+      this.props.updateBoardGroup(
+        constructDoc(this.props.groupId, {
+          dateModified: timestamp,
+          modifiedBy: this.props.userId,
+          first: newId,
+        }),
+      );
+      this.props.disableCreateMode();
     }
   };
 
@@ -59,7 +80,9 @@ class Component extends React.PureComponent {
         />
         <Footer>
           <Button onClick={this.saveBoardItem}>Save</Button>
-          <CloseButton onClick={this.props.destroy}>Discard</CloseButton>
+          <CloseButton onClick={this.props.disableCreateMode}>
+            Discard
+          </CloseButton>
         </Footer>
       </Wrapper>
     );
@@ -67,14 +90,18 @@ class Component extends React.PureComponent {
 }
 
 Component.defaultProps = {
-  destroy: () => {},
-  saveBoardItem: () => {},
+  disableCreateMode: () => {},
+  group: {},
+  updateBoardGroup: () => {},
+  updateBoardItem: () => {},
 };
 
 Component.propTypes = {
-  destroy: PropTypes.func,
+  disableCreateMode: PropTypes.func,
+  group: PropTypes.object,
   groupId: PropTypes.string,
-  saveBoardItem: PropTypes.func,
+  updateBoardGroup: PropTypes.func,
+  updateBoardItem: PropTypes.func,
   userId: PropTypes.string,
 };
 

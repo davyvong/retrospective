@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { BOARD_ITEM_COLORS, COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
+import constructDoc from 'utils/constructDoc';
 import { isType } from 'utils/validate';
 
 import Button from './Button';
@@ -42,10 +43,13 @@ class Component extends React.PureComponent {
     }
     this.setState({ message: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
-        this.props.onChange({
-          data: { message: this.state.message },
-          id: this.props.id,
-        });
+        this.props.updateBoardItem(
+          constructDoc(this.props.id, {
+            dateModified: new Date().getTime(),
+            message: this.state.message,
+            modifiedBy: this.props.userId,
+          }),
+        );
         this.updateTimeout = undefined;
       }, UPDATE_DELAY);
     });
@@ -58,31 +62,29 @@ class Component extends React.PureComponent {
 
   onDownvote = event => {
     event.preventDefault();
-    this.props.onChange({
-      data: {
+    this.props.updateBoardItem(
+      constructDoc(this.props.id, {
         dateModified: new Date().getTime(),
         modifiedBy: this.props.userId,
         votes: this.props.item.votes - 1,
-      },
-      id: this.props.id,
-    });
+      }),
+    );
   };
 
   onUpvote = event => {
     event.preventDefault();
-    this.props.onChange({
-      data: {
+    this.props.updateBoardItem(
+      constructDoc(this.props.id, {
         dateModified: new Date().getTime(),
         modifiedBy: this.props.userId,
         votes: this.props.item.votes + 1,
-      },
-      id: this.props.id,
-    });
+      }),
+    );
   };
 
-  openItem = event => {
+  openModalItem = event => {
     event.preventDefault();
-    this.props.openItem(this.props.id);
+    this.props.openModalItem(this.props.id);
   };
 
   render() {
@@ -109,7 +111,7 @@ class Component extends React.PureComponent {
             value={message}
           />
           <Footer>
-            <Button onClick={this.openItem}>
+            <Button onClick={this.openModalItem}>
               {item.comments === 0 ? 'No' : item.comments} Comment
               {item.comments !== 1 && 's'}
             </Button>
@@ -129,11 +131,11 @@ Component.defaultProps = {
   closeModal: () => {},
   group: {},
   item: {},
-  onChange: () => {},
-  openItem: () => {},
+  openModalItem: () => {},
   removeBoardItem: () => {},
   showPopup: true,
   showShadow: false,
+  updateBoardItem: () => {},
 };
 
 Component.propTypes = {
@@ -141,11 +143,11 @@ Component.propTypes = {
   group: PropTypes.object,
   id: PropTypes.string.isRequired,
   item: PropTypes.object,
-  onChange: PropTypes.func,
-  openItem: PropTypes.func,
+  openModalItem: PropTypes.func,
   removeBoardItem: PropTypes.func,
   showPopup: PropTypes.bool,
   showShadow: PropTypes.bool,
+  updateBoardItem: PropTypes.func,
   userId: PropTypes.string.isRequired,
 };
 
