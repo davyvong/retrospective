@@ -23,6 +23,24 @@ import {
 } from './selectors';
 
 class Component extends React.PureComponent {
+  componentDidMount() {
+    document.addEventListener('keydown', this.onEscape, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.onEscape, false);
+  }
+
+  onEscape = event => {
+    if (
+      event.keyCode === 27 &&
+      this.props.visible &&
+      this.props.closeOnBackdrop
+    ) {
+      this.props.closeModal();
+    }
+  };
+
   onBackdropClick = () => {
     if (this.props.closeOnBackdrop) {
       if (isType(this.props.onClose, 'Function')) {
