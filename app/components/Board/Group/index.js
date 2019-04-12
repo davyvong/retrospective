@@ -91,9 +91,9 @@ class Component extends React.PureComponent {
 
   render() {
     const { create, items, name } = this.state;
-    const { id, renderNewItem, renderItem } = this.props;
+    const { group, id, renderNewItem, renderItem } = this.props;
     return (
-      <Wrapper>
+      <Wrapper color={group.color}>
         <Name
           onChange={this.onChange}
           placeholder="Type a column name"
