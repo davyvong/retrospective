@@ -5,12 +5,12 @@ const Component = styled.div`
   flex-direction: row;
   position: relative;
 
-  & > *:last-child {
+  & > *:not(:first-child) {
     opacity: 0;
     visibility: hidden;
   }
 
-  &:hover > *:last-child {
+  &:hover > *:not(:first-child) {
     opacity: 1;
     visibility: visible;
   }

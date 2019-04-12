@@ -1,11 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import uuidv4 from 'uuid/v4';
 
+import { BOARD_ITEM_COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
 import { isType } from 'utils/validate';
 
+import AddButton from './AddButton';
 import CreateButton from './CreateButton';
 import DeleteButton from './DeleteButton';
 import Header from './Header';
@@ -75,6 +78,22 @@ class Component extends React.PureComponent {
     });
   };
 
+  onAdd = event => {
+    event.preventDefault();
+    const timestamp = new Date().getTime();
+    this.props.onChange({
+      data: {
+        color: BOARD_ITEM_COLORS.GREY,
+        createdBy: this.props.userId,
+        dateCreated: timestamp,
+        dateModified: timestamp,
+        modifiedBy: this.props.userId,
+        name: '',
+      },
+      id: uuidv4(),
+    });
+  };
+
   onDelete = event => {
     event.preventDefault();
     this.props.removeBoardGroup({ id: this.props.id });
@@ -111,6 +130,7 @@ class Component extends React.PureComponent {
             placeholder="Type a column name"
             value={name}
           />
+          <AddButton onClick={this.onAdd}>add</AddButton>
           <DeleteButton onClick={this.onDelete}>delete</DeleteButton>
         </Header>
         {create ? (
