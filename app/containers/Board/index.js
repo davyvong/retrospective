@@ -119,6 +119,7 @@ class Component extends React.PureComponent {
         renderDraftItem={this.renderDraftItem}
         renderItemList={renderItemList}
         updateBoardGroup={this.updateBoardGroup}
+        updateBoardInfo={this.updateBoardInfo}
         userId={this.props.uid}
       />
     );
@@ -143,6 +144,7 @@ class Component extends React.PureComponent {
               item={item}
               openModalItem={this.openModalItem}
               removeBoardItem={this.props.removeBoardItem}
+              updateBoardGroup={this.updateBoardGroup}
               updateBoardItem={this.updateBoardItem}
               userId={this.props.uid}
             />

@@ -72,6 +72,7 @@ class Component extends React.PureComponent {
   onAdd = event => {
     event.preventDefault();
     const newId = uuidv4();
+    const node = this.props.group;
     const timestamp = new Date().getTime();
     const updateQueue = [
       constructDoc(newId, {
@@ -82,7 +83,7 @@ class Component extends React.PureComponent {
         first: null,
         modifiedBy: this.props.userId,
         name: '',
-        next: this.props.group.next,
+        next: node.next,
         prev: this.props.id,
       }),
       constructDoc(this.props.id, {
@@ -91,9 +92,9 @@ class Component extends React.PureComponent {
         next: newId,
       }),
     ];
-    if (isGUID(this.props.group.next)) {
+    if (isGUID(node.next)) {
       updateQueue.push(
-        constructDoc(this.props.group.next, {
+        constructDoc(node.next, {
           dateModified: timestamp,
           modifiedBy: this.props.userId,
           prev: newId,
@@ -105,20 +106,26 @@ class Component extends React.PureComponent {
 
   onDelete = event => {
     event.preventDefault();
+    const node = this.props.group;
     const timestamp = new Date().getTime();
-    const updateQueue = [
-      constructDoc(this.props.group.prev, {
-        dateModified: timestamp,
-        modifiedBy: this.props.userId,
-        next: this.props.group.next,
-      }),
-    ];
-    if (isGUID(this.props.group.next)) {
+    const updateQueue = [];
+    if (isGUID(node.prev)) {
       updateQueue.push(
-        constructDoc(this.props.group.next, {
+        constructDoc(node.prev, {
           dateModified: timestamp,
           modifiedBy: this.props.userId,
-          prev: this.props.group.prev,
+          next: node.next,
+        }),
+      );
+    } else {
+      this.props.updateBoardInfo({ first: node.next });
+    }
+    if (isGUID(node.next)) {
+      updateQueue.push(
+        constructDoc(node.next, {
+          dateModified: timestamp,
+          modifiedBy: this.props.userId,
+          prev: node.prev,
         }),
       );
     }
@@ -179,6 +186,7 @@ Component.defaultProps = {
   renderDraftItem: () => null,
   renderItemList: () => null,
   updateBoardGroup: () => {},
+  updateBoardInfo: () => {},
 };
 
 Component.propTypes = {
@@ -189,6 +197,7 @@ Component.propTypes = {
   renderDraftItem: PropTypes.func,
   renderItemList: PropTypes.func,
   updateBoardGroup: PropTypes.func,
+  updateBoardInfo: PropTypes.func,
   userId: PropTypes.string.isRequired,
 };
 

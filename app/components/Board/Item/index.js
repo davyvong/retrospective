@@ -5,7 +5,7 @@ import { BOARD_ITEM_COLORS, COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
 import constructDoc from 'utils/constructDoc';
-import { isType } from 'utils/validators';
+import { isGUID, isType } from 'utils/validators';
 
 import Button from './Button';
 import CloseButton from './CloseButton';
@@ -57,6 +57,36 @@ class Component extends React.PureComponent {
 
   onDelete = event => {
     event.preventDefault();
+    const node = this.props.item;
+    const timestamp = new Date().getTime();
+    const updateQueue = [];
+    if (isGUID(node.prev)) {
+      updateQueue.push(
+        constructDoc(node.prev, {
+          dateModified: timestamp,
+          modifiedBy: this.props.userId,
+          next: node.next,
+        }),
+      );
+    } else {
+      this.props.updateBoardGroup(
+        constructDoc(node.groupId, {
+          dateModified: timestamp,
+          first: node.next,
+          modifiedBy: this.props.userId,
+        }),
+      );
+    }
+    if (isGUID(node.next)) {
+      updateQueue.push(
+        constructDoc(node.next, {
+          dateModified: timestamp,
+          modifiedBy: this.props.userId,
+          prev: node.prev,
+        }),
+      );
+    }
+    updateQueue.forEach(update => this.props.updateBoardItem(update));
     this.props.removeBoardItem({ id: this.props.id });
   };
 
@@ -135,6 +165,7 @@ Component.defaultProps = {
   removeBoardItem: () => {},
   showPopup: true,
   showShadow: false,
+  updateBoardGroup: () => {},
   updateBoardItem: () => {},
 };
 
@@ -147,6 +178,7 @@ Component.propTypes = {
   removeBoardItem: PropTypes.func,
   showPopup: PropTypes.bool,
   showShadow: PropTypes.bool,
+  updateBoardGroup: PropTypes.func,
   updateBoardItem: PropTypes.func,
   userId: PropTypes.string.isRequired,
 };

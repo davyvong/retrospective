@@ -21,6 +21,7 @@ export const initialState = fromJS({
 });
 
 function reducer(state = initialState, action) {
+  console.log(action);
   switch (action.type) {
     case BOARD_SNAPSHOT:
       return setBoardInfo(state, action);
