@@ -107,7 +107,11 @@ class Component extends React.PureComponent {
     if (!result.destination) {
       return;
     }
-    console.log(result);
+    let desination = this.props.group.first;
+    for (let i = 0; i < result.destination.index; i += 1) {
+      desination = this.props.items[desination].next;
+    }
+    console.log(desination, this.props.items);
   };
 
   render() {
@@ -152,6 +156,7 @@ class Component extends React.PureComponent {
 Component.defaultProps = {
   createItem: () => {},
   group: {},
+  items: {},
   removeBoardGroup: () => {},
   renderDraftItem: () => null,
   renderItemList: () => null,
@@ -163,6 +168,7 @@ Component.propTypes = {
   createItem: PropTypes.func,
   group: PropTypes.object,
   id: PropTypes.string.isRequired,
+  items: PropTypes.object,
   removeBoardGroup: PropTypes.func,
   renderDraftItem: PropTypes.func,
   renderItemList: PropTypes.func,

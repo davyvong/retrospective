@@ -114,6 +114,7 @@ class Component extends React.PureComponent {
         createItem={this.createItem}
         group={group}
         id={id}
+        items={filteredItems}
         key={id}
         removeBoardGroup={this.props.removeBoardGroup}
         renderDraftItem={this.renderDraftItem}
