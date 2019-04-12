@@ -16,6 +16,7 @@ class Component extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      create: false,
       items: [],
       name: '',
     };
@@ -40,9 +41,13 @@ class Component extends React.PureComponent {
     this.setState(newState);
   }
 
-  createItem = event => {
+  enableCreateMode = event => {
     event.preventDefault();
-    this.props.createItem({ groupId: this.props.id });
+    this.setState({ create: true });
+  };
+
+  disableCreateMode = () => {
+    this.setState({ create: false });
   };
 
   onChange = event => {
@@ -85,8 +90,8 @@ class Component extends React.PureComponent {
   };
 
   render() {
-    const { items, name } = this.state;
-    const { id, renderItem } = this.props;
+    const { create, items, name } = this.state;
+    const { id, renderNewItem, renderItem } = this.props;
     return (
       <Wrapper>
         <Name
@@ -94,7 +99,11 @@ class Component extends React.PureComponent {
           placeholder="Type a column name"
           value={name}
         />
-        <Create onClick={this.createItem}>Create</Create>
+        {create ? (
+          renderNewItem({ destroy: this.disableCreateMode, groupId: id })
+        ) : (
+          <Create onClick={this.enableCreateMode}>Create</Create>
+        )}
         <List>
           <DragDropContext onDragEnd={this.onDragEnd}>
             <Droppable droppableId={id}>
@@ -117,6 +126,7 @@ Component.defaultProps = {
   group: {},
   items: [],
   onChange: () => {},
+  renderNewItem: () => null,
   renderItem: () => null,
 };
 
@@ -126,6 +136,7 @@ Component.propTypes = {
   id: PropTypes.string.isRequired,
   items: PropTypes.array,
   onChange: PropTypes.func,
+  renderNewItem: PropTypes.func,
   renderItem: PropTypes.func,
   userId: PropTypes.string.isRequired,
 };

@@ -9,7 +9,6 @@ import { isAuthUID, isGUID, isType } from 'utils/validate';
 import Button from './Button';
 import Close from './Close';
 import Footer from './Footer';
-import Group from './Group';
 import Message from './Message';
 import Wrapper from './Wrapper';
 
@@ -36,7 +35,7 @@ class Component extends React.PureComponent {
         },
         id: uuidv4(),
       });
-      this.props.closeModal();
+      this.props.destroy();
     }
   };
 
@@ -53,10 +52,8 @@ class Component extends React.PureComponent {
 
   render() {
     const { message } = this.state;
-    const { color, name } = this.props.group;
     return (
-      <Wrapper color={color || BOARD_ITEM_COLORS.GREY}>
-        <Group>{name}</Group>
+      <Wrapper color={BOARD_ITEM_COLORS.GREY}>
         <Message
           onChange={this.updateMessage}
           placeholder="Type a message here"
@@ -64,7 +61,7 @@ class Component extends React.PureComponent {
         />
         <Footer>
           <Button onClick={this.saveBoardItem}>Create</Button>
-          <Close onClick={this.props.closeModal}>Discard</Close>
+          <Close onClick={this.props.destroy}>Discard</Close>
         </Footer>
       </Wrapper>
     );
@@ -72,14 +69,12 @@ class Component extends React.PureComponent {
 }
 
 Component.defaultProps = {
-  closeModal: () => {},
-  group: {},
+  destroy: () => {},
   saveBoardItem: () => {},
 };
 
 Component.propTypes = {
-  closeModal: PropTypes.func,
-  group: PropTypes.object,
+  destroy: PropTypes.func,
   groupId: PropTypes.string,
   saveBoardItem: PropTypes.func,
   userId: PropTypes.string,

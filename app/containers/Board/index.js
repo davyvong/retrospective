@@ -49,23 +49,6 @@ class Component extends React.PureComponent {
     this.props.initializeBoard(this.props.match.params.boardId);
   }
 
-  createItem = ({ groupId }) => {
-    this.props.openModal({
-      closeOnBackdrop: false,
-      content: (
-        <SmallContainer>
-          <NewItem
-            closeModal={this.props.closeModal}
-            group={this.props.groups[groupId]}
-            groupId={groupId}
-            saveBoardItem={this.updateBoardItem}
-            userId={this.props.uid}
-          />
-        </SmallContainer>
-      ),
-    });
-  };
-
   openItem = id => {
     const item = this.props.items[id];
     this.props.openModal({
@@ -107,6 +90,7 @@ class Component extends React.PureComponent {
         key={id}
         onChange={this.updateBoardGroup}
         openItem={this.openItem}
+        renderNewItem={this.renderNewItem}
         renderItem={this.renderItem}
         userId={this.props.uid}
       />
@@ -132,6 +116,15 @@ class Component extends React.PureComponent {
         </div>
       )}
     </Draggable>
+  );
+
+  renderNewItem = ({ destroy, groupId }) => (
+    <NewItem
+      destroy={destroy}
+      groupId={groupId}
+      saveBoardItem={this.updateBoardItem}
+      userId={this.props.uid}
+    />
   );
 
   sortCollection = (collection, key, direction = false) =>
