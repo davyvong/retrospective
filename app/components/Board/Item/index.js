@@ -113,10 +113,13 @@ class Component extends React.PureComponent {
               {item.comments === 0 ? 'No' : item.comments} Comment
               {item.comments !== 1 && 's'}
             </Button>
-            {!showPopup && <Close onClick={this.props.closeModal}>Close</Close>}
           </Footer>
         </Content>
-        <Delete onClick={this.onDelete}>close</Delete>
+        {showPopup ? (
+          <Delete onClick={this.onDelete}>delete</Delete>
+        ) : (
+          <Close onClick={this.props.closeModal}>close</Close>
+        )}
       </Wrapper>
     );
   }

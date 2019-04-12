@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 
+import { COLORS } from 'constants/colors';
+
 const Component = styled.i.attrs({ className: 'material-icons' })`
-  background-color: #4a4a4a;
+  background-color: ${COLORS.RED};
   border-radius: 12px;
   color: #ffffff;
   display: flex;
