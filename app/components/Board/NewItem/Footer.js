@@ -3,7 +3,7 @@ import styled from 'styled-components';
 const Component = styled.div`
   display: flex;
   flex-direction: row;
-  font-size: 0.8em;
+  font-size: 0.9em;
   margin: 0 -0.5rem;
   position: relative;
 

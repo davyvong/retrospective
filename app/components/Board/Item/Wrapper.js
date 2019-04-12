@@ -11,7 +11,7 @@ const Component = styled.div`
   display: flex;
   flex-direction: row;
   min-width: 250px;
-  padding: 1.25rem 1.5rem 1rem 1rem;
+  padding: 1.25rem 1.5rem 1rem 0.5rem;
 
   & > *:not(:last-child) {
     margin-bottom: 0.75rem;

@@ -5,7 +5,7 @@ const Component = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 0 !important;
-  margin-right: 1rem;
+  margin-right: 0.5rem;
 `;
 
 export default Component;
