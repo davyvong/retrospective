@@ -7,12 +7,12 @@ import { injectIntl, intlShape } from 'react-intl';
 
 import { Draggable } from 'react-beautiful-dnd';
 
-import Columns from 'components/Board/Columns';
 import Group from 'components/Board/Group';
 import Item from 'components/Board/Item';
 import NewItem from 'components/Board/NewItem';
 import Subtitle from 'components/Board/Subtitle';
 import Title from 'components/Board/Title';
+import Columns from 'components/Bulma/Columns';
 import Container from 'components/Bulma/Container';
 import Section from 'components/Bulma/Section';
 import SmallContainer from 'components/Bulma/SmallContainer';
@@ -172,21 +172,27 @@ class Component extends React.PureComponent {
     const { groups, intl } = this.props;
     const sortedGroups = this.sortCollection(groups, 'dateCreated', true);
     return (
-      <Section>
-        <Container>
-          <Title
-            onChange={this.updateBoardInfo}
-            placeholder={intl.formatMessage(messages.title)}
-            value={title}
-          />
-          <Subtitle
-            onChange={this.updateBoardInfo}
-            placeholder={intl.formatMessage(messages.subtitle)}
-            value={subtitle}
-          />
-          <Columns>{sortedGroups.map(this.renderGroup)}</Columns>
-        </Container>
-      </Section>
+      <div>
+        <Section style={{ paddingBottom: 0 }}>
+          <Container>
+            <Title
+              onChange={this.updateBoardInfo}
+              placeholder={intl.formatMessage(messages.title)}
+              value={title}
+            />
+            <Subtitle
+              onChange={this.updateBoardInfo}
+              placeholder={intl.formatMessage(messages.subtitle)}
+              value={subtitle}
+            />
+          </Container>
+        </Section>
+        <Section style={{ paddingTop: 0 }}>
+          <Container>
+            <Columns>{sortedGroups.map(this.renderGroup)}</Columns>
+          </Container>
+        </Section>
+      </div>
     );
   }
 }
