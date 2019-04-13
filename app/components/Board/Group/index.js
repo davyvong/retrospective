@@ -94,13 +94,30 @@ class Component extends React.PureComponent {
     if (isGUID(node.prev)) {
       updateQueue.push(constructDoc(node.prev, { next: node.next }));
     } else {
-      this.props.updateBoardInfo({ first: node.next });
+      this.props.updateBoardInfo(constructDoc(undefined, { first: node.next }));
     }
     if (isGUID(node.next)) {
       updateQueue.push(constructDoc(node.next, { prev: node.prev }));
     }
     updateQueue.forEach(update => this.props.updateBoardGroup(update));
     this.props.removeBoardGroup({ id: this.props.id });
+  };
+
+  deleteNode = (map, nodeId, nodeUpdater, listId, listUpdater) => {
+    const node = map[nodeId];
+    if (!node) {
+      return;
+    }
+    const updateQueue = [];
+    if (isGUID(node.prev)) {
+      updateQueue.push(constructDoc(node.prev, { next: node.next }));
+    } else {
+      listUpdater(constructDoc(listId, { first: node.next }));
+    }
+    if (isGUID(node.next)) {
+      updateQueue.push(constructDoc(node.next, { prev: node.prev }));
+    }
+    updateQueue.forEach(update => nodeUpdater(update));
   };
 
   onDragEnd = result => {

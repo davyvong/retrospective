@@ -25,7 +25,6 @@ import {
 } from 'containers/Modal/actions';
 import { selectAuthUID } from 'containers/AuthProvider/selectors';
 
-import constructDoc from 'utils/constructDoc';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 import { isGUID, isType } from 'utils/validators';
@@ -64,7 +63,7 @@ class Component extends React.PureComponent {
             item={item}
             showPopup={false}
             showShadow
-            updateBoardItem={this.updateBoardItem}
+            updateBoardItem={this.props.updateBoardItem}
           />
         </ModalContainer>
       ),
@@ -94,8 +93,8 @@ class Component extends React.PureComponent {
       disableCreateMode={disableCreateMode}
       group={this.props.groups[groupId]}
       groupId={groupId}
-      updateBoardGroup={this.updateBoardGroup}
-      updateBoardItem={this.updateBoardItem}
+      updateBoardGroup={this.props.updateBoardGroup}
+      updateBoardItem={this.props.updateBoardItem}
       userId={this.props.uid}
     />
   );
@@ -119,8 +118,8 @@ class Component extends React.PureComponent {
         removeBoardGroup={this.props.removeBoardGroup}
         renderDraftItem={this.renderDraftItem}
         renderItemList={renderItemList}
-        updateBoardGroup={this.updateBoardGroup}
-        updateBoardInfo={this.updateBoardInfo}
+        updateBoardGroup={this.props.updateBoardGroup}
+        updateBoardInfo={this.props.updateBoardInfo}
         userId={this.props.uid}
       />
     );
@@ -145,8 +144,8 @@ class Component extends React.PureComponent {
               item={item}
               openModalItem={this.openModalItem}
               removeBoardItem={this.props.removeBoardItem}
-              updateBoardGroup={this.updateBoardGroup}
-              updateBoardItem={this.updateBoardItem}
+              updateBoardGroup={this.props.updateBoardGroup}
+              updateBoardItem={this.props.updateBoardItem}
             />
           </div>
         )}
@@ -164,18 +163,6 @@ class Component extends React.PureComponent {
     return list.map(renderer);
   };
 
-  updateBoardGroup = doc => {
-    this.props.updateBoardGroup(doc);
-  };
-
-  updateBoardInfo = data => {
-    this.props.updateBoardInfo(constructDoc(undefined, data));
-  };
-
-  updateBoardItem = doc => {
-    this.props.updateBoardItem(doc);
-  };
-
   render() {
     const { subtitle, title } = this.props.info;
     if (!isType(subtitle, 'String') && !isType(title, 'String')) {
@@ -191,13 +178,13 @@ class Component extends React.PureComponent {
         <Section style={{ paddingBottom: 0 }}>
           <Container>
             <Title
-              onChange={this.updateBoardInfo}
               placeholder={intl.formatMessage(messages.title)}
+              updateBoardInfo={this.props.updateBoardInfo}
               value={title}
             />
             <Subtitle
-              onChange={this.updateBoardInfo}
               placeholder={intl.formatMessage(messages.subtitle)}
+              updateBoardInfo={this.props.updateBoardInfo}
               value={subtitle}
             />
           </Container>
