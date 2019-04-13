@@ -4,8 +4,9 @@ import PropTypes from 'prop-types';
 import { BOARD_ITEM_COLORS, COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
-import constructDoc from 'utils/constructDoc';
-import { isGUID, isType } from 'utils/validators';
+import { constructDoc } from 'utils/firebase';
+import linkedList from 'utils/linkedList';
+import { isType } from 'utils/validators';
 
 import Button from './Button';
 import CloseButton from './CloseButton';
@@ -54,18 +55,12 @@ class Component extends React.PureComponent {
   onDelete = event => {
     event.preventDefault();
     const node = this.props.item;
-    const updateQueue = [];
-    if (isGUID(node.prev)) {
-      updateQueue.push(constructDoc(node.prev, { next: node.next }));
-    } else {
-      this.props.updateBoardGroup(
-        constructDoc(node.groupId, { first: node.next }),
-      );
-    }
-    if (isGUID(node.next)) {
-      updateQueue.push(constructDoc(node.next, { prev: node.prev }));
-    }
-    updateQueue.forEach(update => this.props.updateBoardItem(update));
+    linkedList.deleteNode(
+      node,
+      this.props.updateBoardItem,
+      node.groupId,
+      this.props.updateBoardGroup,
+    );
     this.props.removeBoardItem({ id: this.props.id });
   };
 

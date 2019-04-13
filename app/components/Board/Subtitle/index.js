@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { UPDATE_DELAY } from 'constants/timings';
 
-import constructDoc from 'utils/constructDoc';
+import { constructDoc } from 'utils/firebase';
 import { isType } from 'utils/validators';
 
 import Input from './Input';

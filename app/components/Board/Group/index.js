@@ -6,8 +6,9 @@ import uuidv4 from 'uuid/v4';
 import { BOARD_ITEM_COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
-import constructDoc from 'utils/constructDoc';
-import { isGUID, isType } from 'utils/validators';
+import { constructDoc } from 'utils/firebase';
+import linkedList from 'utils/linkedList';
+import { isType } from 'utils/validators';
 
 import AddButton from './AddButton';
 import CreateButton from './CreateButton';
@@ -68,67 +69,59 @@ class Component extends React.PureComponent {
   onAdd = event => {
     event.preventDefault();
     const newId = uuidv4();
-    const node = this.props.group;
-    const updateQueue = [
+    linkedList.insertNode(
+      constructDoc(this.props.id, this.props.group),
+      true,
       constructDoc(newId, {
         color: BOARD_ITEM_COLORS.GREY,
         createdBy: this.props.userId,
         dateCreated: new Date().getTime(),
         first: null,
         name: '',
-        next: node.next,
-        prev: this.props.id,
       }),
-      constructDoc(this.props.id, { next: newId }),
-    ];
-    if (isGUID(node.next)) {
-      updateQueue.push(constructDoc(node.next, { prev: newId }));
-    }
-    updateQueue.forEach(update => this.props.updateBoardGroup(update));
+      this.props.updateBoardGroup,
+      undefined,
+      this.props.updateBoardInfo,
+    );
   };
 
   onDelete = event => {
     event.preventDefault();
-    const node = this.props.group;
-    const updateQueue = [];
-    if (isGUID(node.prev)) {
-      updateQueue.push(constructDoc(node.prev, { next: node.next }));
-    } else {
-      this.props.updateBoardInfo(constructDoc(undefined, { first: node.next }));
-    }
-    if (isGUID(node.next)) {
-      updateQueue.push(constructDoc(node.next, { prev: node.prev }));
-    }
-    updateQueue.forEach(update => this.props.updateBoardGroup(update));
+    linkedList.deleteNode(
+      this.props.group,
+      this.props.updateBoardGroup,
+      undefined,
+      this.props.updateBoardInfo,
+    );
     this.props.removeBoardGroup({ id: this.props.id });
   };
 
-  deleteNode = (map, nodeId, nodeUpdater, listId, listUpdater) => {
-    const node = map[nodeId];
-    if (!node) {
-      return;
-    }
-    const updateQueue = [];
-    if (isGUID(node.prev)) {
-      updateQueue.push(constructDoc(node.prev, { next: node.next }));
-    } else {
-      listUpdater(constructDoc(listId, { first: node.next }));
-    }
-    if (isGUID(node.next)) {
-      updateQueue.push(constructDoc(node.next, { prev: node.prev }));
-    }
-    updateQueue.forEach(update => nodeUpdater(update));
-  };
-
   onDragEnd = result => {
-    if (!result.destination) {
+    if (
+      !result.destination ||
+      result.destination.index === result.source.index
+    ) {
       return;
     }
-    let desination = this.props.group.first;
+    let destination = this.props.group.first;
     for (let i = 0; i < result.destination.index; i += 1) {
-      desination = this.props.items[desination].next;
+      destination = this.props.items[destination].next;
     }
-    console.log(desination, this.props.items);
+    const source = result.draggableId;
+    linkedList.deleteNode(
+      this.props.items[source],
+      this.props.updateBoardItem,
+      this.props.id,
+      this.props.updateBoardGroup,
+    );
+    linkedList.insertNode(
+      constructDoc(destination, this.props.items[destination]),
+      result.destination.index > result.source.index,
+      constructDoc(source, this.props.items[source]),
+      this.props.updateBoardItem,
+      this.props.id,
+      this.props.updateBoardGroup,
+    );
   };
 
   render() {
@@ -179,6 +172,7 @@ Component.defaultProps = {
   renderItemList: () => null,
   updateBoardGroup: () => {},
   updateBoardInfo: () => {},
+  updateBoardItem: () => {},
 };
 
 Component.propTypes = {
@@ -191,6 +185,7 @@ Component.propTypes = {
   renderItemList: PropTypes.func,
   updateBoardGroup: PropTypes.func,
   updateBoardInfo: PropTypes.func,
+  updateBoardItem: PropTypes.func,
   userId: PropTypes.string.isRequired,
 };
 

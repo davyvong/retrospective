@@ -1,4 +1,4 @@
-function constructDoc(id, data = {}) {
+export function constructDoc(id, data = {}) {
   return {
     data: {
       ...data,
@@ -7,5 +7,3 @@ function constructDoc(id, data = {}) {
     id,
   };
 }
-
-export default constructDoc;

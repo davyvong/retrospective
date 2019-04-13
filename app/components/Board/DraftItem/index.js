@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 
-import constructDoc from 'utils/constructDoc';
+import { constructDoc } from 'utils/firebase';
+import linkedList from 'utils/linkedList';
 import { isAuthUID, isGUID, isType } from 'utils/validators';
 
 import Button from './Button';
@@ -21,7 +22,9 @@ class Component extends React.PureComponent {
     event.preventDefault();
     const newId = uuidv4();
     if (this.validateBoardItem()) {
-      const updateQueue = [
+      linkedList.insertNode(
+        constructDoc(this.props.group.first, { prev: null }),
+        false,
         constructDoc(newId, {
           comments: 0,
           createdBy: this.props.userId,
@@ -29,17 +32,11 @@ class Component extends React.PureComponent {
           first: null,
           groupId: this.props.groupId,
           message: this.state.message,
-          next: this.props.group.first,
-          prev: null,
           votes: 0,
         }),
-      ];
-      if (isGUID(this.props.group.first)) {
-        updateQueue.push(constructDoc(this.props.group.first, { prev: newId }));
-      }
-      updateQueue.forEach(update => this.props.updateBoardItem(update));
-      this.props.updateBoardGroup(
-        constructDoc(this.props.groupId, { first: newId }),
+        this.props.updateBoardItem,
+        this.props.groupId,
+        this.props.updateBoardGroup,
       );
       this.props.disableCreateMode();
     }

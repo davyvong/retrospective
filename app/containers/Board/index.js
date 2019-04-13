@@ -27,7 +27,8 @@ import { selectAuthUID } from 'containers/AuthProvider/selectors';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
-import { isGUID, isType } from 'utils/validators';
+import linkedList from 'utils/linkedList';
+import { isType } from 'utils/validators';
 
 import {
   initializeBoard as initializeBoardAction,
@@ -107,7 +108,7 @@ class Component extends React.PureComponent {
     );
     const group = this.props.groups[id];
     const renderItemList = () =>
-      this.renderLinkedList(filteredItems, group.first, this.renderItem);
+      linkedList.render(filteredItems, group.first, this.renderItem);
     return (
       <Group
         createItem={this.createItem}
@@ -120,6 +121,7 @@ class Component extends React.PureComponent {
         renderItemList={renderItemList}
         updateBoardGroup={this.props.updateBoardGroup}
         updateBoardInfo={this.props.updateBoardInfo}
+        updateBoardItem={this.props.updateBoardItem}
         userId={this.props.uid}
       />
     );
@@ -153,16 +155,6 @@ class Component extends React.PureComponent {
     );
   };
 
-  renderLinkedList = (map, first, renderer) => {
-    const list = [];
-    let current = first;
-    while (isGUID(current, 'String') && isType(map[current], 'Object')) {
-      list.push(current);
-      current = map[current].next;
-    }
-    return list.map(renderer);
-  };
-
   render() {
     const { subtitle, title } = this.props.info;
     if (!isType(subtitle, 'String') && !isType(title, 'String')) {
@@ -192,7 +184,7 @@ class Component extends React.PureComponent {
         <Section style={{ paddingTop: 0 }}>
           <Container>
             <Columns>
-              {this.renderLinkedList(groups, info.first, this.renderGroup)}
+              {linkedList.render(groups, info.first, this.renderGroup)}
             </Columns>
           </Container>
         </Section>
