@@ -4,8 +4,10 @@ import PropTypes from 'prop-types';
 import { BOARD_ITEM_COLORS, COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
-import { constructDoc } from 'utils/firebase';
-import linkedList from 'utils/linkedList';
+import { COLLECTION_TYPES } from 'firebase/boards/constants';
+import { deleteNodeV2 } from 'firebase/boards/core';
+import { constructDoc } from 'firebase/boards/helpers';
+
 import { isType } from 'utils/validators';
 
 import Button from './Button';
@@ -54,14 +56,11 @@ class Component extends React.PureComponent {
 
   onDelete = event => {
     event.preventDefault();
-    const node = this.props.item;
-    linkedList.deleteNode(
-      node,
-      this.props.updateBoardItem,
-      node.groupId,
-      this.props.updateBoardGroup,
+    const queue = deleteNodeV2(
+      constructDoc(this.props.id, this.props.item),
+      COLLECTION_TYPES.ITEMS,
     );
-    this.props.removeBoardItem({ id: this.props.id });
+    this.props.executeBatch(queue);
   };
 
   onDownvote = event => {
@@ -78,9 +77,9 @@ class Component extends React.PureComponent {
     );
   };
 
-  openModalItem = event => {
+  openModal = event => {
     event.preventDefault();
-    this.props.openModalItem(this.props.id);
+    this.props.openModal(this.props.id);
   };
 
   render() {
@@ -107,7 +106,7 @@ class Component extends React.PureComponent {
             value={message}
           />
           <Footer>
-            <Button onClick={this.openModalItem}>
+            <Button onClick={this.openModal}>
               {item.comments === 0 ? 'No' : item.comments} Comment
               {item.comments !== 1 && 's'}
             </Button>
@@ -125,26 +124,24 @@ class Component extends React.PureComponent {
 
 Component.defaultProps = {
   closeModal: () => {},
+  executeBatch: () => {},
   group: {},
   item: {},
-  openModalItem: () => {},
-  removeBoardItem: () => {},
+  openModal: () => {},
   showPopup: true,
   showShadow: false,
-  updateBoardGroup: () => {},
   updateBoardItem: () => {},
 };
 
 Component.propTypes = {
   closeModal: PropTypes.func,
+  executeBatch: PropTypes.func,
   group: PropTypes.object,
   id: PropTypes.string.isRequired,
   item: PropTypes.object,
-  openModalItem: PropTypes.func,
-  removeBoardItem: PropTypes.func,
+  openModal: PropTypes.func,
   showPopup: PropTypes.bool,
   showShadow: PropTypes.bool,
-  updateBoardGroup: PropTypes.func,
   updateBoardItem: PropTypes.func,
 };
 

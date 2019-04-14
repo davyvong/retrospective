@@ -25,18 +25,18 @@ import {
 } from 'containers/Modal/actions';
 import { selectAuthUID } from 'containers/AuthProvider/selectors';
 
+import { renderListV2 } from 'firebase/boards/core';
+
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
-import linkedList from 'utils/linkedList';
 import { isType } from 'utils/validators';
 
 import {
   initializeBoard as initializeBoardAction,
-  removeBoardGroup as removeBoardGroupAction,
   updateBoardGroup as updateBoardGroupAction,
   updateBoardInfo as updateBoardInfoAction,
-  removeBoardItem as removeBoardItemAction,
   updateBoardItem as updateBoardItemAction,
+  executeBatch as executeBatchAction,
 } from './actions';
 import messages from './messages';
 import reducer from './reducer';
@@ -52,23 +52,8 @@ class Component extends React.PureComponent {
     this.props.initializeBoard(this.props.match.params.boardId);
   }
 
-  openModalItem = id => {
-    const item = this.props.items[id];
-    this.props.openModal({
-      content: (
-        <ModalContainer>
-          <Item
-            closeModal={this.props.closeModal}
-            group={this.props.groups[item.groupId]}
-            id={id}
-            item={item}
-            showPopup={false}
-            showShadow
-            updateBoardItem={this.props.updateBoardItem}
-          />
-        </ModalContainer>
-      ),
-    });
+  openModal = id => {
+    this.props.openModal({ content: this.renderModalItem(id) });
   };
 
   filterCollection = (collection, key, value) => {
@@ -89,38 +74,48 @@ class Component extends React.PureComponent {
       return collection[b][key] - collection[a][key];
     });
 
-  renderDraftItem = ({ disableCreateMode, groupId }) => (
+  renderDraftItem = ({ disableCreateMode, parent }) => (
     <DraftItem
       disableCreateMode={disableCreateMode}
-      group={this.props.groups[groupId]}
-      groupId={groupId}
-      updateBoardGroup={this.props.updateBoardGroup}
-      updateBoardItem={this.props.updateBoardItem}
+      executeBatch={this.props.executeBatch}
+      group={this.props.groups[parent]}
+      parent={parent}
       userId={this.props.uid}
     />
   );
 
   renderGroup = id => {
-    const filteredItems = this.filterCollection(
-      this.props.items,
-      'groupId',
-      id,
-    );
+    const filteredItems = this.filterCollection(this.props.items, 'parent', id);
     return (
       <Group
         createItem={this.createItem}
+        executeBatch={this.props.executeBatch}
         group={this.props.groups[id]}
         id={id}
         items={filteredItems}
         key={id}
-        removeBoardGroup={this.props.removeBoardGroup}
         renderDraftItem={this.renderDraftItem}
         renderItem={this.renderItem}
         updateBoardGroup={this.props.updateBoardGroup}
-        updateBoardInfo={this.props.updateBoardInfo}
-        updateBoardItem={this.props.updateBoardItem}
         userId={this.props.uid}
       />
+    );
+  };
+
+  renderModalItem = id => {
+    const item = this.props.items[id];
+    return (
+      <ModalContainer>
+        <Item
+          closeModal={this.props.closeModal}
+          group={this.props.groups[item.parent]}
+          id={id}
+          item={item}
+          showPopup={false}
+          showShadow
+          updateBoardItem={this.props.updateBoardItem}
+        />
+      </ModalContainer>
     );
   };
 
@@ -138,12 +133,11 @@ class Component extends React.PureComponent {
             ref={provided.innerRef}
           >
             <Item
-              group={this.props.groups[item.groupId]}
+              executeBatch={this.props.executeBatch}
+              group={this.props.groups[item.parent]}
               id={id}
               item={item}
-              openModalItem={this.openModalItem}
-              removeBoardItem={this.props.removeBoardItem}
-              updateBoardGroup={this.props.updateBoardGroup}
+              openModal={this.openModal}
               updateBoardItem={this.props.updateBoardItem}
             />
           </div>
@@ -181,7 +175,7 @@ class Component extends React.PureComponent {
         <Section style={{ paddingTop: 0 }}>
           <Container>
             <Columns>
-              {linkedList.render(groups, info.first, this.renderGroup)}
+              {renderListV2(groups, info.first, this.renderGroup)}
             </Columns>
           </Container>
         </Section>
@@ -198,15 +192,14 @@ Component.defaultProps = {
 
 Component.propTypes = {
   closeModal: PropTypes.func,
+  executeBatch: PropTypes.func,
   groups: PropTypes.object,
   info: PropTypes.object,
   intl: intlShape.isRequired,
   items: PropTypes.object,
   openModal: PropTypes.func,
-  removeBoardGroup: PropTypes.func,
   updateBoardGroup: PropTypes.func,
   updateBoardInfo: PropTypes.func,
-  removeBoardItem: PropTypes.func,
   updateBoardItem: PropTypes.func,
 };
 
@@ -218,13 +211,12 @@ const mapStateToProps = createStructuredSelector({
 });
 
 export const mapDispatchToProps = dispatch => ({
-  initializeBoard: params => dispatch(initializeBoardAction.request(params)),
   closeModal: params => dispatch(closeModalAction(params)),
+  executeBatch: params => dispatch(executeBatchAction.request(params)),
+  initializeBoard: params => dispatch(initializeBoardAction.request(params)),
   openModal: params => dispatch(openModalAction(params)),
-  removeBoardGroup: params => dispatch(removeBoardGroupAction.request(params)),
   updateBoardGroup: params => dispatch(updateBoardGroupAction.request(params)),
   updateBoardInfo: params => dispatch(updateBoardInfoAction.request(params)),
-  removeBoardItem: params => dispatch(removeBoardItemAction.request(params)),
   updateBoardItem: params => dispatch(updateBoardItemAction.request(params)),
 });
 

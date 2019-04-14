@@ -1,5 +1,7 @@
 import { call, put, select, take } from 'redux-saga/effects';
 
+import { CHANGE_TYPES } from 'firebase/constants';
+
 import { createDocumentChannel, createCollectionChannel } from './channels';
 
 import {
@@ -12,23 +14,7 @@ import {
   boardItemRemoved,
 } from './actions';
 
-import { CHANGE_TYPES } from './constants';
-
 import { selectBoardId } from './selectors';
-
-export function* createDocumentListener(path, action) {
-  const channel = yield call(createDocumentChannel, path);
-  try {
-    while (true) {
-      const doc = yield take(channel);
-      if (doc && action) {
-        yield put(action(doc));
-      }
-    }
-  } finally {
-    //
-  }
-}
 
 export function* createCollectionListener(path, actions) {
   const channel = yield call(createCollectionChannel, path);
@@ -47,6 +33,20 @@ export function* createCollectionListener(path, actions) {
         if (actions[CHANGE_TYPES.REMOVED]) {
           yield put(actions[CHANGE_TYPES.REMOVED](doc));
         }
+      }
+    }
+  } finally {
+    //
+  }
+}
+
+export function* createDocumentListener(path, action) {
+  const channel = yield call(createDocumentChannel, path);
+  try {
+    while (true) {
+      const doc = yield take(channel);
+      if (doc && action) {
+        yield put(action(doc));
       }
     }
   } finally {

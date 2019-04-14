@@ -6,8 +6,15 @@ import uuidv4 from 'uuid/v4';
 import { BOARD_ITEM_COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
-import { constructDoc } from 'utils/firebase';
-import linkedList from 'utils/linkedList';
+import { COLLECTION_TYPES } from 'firebase/boards/constants';
+import {
+  deleteNodeV2,
+  insertNodeV2,
+  renderListV2,
+  reorderNodeV1,
+} from 'firebase/boards/core';
+import { constructDoc } from 'firebase/boards/helpers';
+
 import { isGUID, isType } from 'utils/validators';
 
 import AddButton from './AddButton';
@@ -75,31 +82,28 @@ class Component extends React.PureComponent {
   onAdd = event => {
     event.preventDefault();
     const newId = uuidv4();
-    linkedList.insertNode(
-      constructDoc(this.props.id, this.props.group),
-      true,
+    const queue = insertNodeV2(
       constructDoc(newId, {
         color: BOARD_ITEM_COLORS.GREY,
         createdBy: this.props.userId,
         dateCreated: new Date().getTime(),
         first: null,
         name: '',
+        parent: 'd9965f7c-0437-4bc3-8647-40e313058fe1',
       }),
-      this.props.updateBoardGroup,
-      undefined,
-      this.props.updateBoardInfo,
+      COLLECTION_TYPES.GROUPS,
+      constructDoc(this.props.id, this.props.group),
     );
+    this.props.executeBatch(queue);
   };
 
   onDelete = event => {
     event.preventDefault();
-    linkedList.deleteNode(
-      this.props.group,
-      this.props.updateBoardGroup,
-      undefined,
-      this.props.updateBoardInfo,
+    const queue = deleteNodeV2(
+      constructDoc(this.props.id, this.props.group),
+      COLLECTION_TYPES.GROUPS,
     );
-    this.props.removeBoardGroup({ id: this.props.id });
+    this.props.executeBatch(queue);
   };
 
   onDragEnd = result => {
@@ -116,7 +120,7 @@ class Component extends React.PureComponent {
       }
     }
     const source = result.draggableId;
-    const state = linkedList.reorderNode(
+    const state = reorderNodeV1(
       {
         first: this.state.first,
         items: this.state.items,
@@ -125,22 +129,7 @@ class Component extends React.PureComponent {
       source,
       result.destination.index > result.source.index,
     );
-    this.setState(state, () => {
-      // linkedList.deleteNode(
-      //   this.props.items[source],
-      //   this.props.updateBoardItem,
-      //   this.props.id,
-      //   this.props.updateBoardGroup,
-      // );
-      // linkedList.insertNode(
-      //   constructDoc(destination, this.props.items[destination]),
-      //   result.destination.index > result.source.index,
-      //   constructDoc(source, this.props.items[source]),
-      //   this.props.updateBoardItem,
-      //   this.props.id,
-      //   this.props.updateBoardGroup,
-      // );
-    });
+    this.setState(state);
   };
 
   render() {
@@ -160,7 +149,7 @@ class Component extends React.PureComponent {
         {createMode ? (
           renderDraftItem({
             disableCreateMode: this.disableCreateMode,
-            groupId: id,
+            parent: id,
           })
         ) : (
           <CreateButton onClick={this.enableCreateMode}>Create</CreateButton>
@@ -170,7 +159,7 @@ class Component extends React.PureComponent {
             <Droppable droppableId={id}>
               {provided => (
                 <Items {...provided.droppableProps} ref={provided.innerRef}>
-                  {linkedList.render(items, first, renderItem)}
+                  {renderListV2(items, first, renderItem)}
                   {provided.placeholder}
                 </Items>
               )}
@@ -184,27 +173,23 @@ class Component extends React.PureComponent {
 
 Component.defaultProps = {
   createItem: () => {},
+  executeBatch: () => {},
   group: {},
   items: {},
-  removeBoardGroup: () => {},
   renderDraftItem: () => null,
   renderItem: () => null,
   updateBoardGroup: () => {},
-  updateBoardInfo: () => {},
-  updateBoardItem: () => {},
 };
 
 Component.propTypes = {
   createItem: PropTypes.func,
+  executeBatch: PropTypes.func,
   group: PropTypes.object,
   id: PropTypes.string.isRequired,
   items: PropTypes.object,
-  removeBoardGroup: PropTypes.func,
   renderDraftItem: PropTypes.func,
   renderItem: PropTypes.func,
   updateBoardGroup: PropTypes.func,
-  updateBoardInfo: PropTypes.func,
-  updateBoardItem: PropTypes.func,
   userId: PropTypes.string.isRequired,
 };
 

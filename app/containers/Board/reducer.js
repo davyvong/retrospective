@@ -21,18 +21,16 @@ export const initialState = fromJS({
 });
 
 function reducer(state = initialState, action) {
-  console.log(action);
+  console.log(action); // eslint-disable-line no-console
   switch (action.type) {
     case BOARD_SNAPSHOT:
       return setBoardInfo(state, action);
     case BOARD_GROUP_ADDED:
-      return setBoardGroup(state, action);
     case BOARD_GROUP_MODIFIED:
       return setBoardGroup(state, action);
     case BOARD_GROUP_REMOVED:
       return removeBoardGroup(state, action);
     case BOARD_ITEM_ADDED:
-      return setBoardItem(state, action);
     case BOARD_ITEM_MODIFIED:
       return setBoardItem(state, action);
     case BOARD_ITEM_REMOVED:

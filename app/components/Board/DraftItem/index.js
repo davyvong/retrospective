@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 
-import { constructDoc } from 'utils/firebase';
-import linkedList from 'utils/linkedList';
+import { COLLECTION_TYPES } from 'firebase/boards/constants';
+import { insertNodeV2 } from 'firebase/boards/core';
+import { constructDoc } from 'firebase/boards/helpers';
+
 import { isAuthUID, isGUID, isType } from 'utils/validators';
 
 import Button from './Button';
@@ -22,31 +24,30 @@ class Component extends React.PureComponent {
     event.preventDefault();
     const newId = uuidv4();
     if (this.validateBoardItem()) {
-      linkedList.insertNode(
-        constructDoc(this.props.group.first, { prev: null }),
-        false,
+      const queue = insertNodeV2(
         constructDoc(newId, {
           comments: 0,
           createdBy: this.props.userId,
           dateCreated: new Date().getTime(),
           first: null,
-          groupId: this.props.groupId,
           message: this.state.message,
+          parent: this.props.parent,
           votes: 0,
         }),
-        this.props.updateBoardItem,
-        this.props.groupId,
-        this.props.updateBoardGroup,
+        COLLECTION_TYPES.ITEMS,
+        constructDoc(this.props.group.first, { prev: null }),
+        false,
       );
+      this.props.executeBatch(queue);
       this.props.disableCreateMode();
     }
   };
 
   validateBoardItem = () =>
     isAuthUID(this.props.userId) &&
-    isGUID(this.props.groupId) &&
     isType(this.state.message, 'String') &&
-    this.state.message.length > 0;
+    this.state.message.length > 0 &&
+    isGUID(this.props.parent);
 
   updateMessage = event => {
     event.preventDefault();
@@ -75,18 +76,16 @@ class Component extends React.PureComponent {
 
 Component.defaultProps = {
   disableCreateMode: () => {},
+  executeBatch: () => {},
   group: {},
-  updateBoardGroup: () => {},
-  updateBoardItem: () => {},
 };
 
 Component.propTypes = {
   disableCreateMode: PropTypes.func,
+  executeBatch: PropTypes.func,
   group: PropTypes.object,
-  groupId: PropTypes.string,
-  updateBoardGroup: PropTypes.func,
-  updateBoardItem: PropTypes.func,
-  userId: PropTypes.string,
+  parent: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
 };
 
 export default Component;
