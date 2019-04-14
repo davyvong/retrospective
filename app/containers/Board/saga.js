@@ -1,4 +1,12 @@
-import { all, call, fork, put, select, takeLatest } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  fork,
+  put,
+  select,
+  takeEvery,
+  takeLatest,
+} from 'redux-saga/effects';
 
 import { firestore } from 'configureFirebase';
 
@@ -109,9 +117,9 @@ export function* updateBoardItem(action) {
 
 export default function* saga() {
   yield takeLatest(INITIALIZE_BOARD.REQUEST, initializeBoard);
-  yield takeLatest(REMOVE_BOARD_GROUP.REQUEST, removeBoardGroup);
-  yield takeLatest(UPDATE_BOARD_GROUP.REQUEST, updateBoardGroup);
-  yield takeLatest(UPDATE_BOARD_INFO.REQUEST, updateBoardInfo);
-  yield takeLatest(REMOVE_BOARD_ITEM.REQUEST, removeBoardItem);
-  yield takeLatest(UPDATE_BOARD_ITEM.REQUEST, updateBoardItem);
+  yield takeEvery(REMOVE_BOARD_GROUP.REQUEST, removeBoardGroup);
+  yield takeEvery(UPDATE_BOARD_GROUP.REQUEST, updateBoardGroup);
+  yield takeEvery(UPDATE_BOARD_INFO.REQUEST, updateBoardInfo);
+  yield takeEvery(REMOVE_BOARD_ITEM.REQUEST, removeBoardItem);
+  yield takeEvery(UPDATE_BOARD_ITEM.REQUEST, updateBoardItem);
 }

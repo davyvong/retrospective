@@ -8,7 +8,7 @@ import { UPDATE_DELAY } from 'constants/timings';
 
 import { constructDoc } from 'utils/firebase';
 import linkedList from 'utils/linkedList';
-import { isType } from 'utils/validators';
+import { isGUID, isType } from 'utils/validators';
 
 import AddButton from './AddButton';
 import CreateButton from './CreateButton';
@@ -24,23 +24,29 @@ class Component extends React.PureComponent {
     super(props);
     this.state = {
       createMode: false,
+      first: null,
+      items: {},
       name: '',
     };
   }
 
-  componentDidMount() {
-    this.setState({ name: this.props.group.name });
-  }
-
   componentWillReceiveProps(newProps) {
-    const { group } = newProps;
+    const state = {};
+    const { group, items } = newProps;
+    if (isGUID(group.first) && this.state.first !== group.first) {
+      state.first = group.first;
+    }
     if (
       isType(group.name, 'String') &&
       this.state.name !== group.name &&
       !this.updateTimeout
     ) {
-      this.setState({ name: group.name });
+      state.name = group.name;
     }
+    if (isType(items, 'Object')) {
+      state.items = Object.assign({}, this.state.items, items);
+    }
+    this.setState(state);
   }
 
   enableCreateMode = event => {
@@ -103,30 +109,43 @@ class Component extends React.PureComponent {
     ) {
       return;
     }
-    let destination = this.props.group.first;
+    let destination = this.state.first;
     for (let i = 0; i < result.destination.index; i += 1) {
-      destination = this.props.items[destination].next;
+      if (isType(this.state.items[destination], 'Object')) {
+        destination = this.state.items[destination].next;
+      }
     }
     const source = result.draggableId;
-    linkedList.deleteNode(
-      this.props.items[source],
-      this.props.updateBoardItem,
-      this.props.id,
-      this.props.updateBoardGroup,
-    );
-    linkedList.insertNode(
-      constructDoc(destination, this.props.items[destination]),
+    const state = linkedList.reorderNode(
+      {
+        first: this.state.first,
+        items: this.state.items,
+      },
+      destination,
+      source,
       result.destination.index > result.source.index,
-      constructDoc(source, this.props.items[source]),
-      this.props.updateBoardItem,
-      this.props.id,
-      this.props.updateBoardGroup,
     );
+    this.setState(state, () => {
+      // linkedList.deleteNode(
+      //   this.props.items[source],
+      //   this.props.updateBoardItem,
+      //   this.props.id,
+      //   this.props.updateBoardGroup,
+      // );
+      // linkedList.insertNode(
+      //   constructDoc(destination, this.props.items[destination]),
+      //   result.destination.index > result.source.index,
+      //   constructDoc(source, this.props.items[source]),
+      //   this.props.updateBoardItem,
+      //   this.props.id,
+      //   this.props.updateBoardGroup,
+      // );
+    });
   };
 
   render() {
-    const { createMode, name } = this.state;
-    const { group, id, renderDraftItem, renderItemList } = this.props;
+    const { createMode, first, items, name } = this.state;
+    const { group, id, renderDraftItem, renderItem } = this.props;
     return (
       <Wrapper color={group.color}>
         <Header>
@@ -151,7 +170,7 @@ class Component extends React.PureComponent {
             <Droppable droppableId={id}>
               {provided => (
                 <Items {...provided.droppableProps} ref={provided.innerRef}>
-                  {renderItemList()}
+                  {linkedList.render(items, first, renderItem)}
                   {provided.placeholder}
                 </Items>
               )}
@@ -169,7 +188,7 @@ Component.defaultProps = {
   items: {},
   removeBoardGroup: () => {},
   renderDraftItem: () => null,
-  renderItemList: () => null,
+  renderItem: () => null,
   updateBoardGroup: () => {},
   updateBoardInfo: () => {},
   updateBoardItem: () => {},
@@ -182,7 +201,7 @@ Component.propTypes = {
   items: PropTypes.object,
   removeBoardGroup: PropTypes.func,
   renderDraftItem: PropTypes.func,
-  renderItemList: PropTypes.func,
+  renderItem: PropTypes.func,
   updateBoardGroup: PropTypes.func,
   updateBoardInfo: PropTypes.func,
   updateBoardItem: PropTypes.func,

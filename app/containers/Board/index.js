@@ -106,19 +106,16 @@ class Component extends React.PureComponent {
       'groupId',
       id,
     );
-    const group = this.props.groups[id];
-    const renderItemList = () =>
-      linkedList.render(filteredItems, group.first, this.renderItem);
     return (
       <Group
         createItem={this.createItem}
-        group={group}
+        group={this.props.groups[id]}
         id={id}
         items={filteredItems}
         key={id}
         removeBoardGroup={this.props.removeBoardGroup}
         renderDraftItem={this.renderDraftItem}
-        renderItemList={renderItemList}
+        renderItem={this.renderItem}
         updateBoardGroup={this.props.updateBoardGroup}
         updateBoardInfo={this.props.updateBoardInfo}
         updateBoardItem={this.props.updateBoardItem}

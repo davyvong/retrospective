@@ -22,3 +22,16 @@ export function isAuthUID(str = '') {
   }
   return true;
 }
+
+export function isDocument(doc) {
+  if (!isType(doc, 'Object')) {
+    return false;
+  }
+  if (!isType(doc.data, 'Object')) {
+    return false;
+  }
+  if (!isGUID(doc.id)) {
+    return false;
+  }
+  return true;
+}
