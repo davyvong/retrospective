@@ -13,7 +13,6 @@ const Component = styled.i.attrs({ className: 'material-icons' })`
   justify-content: center;
   margin: 0.25rem 0rem 0.25rem 0.75rem;
   text-align: center;
-  transition: visibility 0s, opacity 0.3s linear;
   width: 28px;
 
   &:hover {

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 const Component = styled.div`
   position: relative;
+  transition: visibility 0s, opacity 0.3s linear;
 
   & > div {
     display: none;
