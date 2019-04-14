@@ -27,16 +27,16 @@ class Component extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.setState({ message: this.props.item.message });
+    this.setState({ message: this.props.node.message });
   }
 
   componentWillReceiveProps(newProps) {
     if (
-      isType(newProps.item.message, 'String') &&
-      this.state.message !== newProps.item.message &&
+      isType(newProps.node.message, 'String') &&
+      this.state.message !== newProps.node.message &&
       !this.updateTimeout
     ) {
-      this.setState({ message: newProps.item.message });
+      this.setState({ message: newProps.node.message });
     }
   }
 
@@ -57,7 +57,7 @@ class Component extends React.PureComponent {
   onDelete = event => {
     event.preventDefault();
     const queue = deleteNodeV2(
-      constructDoc(this.props.id, this.props.item),
+      constructDoc(this.props.id, this.props.node),
       COLLECTION_TYPES.ITEMS,
     );
     this.props.executeBatch(queue);
@@ -66,14 +66,14 @@ class Component extends React.PureComponent {
   onDownvote = event => {
     event.preventDefault();
     this.props.updateItem(
-      constructDoc(this.props.id, { votes: this.props.item.votes - 1 }),
+      constructDoc(this.props.id, { votes: this.props.node.votes - 1 }),
     );
   };
 
   onUpvote = event => {
     event.preventDefault();
     this.props.updateItem(
-      constructDoc(this.props.id, { votes: this.props.item.votes + 1 }),
+      constructDoc(this.props.id, { votes: this.props.node.votes + 1 }),
     );
   };
 
@@ -83,18 +83,18 @@ class Component extends React.PureComponent {
   };
 
   render() {
-    const { group, item, showPopup, showShadow } = this.props;
+    const { node, parent, showPopup, showShadow } = this.props;
     const { message } = this.state;
     return (
       <Wrapper
-        color={item.color || group.color || BOARD_ITEM_COLORS.GREY}
+        color={node.color || parent.color || BOARD_ITEM_COLORS.GREY}
         shadow={showShadow}
       >
         <Vote>
           <Icon hover={COLORS.RED} onClick={this.onUpvote}>
             keyboard_arrow_up
           </Icon>
-          <div>{item.votes}</div>
+          <div>{node.votes}</div>
           <Icon hover={COLORS.BLUE} onClick={this.onDownvote}>
             keyboard_arrow_down
           </Icon>
@@ -107,8 +107,8 @@ class Component extends React.PureComponent {
           />
           <Footer>
             <Button onClick={this.openModal}>
-              {item.comments === 0 ? 'No' : item.comments} Comment
-              {item.comments !== 1 && 's'}
+              {node.comments === 0 ? 'No' : node.comments} Comment
+              {node.comments !== 1 && 's'}
             </Button>
           </Footer>
         </Content>
@@ -125,9 +125,9 @@ class Component extends React.PureComponent {
 Component.defaultProps = {
   closeModal: () => {},
   executeBatch: () => {},
-  group: {},
-  item: {},
   openModal: () => {},
+  node: {},
+  parent: {},
   showPopup: true,
   showShadow: false,
   updateItem: () => {},
@@ -136,10 +136,10 @@ Component.defaultProps = {
 Component.propTypes = {
   closeModal: PropTypes.func,
   executeBatch: PropTypes.func,
-  group: PropTypes.object,
   id: PropTypes.string.isRequired,
-  item: PropTypes.object,
   openModal: PropTypes.func,
+  node: PropTypes.object,
+  parent: PropTypes.object,
   showPopup: PropTypes.bool,
   showShadow: PropTypes.bool,
   updateItem: PropTypes.func,

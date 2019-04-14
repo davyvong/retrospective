@@ -39,16 +39,16 @@ class Component extends React.PureComponent {
 
   componentWillReceiveProps(newProps) {
     const state = {};
-    const { group, items } = newProps;
-    if (isGUID(group.first) && this.state.first !== group.first) {
-      state.first = group.first;
+    const { node, items } = newProps;
+    if (isGUID(node.first) && this.state.first !== node.first) {
+      state.first = node.first;
     }
     if (
-      isType(group.name, 'String') &&
-      this.state.name !== group.name &&
+      isType(node.name, 'String') &&
+      this.state.name !== node.name &&
       !this.updateTimeout
     ) {
-      state.name = group.name;
+      state.name = node.name;
     }
     if (isType(items, 'Object')) {
       state.items = Object.assign({}, this.state.items, items);
@@ -92,7 +92,7 @@ class Component extends React.PureComponent {
         parent: 'd9965f7c-0437-4bc3-8647-40e313058fe1',
       }),
       COLLECTION_TYPES.GROUPS,
-      constructDoc(this.props.id, this.props.group),
+      constructDoc(this.props.id, this.props.node),
     );
     this.props.executeBatch(queue);
   };
@@ -100,7 +100,7 @@ class Component extends React.PureComponent {
   onDelete = event => {
     event.preventDefault();
     const queue = deleteNodeV2(
-      constructDoc(this.props.id, this.props.group),
+      constructDoc(this.props.id, this.props.node),
       COLLECTION_TYPES.GROUPS,
     );
     this.props.executeBatch(queue);
@@ -134,9 +134,9 @@ class Component extends React.PureComponent {
 
   render() {
     const { createMode, first, items, name } = this.state;
-    const { group, id, renderDraftItem, renderItem } = this.props;
+    const { id, node, renderDraftItem, renderItem } = this.props;
     return (
-      <Wrapper color={group.color}>
+      <Wrapper color={node.color}>
         <Header>
           <Name
             onChange={this.onChange}
@@ -174,8 +174,8 @@ class Component extends React.PureComponent {
 Component.defaultProps = {
   createItem: () => {},
   executeBatch: () => {},
-  group: {},
   items: {},
+  node: {},
   renderDraftItem: () => null,
   renderItem: () => null,
   updateGroup: () => {},
@@ -184,9 +184,9 @@ Component.defaultProps = {
 Component.propTypes = {
   createItem: PropTypes.func,
   executeBatch: PropTypes.func,
-  group: PropTypes.object,
   id: PropTypes.string.isRequired,
   items: PropTypes.object,
+  node: PropTypes.object,
   renderDraftItem: PropTypes.func,
   renderItem: PropTypes.func,
   updateGroup: PropTypes.func,

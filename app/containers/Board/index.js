@@ -86,10 +86,10 @@ class Component extends React.PureComponent {
       <Group
         createItem={this.createItem}
         executeBatch={this.props.executeBatch}
-        group={this.props.groups[id]}
         id={id}
         items={filteredItems}
         key={id}
+        node={this.props.groups[id]}
         renderDraftItem={this.renderDraftItem}
         renderItem={this.renderItem}
         updateGroup={this.props.updateGroup}
@@ -99,14 +99,14 @@ class Component extends React.PureComponent {
   };
 
   renderModalItem = id => {
-    const item = this.props.items[id];
+    const node = this.props.items[id];
     return (
       <ModalContainer>
         <Item
           closeModal={this.props.closeModal}
-          group={this.props.groups[item.parent]}
           id={id}
-          item={item}
+          node={node}
+          parent={this.props.groups[node.parent]}
           showPopup={false}
           showShadow
           updateItem={this.props.updateItem}
@@ -116,8 +116,8 @@ class Component extends React.PureComponent {
   };
 
   renderItem = (id, index) => {
-    const item = this.props.items[id];
-    if (!item) {
+    const node = this.props.items[id];
+    if (!node) {
       return null;
     }
     return (
@@ -130,10 +130,10 @@ class Component extends React.PureComponent {
           >
             <Item
               executeBatch={this.props.executeBatch}
-              group={this.props.groups[item.parent]}
               id={id}
-              item={item}
+              node={node}
               openModal={this.openModal}
+              parent={this.props.groups[node.parent]}
               updateItem={this.props.updateItem}
             />
           </div>
