@@ -171,7 +171,7 @@ class Component extends React.PureComponent {
         <Section style={{ paddingTop: 0 }}>
           <Container>
             <Columns>
-              {renderListV2(groups, info.first, this.renderGroup)}
+              {renderListV2(groups, info.child, this.renderGroup)}
             </Columns>
           </Container>
         </Section>

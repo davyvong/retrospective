@@ -19,7 +19,7 @@ export function deleteNodeV2(node, collection) {
     queue.push(
       constructDoc(
         node.data.parent,
-        { first: node.data.next },
+        { child: node.data.next },
         getParentCollection(collection),
       ),
     );
@@ -55,7 +55,7 @@ export function insertNodeV2(node, collection, destination, append = true) {
     queue.push(
       constructDoc(
         node.data.parent,
-        { first: node.id },
+        { child: node.id },
         getParentCollection(collection),
       ),
     );
@@ -63,14 +63,23 @@ export function insertNodeV2(node, collection, destination, append = true) {
   return queue;
 }
 
-export function renderListV2(map, first, renderer) {
+export function renderListV2(map, child, renderer) {
   const list = [];
-  let current = first;
+  let current = child;
   while (isGUID(current) && isType(map[current], 'Object')) {
     list.push(current);
     current = map[current].next;
   }
   return list.map(renderer);
+}
+
+export function reorderNodeV2(node, collection, destination, append = true) {
+  if (!verifyCollectionType(collection)) {
+    return [];
+  }
+  const dQueue = deleteNodeV2(node, collection, false);
+  const iQueue = insertNodeV2(node, collection, destination, append);
+  return [...dQueue, ...iQueue];
 }
 
 export function reorderNodeV1(state, destinationId, sourceId, append) {
@@ -93,7 +102,7 @@ export function reorderNodeV1(state, destinationId, sourceId, append) {
       next: sourceData.next,
     });
   } else {
-    newState.first = sourceData.next;
+    newState.child = sourceData.next;
   }
   if (
     isGUID(sourceData.next) &&
@@ -136,7 +145,7 @@ export function reorderNodeV1(state, destinationId, sourceId, append) {
     !destinationExists ||
     (!isGUID(newState.items[sourceId].prev) && !append)
   ) {
-    newState.first = sourceId;
+    newState.child = sourceId;
   }
   return newState;
 }

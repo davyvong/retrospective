@@ -29,13 +29,13 @@ class Component extends React.PureComponent {
           comments: 0,
           createdBy: this.props.userId,
           dateCreated: new Date().getTime(),
-          first: null,
+          child: null,
           message: this.state.message,
           parent: this.props.parentId,
           votes: 0,
         }),
         COLLECTION_TYPES.ITEMS,
-        constructDoc(this.props.parent.first, { prev: null }),
+        constructDoc(this.props.parent.child, { prev: null }),
         false,
       );
       this.props.executeBatch(queue);

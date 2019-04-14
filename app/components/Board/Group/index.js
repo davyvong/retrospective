@@ -12,6 +12,7 @@ import {
   insertNodeV2,
   renderListV2,
   reorderNodeV1,
+  reorderNodeV2,
 } from 'firebase/core';
 import { constructDoc } from 'firebase/helpers';
 
@@ -31,7 +32,7 @@ class Component extends React.PureComponent {
     super(props);
     this.state = {
       createMode: false,
-      first: null,
+      child: null,
       items: {},
       name: '',
     };
@@ -40,8 +41,8 @@ class Component extends React.PureComponent {
   componentWillReceiveProps(newProps) {
     const state = {};
     const { node, items } = newProps;
-    if (isGUID(node.first) && this.state.first !== node.first) {
-      state.first = node.first;
+    if (isGUID(node.child) && this.state.child !== node.child) {
+      state.child = node.child;
     }
     if (
       isType(node.name, 'String') &&
@@ -87,7 +88,7 @@ class Component extends React.PureComponent {
         color: BOARD_ITEM_COLORS.GREY,
         createdBy: this.props.userId,
         dateCreated: new Date().getTime(),
-        first: null,
+        child: null,
         name: '',
         parent: 'd9965f7c-0437-4bc3-8647-40e313058fe1',
       }),
@@ -113,27 +114,35 @@ class Component extends React.PureComponent {
     ) {
       return;
     }
-    let destination = this.state.first;
+    const { child, items } = this.state;
+    let destinationId = child;
     for (let i = 0; i < result.destination.index; i += 1) {
-      if (isType(this.state.items[destination], 'Object')) {
-        destination = this.state.items[destination].next;
+      if (isType(items[destinationId], 'Object')) {
+        destinationId = items[destinationId].next;
       }
     }
-    const source = result.draggableId;
+    const sourceId = result.draggableId;
+    const append = result.destination.index > result.source.index;
     const state = reorderNodeV1(
-      {
-        first: this.state.first,
-        items: this.state.items,
-      },
-      destination,
-      source,
-      result.destination.index > result.source.index,
+      { child, items },
+      destinationId,
+      sourceId,
+      append,
     );
-    this.setState(state);
+    const queue = reorderNodeV2(
+      constructDoc(sourceId, items[sourceId]),
+      COLLECTION_TYPES.ITEMS,
+      constructDoc(destinationId, items[destinationId]),
+      append,
+    );
+    this.setState(state, () => {
+      // this.props.executeBatch(queue);
+      console.log(queue); // eslint-disable-line no-console
+    });
   };
 
   render() {
-    const { createMode, first, items, name } = this.state;
+    const { createMode, child, items, name } = this.state;
     const { id, node, renderDraftItem, renderItem } = this.props;
     return (
       <Wrapper color={node.color}>
@@ -159,7 +168,7 @@ class Component extends React.PureComponent {
             <Droppable droppableId={id}>
               {provided => (
                 <Items {...provided.droppableProps} ref={provided.innerRef}>
-                  {renderListV2(items, first, renderItem)}
+                  {renderListV2(items, child, renderItem)}
                   {provided.placeholder}
                 </Items>
               )}
