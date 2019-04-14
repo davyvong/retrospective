@@ -35,15 +35,15 @@ export function* createCollectionListener(path, actions) {
   try {
     while (true) {
       const doc = yield take(channel);
-      if (doc.type === CHANGE_TYPES.ADDED) {
+      if (doc.change === CHANGE_TYPES.ADDED) {
         if (actions[CHANGE_TYPES.ADDED]) {
           yield put(actions[CHANGE_TYPES.ADDED](doc));
         }
-      } else if (doc.type === CHANGE_TYPES.MODIFIED) {
+      } else if (doc.change === CHANGE_TYPES.MODIFIED) {
         if (actions[CHANGE_TYPES.MODIFIED]) {
           yield put(actions[CHANGE_TYPES.MODIFIED](doc));
         }
-      } else if (doc.type === CHANGE_TYPES.REMOVED) {
+      } else if (doc.change === CHANGE_TYPES.REMOVED) {
         if (actions[CHANGE_TYPES.REMOVED]) {
           yield put(actions[CHANGE_TYPES.REMOVED](doc));
         }

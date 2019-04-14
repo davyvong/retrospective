@@ -19,8 +19,8 @@ export function createCollectionChannel(path) {
       snapshot.docChanges().forEach(change => {
         emitter({
           id: change.doc.id,
+          change: change.type,
           data: change.doc.data() || {},
-          type: change.type,
         });
       });
     });
