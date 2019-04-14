@@ -1,3 +1,4 @@
+import deepClone from 'utils/deepClone';
 import { isDocument, isGUID, isType } from 'utils/validators';
 
 import {
@@ -74,30 +75,37 @@ export function insertNodeV2(node, collection, destination, append = true) {
 }
 
 export function reorderNodeV1(prevState, nodeId, destinationId, append) {
-  if (!isType(prevState, 'Object') || !isGUID(nodeId)) {
+  if (
+    !isType(prevState, 'Object') ||
+    !isType(prevState.items, 'Object') ||
+    !isGUID(nodeId)
+  ) {
     return {};
   }
-  const state = prevState;
-  const node = state.items[nodeId];
+  const state = deepClone(prevState);
+  const node = deepClone(state.items[nodeId]);
   const updateState = (id, change = {}) => {
-    Object.assign(state.items[id], change, {
+    const data = state.items[id] || {};
+    state.items[id] = {
+      ...data,
+      ...change,
       dateModified: new Date().getTime(),
-    });
+    };
   };
   if (!isType(node, 'Object')) {
     return {};
   }
-  if (isGUID(node.prev) && isType(state.items[node.prev], 'Object')) {
+  if (isGUID(node.prev)) {
     updateState(node.prev, { next: node.next });
   } else {
     state.child = node.next;
   }
-  if (isGUID(node.next) && isType(state.items[node.next], 'Object')) {
+  if (isGUID(node.next)) {
     updateState(node.next, { prev: node.prev });
   }
   const destinationExists =
     isGUID(destinationId) && isType(state.items[destinationId], 'Object');
-  const destination = state.items[destinationId] || {};
+  const destination = deepClone(state.items[destinationId] || {});
   let next = null;
   let prev = null;
   if (destinationExists) {
@@ -105,10 +113,10 @@ export function reorderNodeV1(prevState, nodeId, destinationId, append) {
     prev = append ? destinationId : destination.prev;
   }
   updateState(nodeId, { next, prev });
-  if (isGUID(next) && isType(state.items[next], 'Object')) {
+  if (isGUID(next)) {
     updateState(next, { prev: nodeId });
   }
-  if (isGUID(prev) && isType(state.items[prev], 'Object')) {
+  if (isGUID(prev)) {
     updateState(prev, { next: nodeId });
   }
   if (!destinationExists || (!isGUID(prev) && !append)) {
