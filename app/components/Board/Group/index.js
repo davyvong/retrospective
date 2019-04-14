@@ -6,14 +6,14 @@ import uuidv4 from 'uuid/v4';
 import { BOARD_ITEM_COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
-import { COLLECTION_TYPES } from 'firebase/boards/constants';
+import { COLLECTION_TYPES } from 'firebase/constants';
 import {
   deleteNodeV2,
   insertNodeV2,
   renderListV2,
   reorderNodeV1,
-} from 'firebase/boards/core';
-import { constructDoc } from 'firebase/boards/helpers';
+} from 'firebase/core';
+import { constructDoc } from 'firebase/helpers';
 
 import { isGUID, isType } from 'utils/validators';
 
@@ -71,7 +71,7 @@ class Component extends React.PureComponent {
     }
     this.setState({ name: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
-        this.props.updateBoardGroup(
+        this.props.updateGroup(
           constructDoc(this.props.id, { name: this.state.name }),
         );
         this.updateTimeout = undefined;
@@ -149,7 +149,7 @@ class Component extends React.PureComponent {
         {createMode ? (
           renderDraftItem({
             disableCreateMode: this.disableCreateMode,
-            parent: id,
+            parentId: id,
           })
         ) : (
           <CreateButton onClick={this.enableCreateMode}>Create</CreateButton>
@@ -178,7 +178,7 @@ Component.defaultProps = {
   items: {},
   renderDraftItem: () => null,
   renderItem: () => null,
-  updateBoardGroup: () => {},
+  updateGroup: () => {},
 };
 
 Component.propTypes = {
@@ -189,7 +189,7 @@ Component.propTypes = {
   items: PropTypes.object,
   renderDraftItem: PropTypes.func,
   renderItem: PropTypes.func,
-  updateBoardGroup: PropTypes.func,
+  updateGroup: PropTypes.func,
   userId: PropTypes.string.isRequired,
 };
 

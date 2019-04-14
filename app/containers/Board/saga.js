@@ -9,20 +9,20 @@ import {
 } from 'redux-saga/effects';
 
 import { firestore } from 'configureFirebase';
-import { COLLECTION_TYPES } from 'firebase/boards/constants';
+import { COLLECTION_TYPES } from 'firebase/constants';
 
 import {
   initialize as initializeAction,
-  updateBoardGroup as updateBoardGroupAction,
-  updateBoardInfo as updateBoardInfoAction,
-  updateBoardItem as updateBoardItemAction,
+  updateGroup as updateGroupAction,
+  updateBoard as updateBoardAction,
+  updateItem as updateItemAction,
   executeBatch as executeBatchAction,
 } from './actions';
 
 import {
   INITIALIZE,
+  UPDATE_BOARD,
   UPDATE_GROUP,
-  UPDATE_INFO,
   UPDATE_ITEM,
   EXECUTE_BATCH,
 } from './constants';
@@ -54,39 +54,39 @@ export function* initialize(action) {
   }
 }
 
-export function* updateBoardGroup(action) {
-  try {
-    const { params: doc } = action;
-    const boardId = yield select(selectBoardId());
-    const ref = firestore.doc(`boards/${boardId}/groups/${doc.id}`);
-    yield call([ref, ref.set], doc.data, { merge: true });
-    yield put(updateBoardGroupAction.success());
-  } catch (error) {
-    yield put(updateBoardGroupAction.failure(error));
-  }
-}
-
-export function* updateBoardInfo(action) {
+export function* updateBoard(action) {
   try {
     const { params: doc } = action;
     const boardId = yield select(selectBoardId());
     const ref = firestore.doc(`boards/${boardId}`);
     yield call([ref, ref.set], doc.data, { merge: true });
-    yield put(updateBoardInfoAction.success());
+    yield put(updateBoardAction.success());
   } catch (error) {
-    yield put(updateBoardInfoAction.failure(error));
+    yield put(updateBoardAction.failure(error));
   }
 }
 
-export function* updateBoardItem(action) {
+export function* updateGroup(action) {
+  try {
+    const { params: doc } = action;
+    const boardId = yield select(selectBoardId());
+    const ref = firestore.doc(`boards/${boardId}/groups/${doc.id}`);
+    yield call([ref, ref.set], doc.data, { merge: true });
+    yield put(updateGroupAction.success());
+  } catch (error) {
+    yield put(updateGroupAction.failure(error));
+  }
+}
+
+export function* updateItem(action) {
   try {
     const { params: doc } = action;
     const boardId = yield select(selectBoardId());
     const ref = firestore.doc(`boards/${boardId}/items/${doc.id}`);
     yield call([ref, ref.set], doc.data, { merge: true });
-    yield put(updateBoardItemAction.success());
+    yield put(updateItemAction.success());
   } catch (error) {
-    yield put(updateBoardItemAction.failure(error));
+    yield put(updateItemAction.failure(error));
   }
 }
 
@@ -115,8 +115,8 @@ export function* executeBatch(action) {
 
 export default function* saga() {
   yield takeLatest(INITIALIZE.REQUEST, initialize);
-  yield takeEvery(UPDATE_GROUP.REQUEST, updateBoardGroup);
-  yield takeEvery(UPDATE_INFO.REQUEST, updateBoardInfo);
-  yield takeEvery(UPDATE_ITEM.REQUEST, updateBoardItem);
+  yield takeEvery(UPDATE_BOARD.REQUEST, updateBoard);
+  yield takeEvery(UPDATE_GROUP.REQUEST, updateGroup);
+  yield takeEvery(UPDATE_ITEM.REQUEST, updateItem);
   yield takeEvery(EXECUTE_BATCH.REQUEST, executeBatch);
 }

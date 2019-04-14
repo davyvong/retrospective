@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { BOARD_ITEM_COLORS, COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
-import { COLLECTION_TYPES } from 'firebase/boards/constants';
-import { deleteNodeV2 } from 'firebase/boards/core';
-import { constructDoc } from 'firebase/boards/helpers';
+import { COLLECTION_TYPES } from 'firebase/constants';
+import { deleteNodeV2 } from 'firebase/core';
+import { constructDoc } from 'firebase/helpers';
 
 import { isType } from 'utils/validators';
 
@@ -46,7 +46,7 @@ class Component extends React.PureComponent {
     }
     this.setState({ message: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
-        this.props.updateBoardItem(
+        this.props.updateItem(
           constructDoc(this.props.id, { message: this.state.message }),
         );
         this.updateTimeout = undefined;
@@ -65,14 +65,14 @@ class Component extends React.PureComponent {
 
   onDownvote = event => {
     event.preventDefault();
-    this.props.updateBoardItem(
+    this.props.updateItem(
       constructDoc(this.props.id, { votes: this.props.item.votes - 1 }),
     );
   };
 
   onUpvote = event => {
     event.preventDefault();
-    this.props.updateBoardItem(
+    this.props.updateItem(
       constructDoc(this.props.id, { votes: this.props.item.votes + 1 }),
     );
   };
@@ -130,7 +130,7 @@ Component.defaultProps = {
   openModal: () => {},
   showPopup: true,
   showShadow: false,
-  updateBoardItem: () => {},
+  updateItem: () => {},
 };
 
 Component.propTypes = {
@@ -142,7 +142,7 @@ Component.propTypes = {
   openModal: PropTypes.func,
   showPopup: PropTypes.bool,
   showShadow: PropTypes.bool,
-  updateBoardItem: PropTypes.func,
+  updateItem: PropTypes.func,
 };
 
 export default Component;

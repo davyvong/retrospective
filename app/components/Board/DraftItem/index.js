@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 
-import { COLLECTION_TYPES } from 'firebase/boards/constants';
-import { insertNodeV2 } from 'firebase/boards/core';
-import { constructDoc } from 'firebase/boards/helpers';
+import { COLLECTION_TYPES } from 'firebase/constants';
+import { insertNodeV2 } from 'firebase/core';
+import { constructDoc } from 'firebase/helpers';
 
 import { isAuthUID, isGUID, isType } from 'utils/validators';
 
@@ -20,10 +20,10 @@ class Component extends React.PureComponent {
     this.state = { message: '' };
   }
 
-  saveBoardItem = event => {
+  saveItem = event => {
     event.preventDefault();
     const newId = uuidv4();
-    if (this.validateBoardItem()) {
+    if (this.validateItem()) {
       const queue = insertNodeV2(
         constructDoc(newId, {
           comments: 0,
@@ -31,11 +31,11 @@ class Component extends React.PureComponent {
           dateCreated: new Date().getTime(),
           first: null,
           message: this.state.message,
-          parent: this.props.parent,
+          parent: this.props.parentId,
           votes: 0,
         }),
         COLLECTION_TYPES.ITEMS,
-        constructDoc(this.props.group.first, { prev: null }),
+        constructDoc(this.props.parent.first, { prev: null }),
         false,
       );
       this.props.executeBatch(queue);
@@ -43,11 +43,11 @@ class Component extends React.PureComponent {
     }
   };
 
-  validateBoardItem = () =>
+  validateItem = () =>
     isAuthUID(this.props.userId) &&
     isType(this.state.message, 'String') &&
     this.state.message.length > 0 &&
-    isGUID(this.props.parent);
+    isGUID(this.props.parentId);
 
   updateMessage = event => {
     event.preventDefault();
@@ -64,7 +64,7 @@ class Component extends React.PureComponent {
           value={message}
         />
         <Footer>
-          <Button onClick={this.saveBoardItem}>Save</Button>
+          <Button onClick={this.saveItem}>Save</Button>
           <CloseButton onClick={this.props.disableCreateMode}>
             Discard
           </CloseButton>
@@ -77,14 +77,14 @@ class Component extends React.PureComponent {
 Component.defaultProps = {
   disableCreateMode: () => {},
   executeBatch: () => {},
-  group: {},
+  parent: {},
 };
 
 Component.propTypes = {
   disableCreateMode: PropTypes.func,
   executeBatch: PropTypes.func,
-  group: PropTypes.object,
-  parent: PropTypes.string.isRequired,
+  parent: PropTypes.object,
+  parentId: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
 };
 
