@@ -10,7 +10,7 @@ import { COLLECTION_TYPES } from 'firebase/constants';
 import {
   deleteNodeV2,
   insertNodeV2,
-  renderListV2,
+  renderListV1,
   reorderNodeV1,
   reorderNodeV2,
 } from 'firebase/core';
@@ -52,7 +52,15 @@ class Component extends React.PureComponent {
       state.name = node.name;
     }
     if (isType(items, 'Object')) {
-      state.items = Object.assign({}, this.state.items, items);
+      state.items = this.state.items;
+      Object.keys(items).forEach(key => {
+        if (
+          !isType(state.items[key], 'Object') ||
+          items[key].dateModified > state.items[key].dataModified
+        ) {
+          state.items[key] = items[key];
+        }
+      });
     }
     this.setState(state);
   }
@@ -123,21 +131,21 @@ class Component extends React.PureComponent {
     }
     const sourceId = result.draggableId;
     const append = result.destination.index > result.source.index;
-    const state = reorderNodeV1(
-      { child, items },
-      destinationId,
-      sourceId,
-      append,
-    );
     const queue = reorderNodeV2(
       constructDoc(sourceId, items[sourceId]),
       COLLECTION_TYPES.ITEMS,
       constructDoc(destinationId, items[destinationId]),
       append,
     );
+    const state = reorderNodeV1(
+      { child, items },
+      sourceId,
+      destinationId,
+      append,
+    );
     this.setState(state, () => {
       // this.props.executeBatch(queue);
-      console.log(queue); // eslint-disable-line no-console
+      console.log(queue);
     });
   };
 
@@ -168,7 +176,7 @@ class Component extends React.PureComponent {
             <Droppable droppableId={id}>
               {provided => (
                 <Items {...provided.droppableProps} ref={provided.innerRef}>
-                  {renderListV2(items, child, renderItem)}
+                  {renderListV1(items, child, renderItem)}
                   {provided.placeholder}
                 </Items>
               )}

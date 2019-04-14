@@ -25,7 +25,7 @@ import {
 } from 'containers/Modal/actions';
 import { selectUID } from 'containers/AuthProvider/selectors';
 
-import { renderListV2 } from 'firebase/core';
+import { renderListV1 } from 'firebase/core';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
@@ -171,7 +171,7 @@ class Component extends React.PureComponent {
         <Section style={{ paddingTop: 0 }}>
           <Container>
             <Columns>
-              {renderListV2(groups, info.child, this.renderGroup)}
+              {renderListV1(groups, info.child, this.renderGroup)}
             </Columns>
           </Container>
         </Section>

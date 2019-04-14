@@ -6,6 +6,16 @@ import {
   verifyCollectionType,
 } from './helpers';
 
+export function renderListV1(map, child, renderer) {
+  const list = [];
+  let current = child;
+  while (isGUID(current) && isType(map[current], 'Object')) {
+    list.push(current);
+    current = map[current].next;
+  }
+  return list.map(renderer);
+}
+
 export function deleteNodeV2(node, collection) {
   if (!verifyCollectionType(collection)) {
     return [];
@@ -44,7 +54,7 @@ export function insertNodeV2(node, collection, destination, append = true) {
     next = append ? destination.data.next : destination.id;
     prev = append ? destination.id : destination.data.prev;
   }
-  queue.push(constructDoc(node.id, { ...node.data, next, prev }, collection));
+  queue.push(constructDoc(node.id, { next, prev }, collection));
   if (isGUID(next)) {
     queue.push(constructDoc(next, { prev: node.id }, collection));
   }
@@ -63,89 +73,99 @@ export function insertNodeV2(node, collection, destination, append = true) {
   return queue;
 }
 
-export function renderListV2(map, child, renderer) {
-  const list = [];
-  let current = child;
-  while (isGUID(current) && isType(map[current], 'Object')) {
-    list.push(current);
-    current = map[current].next;
+export function reorderNodeV1(prevState, nodeId, destinationId, append) {
+  if (!isType(prevState, 'Object') || !isGUID(nodeId)) {
+    return {};
   }
-  return list.map(renderer);
+  const state = prevState;
+  const node = state.items[nodeId];
+  const updateState = (id, change = {}) => {
+    Object.assign(state.items[id], change, {
+      dateModified: new Date().getTime(),
+    });
+  };
+  if (!isType(node, 'Object')) {
+    return {};
+  }
+  if (isGUID(node.prev) && isType(state.items[node.prev], 'Object')) {
+    updateState(node.prev, { next: node.next });
+  } else {
+    state.child = node.next;
+  }
+  if (isGUID(node.next) && isType(state.items[node.next], 'Object')) {
+    updateState(node.next, { prev: node.prev });
+  }
+  const destinationExists =
+    isGUID(destinationId) && isType(state.items[destinationId], 'Object');
+  const destination = state.items[destinationId] || {};
+  let next = null;
+  let prev = null;
+  if (destinationExists) {
+    next = append ? destination.next : destinationId;
+    prev = append ? destinationId : destination.prev;
+  }
+  updateState(nodeId, { next, prev });
+  if (isGUID(next) && isType(state.items[next], 'Object')) {
+    updateState(next, { prev: nodeId });
+  }
+  if (isGUID(prev) && isType(state.items[prev], 'Object')) {
+    updateState(prev, { next: nodeId });
+  }
+  if (!destinationExists || (!isGUID(prev) && !append)) {
+    state.child = nodeId;
+  }
+  return state;
 }
 
 export function reorderNodeV2(node, collection, destination, append = true) {
-  if (!verifyCollectionType(collection)) {
+  if (!verifyCollectionType(collection) || !isDocument(node)) {
     return [];
   }
-  const dQueue = deleteNodeV2(node, collection, false);
-  const iQueue = insertNodeV2(node, collection, destination, append);
-  return [...dQueue, ...iQueue];
-}
-
-export function reorderNodeV1(state, destinationId, sourceId, append) {
-  if (!isType(state, 'Object')) {
-    return {};
-  }
-  const newState = Object.assign({}, state);
-  if (!isGUID(sourceId)) {
-    return {};
-  }
-  const sourceData = newState.items[sourceId];
-  if (!isType(sourceData, 'Object')) {
-    return {};
-  }
-  if (
-    isGUID(sourceData.prev) &&
-    isType(newState.items[sourceData.prev], 'Object')
-  ) {
-    Object.assign(newState.items[sourceData.prev], {
-      next: sourceData.next,
-    });
+  const state = {};
+  const updateState = (nodeId, nodeChanges = {}, nodeCollection) => {
+    const prevState = state[nodeId] || {};
+    state[nodeId] = Object.assign(
+      prevState,
+      constructDoc(nodeId, nodeChanges, nodeCollection),
+    );
+  };
+  if (isGUID(node.data.prev)) {
+    updateState(node.data.prev, { next: node.data.next }, collection);
   } else {
-    newState.child = sourceData.next;
+    updateState(
+      node.data.parent,
+      { child: node.data.next },
+      getParentCollection(collection),
+    );
   }
-  if (
-    isGUID(sourceData.next) &&
-    isType(newState.items[sourceData.next], 'Object')
-  ) {
-    Object.assign(newState.items[sourceData.next], {
-      prev: sourceData.prev,
-    });
+  if (isGUID(node.data.next)) {
+    updateState(node.data.next, { prev: node.data.prev }, collection);
   }
-  const destinationExists =
-    isGUID(destinationId) && isType(newState.items[destinationId], 'Object');
-  const destinationData = newState.items[destinationId] || {};
-  sourceData.next = null;
-  sourceData.prev = null;
-  if (destinationExists) {
-    sourceData.next = append ? destinationData.next : destinationId;
-    sourceData.prev = append ? destinationId : destinationData.prev;
+  let next = null;
+  let prev = null;
+  if (isDocument(destination)) {
+    next = append
+      ? (state[destination.id] && state[destination.id].data.next) ||
+        destination.data.next
+      : destination.id;
+    prev = append
+      ? destination.id
+      : (state[destination.id] && state[destination.id].data.prev) ||
+        destination.data.prev;
   }
-  Object.assign(newState.items[sourceId], {
-    next: sourceData.next,
-    prev: sourceData.prev,
-  });
-  if (
-    isGUID(sourceData.next) &&
-    isType(newState.items[sourceData.next], 'Object')
-  ) {
-    Object.assign(newState.items[sourceData.next], {
-      prev: sourceId,
-    });
+  updateState(node.id, { next, prev }, collection);
+  if (isGUID(next)) {
+    updateState(next, { prev: node.id }, collection);
   }
-  if (
-    isGUID(sourceData.prev) &&
-    isType(newState.items[sourceData.prev], 'Object')
-  ) {
-    Object.assign(newState.items[sourceData.prev], {
-      next: sourceId,
-    });
+  if (isGUID(prev)) {
+    updateState(prev, { next: node.id }, collection);
   }
-  if (
-    !destinationExists ||
-    (!isGUID(newState.items[sourceId].prev) && !append)
-  ) {
-    newState.child = sourceId;
+  if (!isDocument(destination) || (!isGUID(prev) && !append)) {
+    updateState(
+      node.data.parent,
+      { child: node.id },
+      getParentCollection(collection),
+    );
   }
-  return newState;
+  return Object.values(state);
 }
