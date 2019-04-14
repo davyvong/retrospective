@@ -121,6 +121,7 @@ export function reorderNodeV2(node, collection, destination, append = true) {
   if (!verifyCollectionType(collection) || !isDocument(node)) {
     return [];
   }
+  const queue = [];
   const state = {};
   const updateState = (nodeId, nodeChanges = {}, nodeCollection) => {
     const prevState = state[nodeId] || {};
@@ -128,6 +129,7 @@ export function reorderNodeV2(node, collection, destination, append = true) {
       prevState,
       constructDoc(nodeId, nodeChanges, nodeCollection),
     );
+    queue.push(state[nodeId]);
   };
   if (isGUID(node.data.prev)) {
     updateState(node.data.prev, { next: node.data.next }, collection);
@@ -143,6 +145,7 @@ export function reorderNodeV2(node, collection, destination, append = true) {
   }
   let next = null;
   let prev = null;
+  updateState(node.id, { next, prev }, collection);
   if (isDocument(destination)) {
     next = append
       ? (state[destination.id] && state[destination.id].data.next) ||
@@ -167,5 +170,5 @@ export function reorderNodeV2(node, collection, destination, append = true) {
       getParentCollection(collection),
     );
   }
-  return Object.values(state);
+  return queue;
 }

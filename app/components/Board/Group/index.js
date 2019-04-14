@@ -144,8 +144,7 @@ class Component extends React.PureComponent {
       append,
     );
     this.setState(state, () => {
-      // this.props.executeBatch(queue);
-      console.log(queue);
+      this.props.executeBatch(queue);
     });
   };
 
