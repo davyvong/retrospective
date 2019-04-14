@@ -11,7 +11,7 @@ exports.onDeleteGroup = functions.firestore
     const { boardId, groupId } = context.params;
     return firestore
       .collection(`boards/${boardId}/items`)
-      .where('groupId', '==', groupId)
+      .where('parent', '==', groupId)
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => doc.ref.delete());
