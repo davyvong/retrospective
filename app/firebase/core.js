@@ -54,7 +54,7 @@ export function insertNodeV2(node, collection, destination, append = true) {
     next = append ? destination.data.next : destination.id;
     prev = append ? destination.id : destination.data.prev;
   }
-  queue.push(constructDoc(node.id, { next, prev }, collection));
+  queue.push(constructDoc(node.id, { ...node.data, next, prev }, collection));
   if (isGUID(next)) {
     queue.push(constructDoc(next, { prev: node.id }, collection));
   }
