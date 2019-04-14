@@ -2,36 +2,24 @@ import createAction from 'utils/createAction';
 import createAsyncAction from 'utils/createAsyncAction';
 
 import {
-  BOARD_SNAPSHOT,
-  BOARD_GROUP_ADDED,
-  BOARD_GROUP_MODIFIED,
-  BOARD_GROUP_REMOVED,
-  BOARD_ITEM_ADDED,
-  BOARD_ITEM_MODIFIED,
-  BOARD_ITEM_REMOVED,
-  INITIALIZE_BOARD,
-  UPDATE_BOARD_GROUP,
-  UPDATE_BOARD_INFO,
-  UPDATE_BOARD_ITEM,
+  INITIALIZE,
   EXECUTE_BATCH,
+  BOARD_SNAPSHOT,
+  GROUP_SNAPSHOT,
+  ITEM_SNAPSHOT,
+  UPDATE_GROUP,
+  UPDATE_INFO,
+  UPDATE_ITEM,
 } from './constants';
 
-export const boardSnapshot = createAction(BOARD_SNAPSHOT);
-
-export const boardGroupAdded = createAction(BOARD_GROUP_ADDED);
-export const boardGroupModified = createAction(BOARD_GROUP_MODIFIED);
-export const boardGroupRemoved = createAction(BOARD_GROUP_REMOVED);
-
-export const boardItemAdded = createAction(BOARD_ITEM_ADDED);
-export const boardItemModified = createAction(BOARD_ITEM_MODIFIED);
-export const boardItemRemoved = createAction(BOARD_ITEM_REMOVED);
-
-export const initializeBoard = createAsyncAction(INITIALIZE_BOARD);
-
-export const updateBoardGroup = createAsyncAction(UPDATE_BOARD_GROUP);
-
-export const updateBoardInfo = createAsyncAction(UPDATE_BOARD_INFO);
-
-export const updateBoardItem = createAsyncAction(UPDATE_BOARD_ITEM);
+export const initialize = createAsyncAction(INITIALIZE);
 
 export const executeBatch = createAsyncAction(EXECUTE_BATCH);
+
+export const onBoardSnapshot = createAction(BOARD_SNAPSHOT);
+export const onGroupSnapshot = createAction(GROUP_SNAPSHOT);
+export const onItemSnapshot = createAction(ITEM_SNAPSHOT);
+
+export const updateBoardGroup = createAsyncAction(UPDATE_GROUP);
+export const updateBoardInfo = createAsyncAction(UPDATE_INFO);
+export const updateBoardItem = createAsyncAction(UPDATE_ITEM);

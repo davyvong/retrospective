@@ -23,7 +23,7 @@ import {
   closeModal as closeModalAction,
   openModal as openModalAction,
 } from 'containers/Modal/actions';
-import { selectAuthUID } from 'containers/AuthProvider/selectors';
+import { selectUID } from 'containers/AuthProvider/selectors';
 
 import { renderListV2 } from 'firebase/boards/core';
 
@@ -32,24 +32,20 @@ import injectSaga from 'utils/injectSaga';
 import { isType } from 'utils/validators';
 
 import {
-  initializeBoard as initializeBoardAction,
+  executeBatch as executeBatchAction,
+  initialize as initializeAction,
   updateBoardGroup as updateBoardGroupAction,
   updateBoardInfo as updateBoardInfoAction,
   updateBoardItem as updateBoardItemAction,
-  executeBatch as executeBatchAction,
 } from './actions';
 import messages from './messages';
 import reducer from './reducer';
 import saga from './saga';
-import {
-  selectBoardGroups,
-  selectBoardInfo,
-  selectBoardItems,
-} from './selectors';
+import { selectGroups, selectInfo, selectItems } from './selectors';
 
 class Component extends React.PureComponent {
   componentDidMount() {
-    this.props.initializeBoard(this.props.match.params.boardId);
+    this.props.initialize(this.props.match.params.boardId);
   }
 
   openModal = id => {
@@ -204,16 +200,16 @@ Component.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  groups: selectBoardGroups(),
-  info: selectBoardInfo(),
-  items: selectBoardItems(),
-  uid: selectAuthUID(),
+  groups: selectGroups(),
+  info: selectInfo(),
+  items: selectItems(),
+  uid: selectUID(),
 });
 
 export const mapDispatchToProps = dispatch => ({
   closeModal: params => dispatch(closeModalAction(params)),
   executeBatch: params => dispatch(executeBatchAction.request(params)),
-  initializeBoard: params => dispatch(initializeBoardAction.request(params)),
+  initialize: params => dispatch(initializeAction.request(params)),
   openModal: params => dispatch(openModalAction(params)),
   updateBoardGroup: params => dispatch(updateBoardGroupAction.request(params)),
   updateBoardInfo: params => dispatch(updateBoardInfoAction.request(params)),

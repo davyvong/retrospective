@@ -2,16 +2,16 @@ import { createSelector } from 'reselect';
 
 const selectState = state => state.get('board');
 
-const selectBoardGroups = () =>
+const selectGroups = () =>
   createSelector(selectState, state => state.get('groups').toJS());
 
 const selectBoardId = () =>
   createSelector(selectState, state => state.get('id'));
 
-const selectBoardInfo = () =>
+const selectInfo = () =>
   createSelector(selectState, state => state.get('info').toJS());
 
-const selectBoardItems = () =>
+const selectItems = () =>
   createSelector(selectState, state => state.get('items').toJS());
 
-export { selectBoardGroups, selectBoardId, selectBoardInfo, selectBoardItems };
+export { selectGroups, selectBoardId, selectInfo, selectItems };

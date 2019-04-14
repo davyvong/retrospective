@@ -12,7 +12,7 @@ import { firestore } from 'configureFirebase';
 import { COLLECTION_TYPES } from 'firebase/boards/constants';
 
 import {
-  initializeBoard as initializeBoardAction,
+  initialize as initializeAction,
   updateBoardGroup as updateBoardGroupAction,
   updateBoardInfo as updateBoardInfoAction,
   updateBoardItem as updateBoardItemAction,
@@ -20,22 +20,22 @@ import {
 } from './actions';
 
 import {
-  INITIALIZE_BOARD,
-  UPDATE_BOARD_GROUP,
-  UPDATE_BOARD_INFO,
-  UPDATE_BOARD_ITEM,
+  INITIALIZE,
+  UPDATE_GROUP,
+  UPDATE_INFO,
+  UPDATE_ITEM,
   EXECUTE_BATCH,
 } from './constants';
 
 import {
-  boardInfoListener,
-  boardGroupListener,
-  boardItemListener,
+  boardDocumentListener,
+  groupCollectionListener,
+  itemCollectionListener,
 } from './listeners';
 
 import { selectBoardId } from './selectors';
 
-export function* initializeBoard(action) {
+export function* initialize(action) {
   try {
     const { params: id } = action;
     const ref = firestore.doc(`boards/${id}`);
@@ -43,14 +43,14 @@ export function* initializeBoard(action) {
     if (!doc.exists) {
       throw new Error(`Board (${id}) does not exist.`);
     }
-    yield put(initializeBoardAction.success(id));
+    yield put(initializeAction.success(id));
     yield all([
-      fork(boardInfoListener),
-      fork(boardGroupListener),
-      fork(boardItemListener),
+      fork(boardDocumentListener),
+      fork(groupCollectionListener),
+      fork(itemCollectionListener),
     ]);
   } catch (error) {
-    yield put(initializeBoardAction.failure(error));
+    yield put(initializeAction.failure(error));
   }
 }
 
@@ -114,9 +114,9 @@ export function* executeBatch(action) {
 }
 
 export default function* saga() {
-  yield takeLatest(INITIALIZE_BOARD.REQUEST, initializeBoard);
-  yield takeEvery(UPDATE_BOARD_GROUP.REQUEST, updateBoardGroup);
-  yield takeEvery(UPDATE_BOARD_INFO.REQUEST, updateBoardInfo);
-  yield takeEvery(UPDATE_BOARD_ITEM.REQUEST, updateBoardItem);
+  yield takeLatest(INITIALIZE.REQUEST, initialize);
+  yield takeEvery(UPDATE_GROUP.REQUEST, updateBoardGroup);
+  yield takeEvery(UPDATE_INFO.REQUEST, updateBoardInfo);
+  yield takeEvery(UPDATE_ITEM.REQUEST, updateBoardItem);
   yield takeEvery(EXECUTE_BATCH.REQUEST, executeBatch);
 }
