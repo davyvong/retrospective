@@ -1,10 +1,12 @@
 import styled from 'styled-components';
 
 const Component = styled.i.attrs({ className: 'material-icons' })`
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 
   &:hover {
+    background-color: #00000010;
+    border-radius: 2rem;
     color: ${props => props.hover};
     cursor: pointer;
   }
