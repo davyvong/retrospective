@@ -17,7 +17,7 @@ import DeleteButton from './DeleteButton';
 import Footer from './Footer';
 import Icon from './Icon';
 import Message from './Message';
-import Vote from './Vote';
+import VoteWrapper from './VoteWrapper';
 import Wrapper from './Wrapper';
 
 class Component extends React.PureComponent {
@@ -90,7 +90,7 @@ class Component extends React.PureComponent {
         color={node.color || parent.color || BOARD_ITEM_COLORS.GREY}
         shadow={showShadow}
       >
-        <Vote>
+        <VoteWrapper>
           <Icon hover={COLORS.RED} onClick={this.onUpvote}>
             keyboard_arrow_up
           </Icon>
@@ -98,7 +98,7 @@ class Component extends React.PureComponent {
           <Icon hover={COLORS.BLUE} onClick={this.onDownvote}>
             keyboard_arrow_down
           </Icon>
-        </Vote>
+        </VoteWrapper>
         <Content>
           <Message
             onChange={this.onChange}

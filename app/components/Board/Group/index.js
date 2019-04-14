@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { TwitterPicker } from 'react-color';
 import uuidv4 from 'uuid/v4';
 
 import { BOARD_ITEM_COLORS } from 'constants/colors';
@@ -19,6 +20,8 @@ import { constructDoc } from 'firebase/helpers';
 import { isGUID, isType } from 'utils/validators';
 
 import AddButton from './AddButton';
+import ColorButton from './ColorButton';
+import ColorWrapper from './ColorWrapper';
 import CreateButton from './CreateButton';
 import DeleteButton from './DeleteButton';
 import Header from './Header';
@@ -142,6 +145,10 @@ class Component extends React.PureComponent {
     });
   };
 
+  updateColor = color => {
+    this.props.updateGroup(constructDoc(this.props.id, { color: color.hex }));
+  };
+
   render() {
     const { createMode, child, items, name } = this.state;
     const { id, node, renderDraftItem, renderItem } = this.props;
@@ -153,6 +160,15 @@ class Component extends React.PureComponent {
             placeholder="Type a column name"
             value={name}
           />
+          <ColorWrapper>
+            <ColorButton>color_lens</ColorButton>
+            <TwitterPicker
+              color={node.color}
+              colors={BOARD_ITEM_COLORS}
+              onChangeComplete={this.updateColor}
+              triangle="top-right"
+            />
+          </ColorWrapper>
           <AddButton onClick={this.onAdd}>add</AddButton>
           <DeleteButton onClick={this.onDelete}>delete</DeleteButton>
         </Header>
