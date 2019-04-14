@@ -40,27 +40,21 @@ class Component extends React.PureComponent {
 
   componentWillReceiveProps(newProps) {
     const state = {};
-    const { node, items } = newProps;
-    if (isGUID(node.child) && this.state.child !== node.child) {
-      state.child = node.child;
+    if (
+      isGUID(newProps.node.child) &&
+      this.state.child !== newProps.node.child
+    ) {
+      state.child = newProps.node.child;
     }
     if (
-      isType(node.name, 'String') &&
-      this.state.name !== node.name &&
+      isType(newProps.node.name, 'String') &&
+      this.state.name !== newProps.node.name &&
       !this.updateTimeout
     ) {
-      state.name = node.name;
+      state.name = newProps.node.name;
     }
-    if (isType(items, 'Object')) {
-      state.items = this.state.items;
-      Object.keys(items).forEach(key => {
-        if (
-          !isType(state.items[key], 'Object') ||
-          items[key].dateModified > state.items[key].dataModified
-        ) {
-          state.items[key] = items[key];
-        }
-      });
+    if (isType(newProps.items, 'Object')) {
+      state.items = newProps.items;
     }
     this.setState(state);
   }

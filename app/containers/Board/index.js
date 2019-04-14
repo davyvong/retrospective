@@ -27,6 +27,7 @@ import { selectUID } from 'containers/AuthProvider/selectors';
 
 import { renderListV1 } from 'firebase/core';
 
+import deepClone from 'utils/deepClone';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 import { isType } from 'utils/validators';
@@ -53,7 +54,7 @@ class Component extends React.PureComponent {
   };
 
   filterCollection = (collection, key, value) => {
-    const filteredCollection = Object.assign({}, collection);
+    const filteredCollection = deepClone(collection);
     Object.keys(collection).forEach(id => {
       if (filteredCollection[id][key] !== value) {
         delete filteredCollection[id];

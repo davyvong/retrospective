@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import deepClone from 'utils/deepClone';
 import { isDocument, isGUID, isType } from 'utils/validators';
 
@@ -9,10 +11,15 @@ import {
 
 export function renderListV1(map, child, renderer) {
   const list = [];
+  let count = 0;
   let current = child;
   while (isGUID(current) && isType(map[current], 'Object')) {
     list.push(current);
     current = map[current].next;
+    // eslint-disable-next-line no-plusplus
+    if (count++ > 1000) {
+      return null;
+    }
   }
   return list.map(renderer);
 }
@@ -133,7 +140,7 @@ export function reorderNodeV2(node, collection, destination, append = true) {
   const state = {};
   const updateState = (nodeId, nodeChanges = {}, nodeCollection) => {
     const prevState = state[nodeId] || {};
-    state[nodeId] = Object.assign(
+    state[nodeId] = merge(
       prevState,
       constructDoc(nodeId, nodeChanges, nodeCollection),
     );
@@ -164,13 +171,13 @@ export function reorderNodeV2(node, collection, destination, append = true) {
       : (state[destination.id] && state[destination.id].data.prev) ||
         destination.data.prev;
   }
-  updateState(node.id, { next, prev }, collection);
   if (isGUID(next)) {
     updateState(next, { prev: node.id }, collection);
   }
   if (isGUID(prev)) {
     updateState(prev, { next: node.id }, collection);
   }
+  updateState(node.id, { next, prev }, collection);
   if (!isDocument(destination) || (!isGUID(prev) && !append)) {
     updateState(
       node.data.parent,
