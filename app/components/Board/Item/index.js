@@ -65,16 +65,43 @@ class Component extends React.PureComponent {
 
   onDownvote = event => {
     event.preventDefault();
-    this.props.updateItem(
-      constructDoc(this.props.id, { votes: this.props.node.votes - 1 }),
-    );
+    this.onVote('-');
   };
 
   onUpvote = event => {
     event.preventDefault();
-    this.props.updateItem(
-      constructDoc(this.props.id, { votes: this.props.node.votes + 1 }),
-    );
+    this.onVote('+');
+  };
+
+  onVote = direction => {
+    let change = 0;
+    if (direction === '+') {
+      change = 1;
+    }
+    if (direction === '-') {
+      change = -1;
+    }
+    if (
+      this.props.remainingVotes < 0 ||
+      (this.props.remainingVotes === 0 &&
+        Math.abs(this.props.userVotes + change) >
+          Math.abs(this.props.userVotes))
+    ) {
+      return;
+    }
+    const queue = [
+      constructDoc(
+        this.props.userId,
+        { [this.props.id]: this.props.userVotes + change },
+        COLLECTION_TYPES.VOTES,
+      ),
+      constructDoc(
+        this.props.id,
+        { votes: this.props.node.votes + change },
+        COLLECTION_TYPES.ITEMS,
+      ),
+    ];
+    this.props.executeBatch(queue);
   };
 
   openModal = event => {
@@ -83,12 +110,12 @@ class Component extends React.PureComponent {
   };
 
   render() {
-    const { node, parent, showPopup, showShadow } = this.props;
+    const { node, parent, showPopup, userVotes } = this.props;
     const { message } = this.state;
     return (
       <Wrapper
         color={node.color || parent.color || ITEM_COLORS.GREY}
-        shadow={showShadow}
+        shadow={!showPopup}
       >
         <VoteWrapper>
           <Icon hover={COLORS.RED} onClick={this.onUpvote}>
@@ -106,8 +133,9 @@ class Component extends React.PureComponent {
             value={message}
           />
           <Footer>
+            <Button>You voted {userVotes}</Button>
             <Button onClick={this.openModal}>
-              {node.comments === 0 ? 'No' : node.comments} Comment
+              {node.comments === 0 ? 'No' : node.comments} comment
               {node.comments !== 1 && 's'}
             </Button>
           </Footer>
@@ -128,9 +156,10 @@ Component.defaultProps = {
   openModal: () => {},
   node: {},
   parent: {},
+  remainingVotes: 0,
   showPopup: true,
-  showShadow: false,
   updateItem: () => {},
+  userVotes: 0,
 };
 
 Component.propTypes = {
@@ -140,9 +169,11 @@ Component.propTypes = {
   openModal: PropTypes.func,
   node: PropTypes.object,
   parent: PropTypes.object,
+  remainingVotes: PropTypes.number,
   showPopup: PropTypes.bool,
-  showShadow: PropTypes.bool,
   updateItem: PropTypes.func,
+  userId: PropTypes.string.isRequired,
+  userVotes: PropTypes.number,
 };
 
 export default Component;

@@ -3,6 +3,7 @@ export const COLLECTION_TYPES = {
   COMMENTS: 'comments',
   GROUPS: 'groups',
   ITEMS: 'items',
+  VOTES: 'votes',
 };
 
 export const COLLECTION_MAP = {
@@ -14,5 +15,8 @@ export const COLLECTION_MAP = {
   },
   [COLLECTION_TYPES.ITEMS]: {
     parent: COLLECTION_TYPES.GROUPS,
+  },
+  [COLLECTION_TYPES.VOTES]: {
+    parent: COLLECTION_TYPES.ITEMS,
   },
 };

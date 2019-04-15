@@ -1,8 +1,15 @@
 import { call, put, select, take } from 'redux-saga/effects';
 
+import { selectUID } from 'containers/AuthProvider/selectors';
+
 import { createDocumentChannel, createCollectionChannel } from './channels';
 
-import { onBoardSnapshot, onGroupSnapshot, onItemSnapshot } from './actions';
+import {
+  onBoardSnapshot,
+  onGroupSnapshot,
+  onItemSnapshot,
+  onVoteSnapshot,
+} from './actions';
 
 import { selectBoardId } from './selectors';
 
@@ -47,5 +54,16 @@ export function* itemCollectionListener() {
     createCollectionChannel,
     `boards/${id}/items`,
     onItemSnapshot,
+  );
+}
+
+export function* voteDocumentListener() {
+  const id = yield select(selectBoardId());
+  const uid = yield select(selectUID());
+  yield call(
+    createListener,
+    createDocumentChannel,
+    `boards/${id}/votes/${uid}`,
+    onVoteSnapshot,
   );
 }

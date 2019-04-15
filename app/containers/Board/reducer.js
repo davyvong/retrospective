@@ -1,11 +1,12 @@
 import { fromJS } from 'immutable';
 
-import { isGUID, isType } from 'utils/validators';
+import { isAuthUID, isGUID, isType } from 'utils/validators';
 
 import {
   BOARD_SNAPSHOT,
   GROUP_SNAPSHOT,
   ITEM_SNAPSHOT,
+  VOTE_SNAPSHOT,
   INITIALIZE,
 } from './constants';
 
@@ -14,6 +15,7 @@ export const initialState = fromJS({
   info: {},
   items: {},
   groups: {},
+  votes: {},
 });
 
 function reducer(state = initialState, action) {
@@ -26,6 +28,8 @@ function reducer(state = initialState, action) {
       return onGroupSnapshot(state, action);
     case ITEM_SNAPSHOT:
       return onItemSnapshot(state, action);
+    case VOTE_SNAPSHOT:
+      return onVoteSnapshot(state, action);
     default:
       return state;
   }
@@ -74,6 +78,16 @@ function onItemSnapshot(state, action) {
       if (doc.change === 'removed') {
         return state.set('items', state.get('items').delete(doc.id));
       }
+    }
+  }
+  return state;
+}
+
+function onVoteSnapshot(state, action) {
+  if (isType(action.params, 'Object')) {
+    const { params: doc } = action;
+    if (isType(doc.data, 'Object') && isAuthUID(doc.id)) {
+      return state.set('votes', fromJS(doc.data));
     }
   }
   return state;

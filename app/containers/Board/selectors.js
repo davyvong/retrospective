@@ -14,4 +14,7 @@ const selectInfo = () =>
 const selectItems = () =>
   createSelector(selectState, state => state.get('items').toJS());
 
-export { selectGroups, selectBoardId, selectInfo, selectItems };
+const selectVotes = () =>
+  createSelector(selectState, state => state.get('votes').toJS());
+
+export { selectGroups, selectBoardId, selectInfo, selectItems, selectVotes };

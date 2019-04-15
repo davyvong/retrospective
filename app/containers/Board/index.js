@@ -11,9 +11,11 @@ import Container from 'components/Board/Container';
 import Group from 'components/Board/Group';
 import Item from 'components/Board/Item';
 import DraftItem from 'components/Board/DraftItem';
+import Setting from 'components/Board/Setting';
 import Subtitle from 'components/Board/Subtitle';
 import Title from 'components/Board/Title';
 import Columns from 'components/Bulma/Columns';
+import Row from 'components/Bulma/Row';
 import Section from 'components/Bulma/Section';
 import FullScreen from 'components/FullScreen';
 import ModalContainer from 'components/Modal/Container';
@@ -26,11 +28,12 @@ import {
 import { selectUID } from 'containers/AuthProvider/selectors';
 
 import { renderListV1 } from 'firebase/core';
+import { constructDoc } from 'firebase/helpers';
 
 import deepClone from 'utils/deepClone';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
-import { isType } from 'utils/validators';
+import { isGUID, isType } from 'utils/validators';
 
 import {
   executeBatch as executeBatchAction,
@@ -42,7 +45,12 @@ import {
 import messages from './messages';
 import reducer from './reducer';
 import saga from './saga';
-import { selectGroups, selectInfo, selectItems } from './selectors';
+import {
+  selectGroups,
+  selectInfo,
+  selectItems,
+  selectVotes,
+} from './selectors';
 
 class Component extends React.PureComponent {
   componentDidMount() {
@@ -51,6 +59,16 @@ class Component extends React.PureComponent {
 
   openModal = id => {
     this.props.openModal({ content: this.renderModalItem(id) });
+  };
+
+  calculateRemainingVotes = () => {
+    const votes = Object.keys(this.props.votes);
+    const userVotes = votes.filter(id => isGUID(id));
+    const voteCount = userVotes.reduce(
+      (acc, id) => acc + Math.abs(this.props.votes[id]),
+      0,
+    );
+    return this.props.info.voteLimit - voteCount;
   };
 
   filterCollection = (collection, key, value) => {
@@ -101,6 +119,7 @@ class Component extends React.PureComponent {
 
   renderModalItem = id => {
     const node = this.props.items[id];
+    const userVotes = this.props.votes[id] || 0;
     return (
       <ModalContainer>
         <Item
@@ -108,9 +127,11 @@ class Component extends React.PureComponent {
           id={id}
           node={node}
           parent={this.props.groups[node.parent]}
+          remainingVotes={this.calculateRemainingVotes()}
           showPopup={false}
-          showShadow
           updateItem={this.props.updateItem}
+          userId={this.props.uid}
+          userVotes={userVotes}
         />
       </ModalContainer>
     );
@@ -121,6 +142,7 @@ class Component extends React.PureComponent {
     if (!node) {
       return null;
     }
+    const userVotes = this.props.votes[id] || 0;
     return (
       <Draggable draggableId={id} key={id} index={index}>
         {provided => (
@@ -135,12 +157,24 @@ class Component extends React.PureComponent {
               node={node}
               openModal={this.openModal}
               parent={this.props.groups[node.parent]}
+              remainingVotes={this.calculateRemainingVotes()}
               updateItem={this.props.updateItem}
+              userId={this.props.uid}
+              userVotes={userVotes}
             />
           </div>
         )}
       </Draggable>
     );
+  };
+
+  updateVotesPerUser = event => {
+    event.preventDefault();
+    if (!Number.isNaN(event.target.value)) {
+      this.props.updateBoard(
+        constructDoc(undefined, { voteLimit: event.target.value }),
+      );
+    }
   };
 
   render() {
@@ -155,7 +189,7 @@ class Component extends React.PureComponent {
     const { groups, info, intl } = this.props;
     return (
       <div>
-        <Section style={{ paddingBottom: 0 }}>
+        <Section style={{ paddingBottom: '1rem' }}>
           <Container>
             <Title
               placeholder={intl.formatMessage(messages.title)}
@@ -167,6 +201,18 @@ class Component extends React.PureComponent {
               updateBoard={this.props.updateBoard}
               value={subtitle}
             />
+            <Row>
+              <Setting
+                onChange={this.updateVotesPerUser}
+                prefix="Votes per user:"
+                value={info.voteLimit}
+              />
+              <Setting
+                disabled
+                prefix="Votes remaining:"
+                value={this.calculateRemainingVotes()}
+              />
+            </Row>
           </Container>
         </Section>
         <Section style={{ paddingTop: 0 }}>
@@ -185,6 +231,7 @@ Component.defaultProps = {
   groups: {},
   info: {},
   items: {},
+  votes: {},
 };
 
 Component.propTypes = {
@@ -198,6 +245,7 @@ Component.propTypes = {
   updateBoard: PropTypes.func,
   updateGroup: PropTypes.func,
   updateItem: PropTypes.func,
+  votes: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -205,6 +253,7 @@ const mapStateToProps = createStructuredSelector({
   info: selectInfo(),
   items: selectItems(),
   uid: selectUID(),
+  votes: selectVotes(),
 });
 
 export const mapDispatchToProps = dispatch => ({
