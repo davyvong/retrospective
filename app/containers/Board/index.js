@@ -55,10 +55,12 @@ class Component extends React.PureComponent {
   calculateRemainingVotes = () => {
     const votes = Object.keys(this.props.votes);
     const userVotes = votes.filter(id => isGUID(id));
-    const voteCount = userVotes.reduce(
-      (acc, id) => acc + Math.abs(this.props.votes[id]),
-      0,
-    );
+    const voteCount = userVotes.reduce((acc, id) => {
+      if (isType(this.props.items[id], 'Object')) {
+        return acc + Math.abs(this.props.votes[id]);
+      }
+      return acc;
+    }, 0);
     return this.props.info.voteLimit - voteCount;
   };
 
