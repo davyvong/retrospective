@@ -133,7 +133,13 @@ class Component extends React.PureComponent {
             value={message}
           />
           <Footer>
-            <Button>You voted {userVotes}</Button>
+            {userVotes !== 0 && (
+              <Button>
+                {userVotes > 0 && '+'}
+                {userVotes} Vote
+                {userVotes !== 1 && 's'}
+              </Button>
+            )}
             <Button onClick={this.openModal}>
               {node.comments === 0 ? 'No' : node.comments} comment
               {node.comments !== 1 && 's'}
