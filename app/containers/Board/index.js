@@ -18,13 +18,8 @@ import Columns from 'components/Bulma/Columns';
 import Row from 'components/Bulma/Row';
 import Section from 'components/Bulma/Section';
 import FullScreen from 'components/FullScreen';
-import ModalContainer from 'components/Modal/Container';
 import Spinner from 'components/Spinner';
 
-import {
-  closeModal as closeModalAction,
-  openModal as openModalAction,
-} from 'containers/Modal/actions';
 import { selectUID } from 'containers/AuthProvider/selectors';
 
 import { renderListV1 } from 'firebase/core';
@@ -56,10 +51,6 @@ class Component extends React.PureComponent {
   componentDidMount() {
     this.props.initialize(this.props.match.params.boardId);
   }
-
-  openModal = id => {
-    this.props.openModal({ content: this.renderModalItem(id) });
-  };
 
   calculateRemainingVotes = () => {
     const votes = Object.keys(this.props.votes);
@@ -100,13 +91,13 @@ class Component extends React.PureComponent {
   );
 
   renderGroup = id => {
-    const filteredItems = this.filterCollection(this.props.items, 'parent', id);
+    const items = this.filterCollection(this.props.items, 'parent', id);
     return (
       <Group
         createItem={this.createItem}
         executeBatch={this.props.executeBatch}
         id={id}
-        items={filteredItems}
+        items={items}
         key={id}
         node={this.props.groups[id]}
         renderDraftItem={this.renderDraftItem}
@@ -114,26 +105,6 @@ class Component extends React.PureComponent {
         updateGroup={this.props.updateGroup}
         userId={this.props.uid}
       />
-    );
-  };
-
-  renderModalItem = id => {
-    const node = this.props.items[id];
-    const userVotes = this.props.votes[id] || 0;
-    return (
-      <ModalContainer>
-        <Item
-          closeModal={this.props.closeModal}
-          id={id}
-          node={node}
-          parent={this.props.groups[node.parent]}
-          remainingVotes={this.calculateRemainingVotes()}
-          showPopup={false}
-          updateItem={this.props.updateItem}
-          userId={this.props.uid}
-          userVotes={userVotes}
-        />
-      </ModalContainer>
     );
   };
 
@@ -155,7 +126,6 @@ class Component extends React.PureComponent {
               executeBatch={this.props.executeBatch}
               id={id}
               node={node}
-              openModal={this.openModal}
               parent={this.props.groups[node.parent]}
               remainingVotes={this.calculateRemainingVotes()}
               updateItem={this.props.updateItem}
@@ -235,13 +205,11 @@ Component.defaultProps = {
 };
 
 Component.propTypes = {
-  closeModal: PropTypes.func,
   executeBatch: PropTypes.func,
   groups: PropTypes.object,
   info: PropTypes.object,
   intl: intlShape.isRequired,
   items: PropTypes.object,
-  openModal: PropTypes.func,
   updateBoard: PropTypes.func,
   updateGroup: PropTypes.func,
   updateItem: PropTypes.func,
@@ -257,10 +225,8 @@ const mapStateToProps = createStructuredSelector({
 });
 
 export const mapDispatchToProps = dispatch => ({
-  closeModal: params => dispatch(closeModalAction(params)),
   executeBatch: params => dispatch(executeBatchAction.request(params)),
   initialize: params => dispatch(initializeAction.request(params)),
-  openModal: params => dispatch(openModalAction(params)),
   updateBoard: params => dispatch(updateBoardAction.request(params)),
   updateGroup: params => dispatch(updateGroupAction.request(params)),
   updateItem: params => dispatch(updateItemAction.request(params)),

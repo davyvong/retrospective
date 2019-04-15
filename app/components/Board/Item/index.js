@@ -10,11 +10,10 @@ import { constructDoc } from 'firebase/helpers';
 
 import { isType } from 'utils/validators';
 
-import Button from './Button';
-import CloseButton from './CloseButton';
 import Content from './Content';
 import DeleteButton from './DeleteButton';
 import Footer from './Footer';
+import FooterButton from './FooterButton';
 import Icon from './Icon';
 import Message from './Message';
 import VoteWrapper from './VoteWrapper';
@@ -104,19 +103,11 @@ class Component extends React.PureComponent {
     this.props.executeBatch(queue);
   };
 
-  openModal = event => {
-    event.preventDefault();
-    this.props.openModal(this.props.id);
-  };
-
   render() {
-    const { node, parent, showPopup, userVotes } = this.props;
+    const { node, parent, userVotes } = this.props;
     const { message } = this.state;
     return (
-      <Wrapper
-        color={node.color || parent.color || ITEM_COLORS.GREY}
-        shadow={!showPopup}
-      >
+      <Wrapper color={node.color || parent.color || ITEM_COLORS.GREY}>
         <VoteWrapper>
           <Icon hover={COLORS.RED} onClick={this.onUpvote}>
             keyboard_arrow_up
@@ -134,49 +125,39 @@ class Component extends React.PureComponent {
           />
           <Footer>
             {userVotes !== 0 && (
-              <Button>
+              <FooterButton>
                 {userVotes > 0 && '+'}
                 {userVotes} Vote
                 {userVotes !== 1 && 's'}
-              </Button>
+              </FooterButton>
             )}
-            <Button onClick={this.openModal}>
+            <FooterButton>
               {node.comments === 0 ? 'No' : node.comments} comment
               {node.comments !== 1 && 's'}
-            </Button>
+            </FooterButton>
           </Footer>
         </Content>
-        {showPopup ? (
-          <DeleteButton onClick={this.onDelete}>delete</DeleteButton>
-        ) : (
-          <CloseButton onClick={this.props.closeModal}>close</CloseButton>
-        )}
+        <DeleteButton onClick={this.onDelete}>delete</DeleteButton>
       </Wrapper>
     );
   }
 }
 
 Component.defaultProps = {
-  closeModal: () => {},
   executeBatch: () => {},
-  openModal: () => {},
   node: {},
   parent: {},
   remainingVotes: 0,
-  showPopup: true,
   updateItem: () => {},
   userVotes: 0,
 };
 
 Component.propTypes = {
-  closeModal: PropTypes.func,
   executeBatch: PropTypes.func,
   id: PropTypes.string.isRequired,
-  openModal: PropTypes.func,
   node: PropTypes.object,
   parent: PropTypes.object,
   remainingVotes: PropTypes.number,
-  showPopup: PropTypes.bool,
   updateItem: PropTypes.func,
   userId: PropTypes.string.isRequired,
   userVotes: PropTypes.number,
