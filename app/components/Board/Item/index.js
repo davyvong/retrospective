@@ -124,17 +124,16 @@ class Component extends React.PureComponent {
             value={message}
           />
           <Footer>
-            {userVotes !== 0 && (
-              <FooterButton>
-                {userVotes > 0 && '+'}
-                {userVotes} Vote
-                {userVotes !== 1 && 's'}
-              </FooterButton>
-            )}
             <FooterButton>
               {node.comments === 0 ? 'No' : node.comments} comment
               {node.comments !== 1 && 's'}
             </FooterButton>
+            {userVotes !== 0 && (
+              <FooterButton>
+                {userVotes > 0 && '+'}
+                {userVotes} Contribution
+              </FooterButton>
+            )}
           </Footer>
         </Content>
         <DeleteButton onClick={this.onDelete}>delete</DeleteButton>

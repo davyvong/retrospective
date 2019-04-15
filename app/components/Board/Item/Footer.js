@@ -8,7 +8,7 @@ const Component = styled.div`
   position: relative;
 
   & > div:not(:last-child) {
-    margin-right: 0.75rem;
+    margin-right: 0.5rem;
   }
 `;
 
