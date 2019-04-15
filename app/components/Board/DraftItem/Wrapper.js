@@ -7,7 +7,7 @@ const Component = styled.div`
   border-radius: 6px;
   display: flex;
   flex-direction: column;
-  margin: 0.75rem 0 1.5rem 0;
+  margin: 0.75rem 0 1rem 0;
   padding: 1.25rem 1.5rem 1rem 1.5rem;
   width: 100%;
 
