@@ -86,6 +86,7 @@ class Component extends React.PureComponent {
       executeBatch={this.props.executeBatch}
       parent={this.props.groups[parentId]}
       parentId={parentId}
+      placeholder={this.props.intl.formatMessage(messages.itemMessage)}
       userId={this.props.uid}
     />
   );
@@ -100,6 +101,7 @@ class Component extends React.PureComponent {
         items={items}
         key={id}
         node={this.props.groups[id]}
+        placeholder={this.props.intl.formatMessage(messages.groupName)}
         renderDraftItem={this.renderDraftItem}
         renderItem={this.renderItem}
         updateGroup={this.props.updateGroup}
@@ -127,6 +129,7 @@ class Component extends React.PureComponent {
               id={id}
               node={node}
               parent={this.props.groups[node.parent]}
+              placeholder={this.props.intl.formatMessage(messages.itemMessage)}
               remainingVotes={this.calculateRemainingVotes()}
               updateItem={this.props.updateItem}
               userId={this.props.uid}

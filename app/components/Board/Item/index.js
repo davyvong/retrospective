@@ -104,7 +104,7 @@ class Component extends React.PureComponent {
   };
 
   render() {
-    const { node, parent, userVotes } = this.props;
+    const { node, parent, placeholder, userVotes } = this.props;
     const { message } = this.state;
     return (
       <Wrapper color={node.color || parent.color || ITEM_COLORS.GREY}>
@@ -120,7 +120,7 @@ class Component extends React.PureComponent {
         <Content>
           <Message
             onChange={this.onChange}
-            placeholder="Type a message here"
+            placeholder={placeholder}
             value={message}
           />
           <Footer>
@@ -147,6 +147,7 @@ Component.defaultProps = {
   executeBatch: () => {},
   node: {},
   parent: {},
+  placeholder: '',
   remainingVotes: 0,
   updateItem: () => {},
   userVotes: 0,
@@ -157,6 +158,7 @@ Component.propTypes = {
   id: PropTypes.string.isRequired,
   node: PropTypes.object,
   parent: PropTypes.object,
+  placeholder: PropTypes.string,
   remainingVotes: PropTypes.number,
   updateItem: PropTypes.func,
   userId: PropTypes.string.isRequired,

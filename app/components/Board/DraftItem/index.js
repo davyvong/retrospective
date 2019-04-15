@@ -60,7 +60,7 @@ class Component extends React.PureComponent {
       <Wrapper>
         <Message
           onChange={this.updateMessage}
-          placeholder="Type a message here"
+          placeholder={this.props.placeholder}
           value={message}
         />
         <Footer>
@@ -78,6 +78,7 @@ Component.defaultProps = {
   disableCreateMode: () => {},
   executeBatch: () => {},
   parent: {},
+  placeholder: '',
 };
 
 Component.propTypes = {
@@ -85,6 +86,7 @@ Component.propTypes = {
   executeBatch: PropTypes.func,
   parent: PropTypes.object,
   parentId: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
   userId: PropTypes.string.isRequired,
 };
 

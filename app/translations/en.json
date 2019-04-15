@@ -1,4 +1,6 @@
 {
+  "app.containers.Board.groupName": "Type a column name",
+  "app.containers.Board.itemMessage": "Type a message here",
   "app.containers.Board.subtitle": "Description",
   "app.containers.Board.title": "Board Name",
   "app.containers.NotFound.description": "The page you requested does not exist.",

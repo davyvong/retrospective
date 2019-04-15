@@ -158,7 +158,7 @@ class Component extends React.PureComponent {
         <Header>
           <Name
             onChange={this.onChange}
-            placeholder="Type a column name"
+            placeholder={this.props.placeholder}
             value={name}
           />
           <ColorWrapper>
@@ -203,6 +203,7 @@ Component.defaultProps = {
   executeBatch: () => {},
   items: {},
   node: {},
+  placeholder: '',
   renderDraftItem: () => null,
   renderItem: () => null,
   updateGroup: () => {},
@@ -214,6 +215,7 @@ Component.propTypes = {
   id: PropTypes.string.isRequired,
   items: PropTypes.object,
   node: PropTypes.object,
+  placeholder: PropTypes.string,
   renderDraftItem: PropTypes.func,
   renderItem: PropTypes.func,
   updateGroup: PropTypes.func,
