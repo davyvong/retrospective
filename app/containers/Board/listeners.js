@@ -6,6 +6,7 @@ import { createDocumentChannel, createCollectionChannel } from './channels';
 
 import {
   onBoardSnapshot,
+  onCommentSnapshot,
   onGroupSnapshot,
   onItemSnapshot,
   onVoteSnapshot,
@@ -34,6 +35,16 @@ export function* boardDocumentListener() {
     createDocumentChannel,
     `boards/${id}`,
     onBoardSnapshot,
+  );
+}
+
+export function* commentCollectionListener() {
+  const id = yield select(selectBoardId());
+  yield call(
+    createListener,
+    createCollectionChannel,
+    `boards/${id}/comments`,
+    onCommentSnapshot,
   );
 }
 

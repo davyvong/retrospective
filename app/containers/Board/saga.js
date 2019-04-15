@@ -29,6 +29,7 @@ import {
 
 import {
   boardDocumentListener,
+  commentCollectionListener,
   groupCollectionListener,
   itemCollectionListener,
   voteDocumentListener,
@@ -47,6 +48,7 @@ export function* initialize(action) {
     yield put(initializeAction.success(id));
     yield all([
       fork(boardDocumentListener),
+      fork(commentCollectionListener),
       fork(groupCollectionListener),
       fork(itemCollectionListener),
       fork(voteDocumentListener),

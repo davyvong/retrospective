@@ -4,6 +4,7 @@ import { isAuthUID, isGUID, isType } from 'utils/validators';
 
 import {
   BOARD_SNAPSHOT,
+  COMMENT_SNAPSHOT,
   GROUP_SNAPSHOT,
   ITEM_SNAPSHOT,
   VOTE_SNAPSHOT,
@@ -11,10 +12,11 @@ import {
 } from './constants';
 
 export const initialState = fromJS({
+  comments: {},
+  groups: {},
   id: '',
   info: {},
   items: {},
-  groups: {},
   votes: {},
 });
 
@@ -24,6 +26,8 @@ function reducer(state = initialState, action) {
       return initialize(state, action);
     case BOARD_SNAPSHOT:
       return onBoardSnapshot(state, action);
+    case COMMENT_SNAPSHOT:
+      return onCommentSnapshot(state, action);
     case GROUP_SNAPSHOT:
       return onGroupSnapshot(state, action);
     case ITEM_SNAPSHOT:
@@ -62,6 +66,21 @@ function onGroupSnapshot(state, action) {
       }
       if (doc.change === 'removed') {
         return state.set('groups', state.get('groups').delete(doc.id));
+      }
+    }
+  }
+  return state;
+}
+
+function onCommentSnapshot(state, action) {
+  if (isType(action.params, 'Object')) {
+    const { params: doc } = action;
+    if (isType(doc.data, 'Object') && isGUID(doc.id)) {
+      if (doc.change === 'added' || doc.change === 'modified') {
+        return state.setIn(['comments', doc.id], doc.data);
+      }
+      if (doc.change === 'removed') {
+        return state.set('comments', state.get('comments').delete(doc.id));
       }
     }
   }
