@@ -34,6 +34,7 @@ import {
   executeBatch as executeBatchAction,
   initialize as initializeAction,
   updateBoard as updateBoardAction,
+  updateComment as updateCommentAction,
   updateGroup as updateGroupAction,
   updateItem as updateItemAction,
 } from './actions';
@@ -41,6 +42,7 @@ import messages from './messages';
 import reducer from './reducer';
 import saga from './saga';
 import {
+  selectComments,
   selectGroups,
   selectInfo,
   selectItems,
@@ -143,12 +145,28 @@ class Component extends React.PureComponent {
     );
   };
 
-  updateVotesPerUser = event => {
-    event.preventDefault();
-    if (!Number.isNaN(event.target.value)) {
+  updateSubtitle = update => {
+    if (isType(update, 'Object') && isType(update.value, 'String')) {
       this.props.updateBoard(
-        constructDoc(undefined, { voteLimit: event.target.value }),
+        constructDoc(undefined, { subtitle: update.value }),
       );
+    }
+  };
+
+  updateTitle = update => {
+    if (isType(update, 'Object') && isType(update.value, 'String')) {
+      this.props.updateBoard(constructDoc(undefined, { title: update.value }));
+    }
+  };
+
+  updateVotesPerUser = update => {
+    if (isType(update, 'Object')) {
+      const updateInt = parseInt(update.value, 10);
+      if (!Number.isNaN(updateInt)) {
+        this.props.updateBoard(
+          constructDoc(undefined, { voteLimit: updateInt }),
+        );
+      }
     }
   };
 
@@ -168,18 +186,18 @@ class Component extends React.PureComponent {
           <Container>
             <Title
               placeholder={intl.formatMessage(messages.title)}
-              updateBoard={this.props.updateBoard}
+              update={this.updateTitle}
               value={title}
             />
             <Subtitle
               placeholder={intl.formatMessage(messages.subtitle)}
-              updateBoard={this.props.updateBoard}
+              update={this.updateSubtitle}
               value={subtitle}
             />
             <Row>
               <Setting
-                onChange={this.updateVotesPerUser}
                 prefix="Votes per user:"
+                update={this.updateVotesPerUser}
                 value={info.voteLimit}
               />
               <Setting
@@ -222,6 +240,7 @@ Component.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  comments: selectComments(),
   groups: selectGroups(),
   info: selectInfo(),
   items: selectItems(),
@@ -233,6 +252,7 @@ export const mapDispatchToProps = dispatch => ({
   executeBatch: params => dispatch(executeBatchAction.request(params)),
   initialize: params => dispatch(initializeAction.request(params)),
   updateBoard: params => dispatch(updateBoardAction.request(params)),
+  updateComment: params => dispatch(updateCommentAction.request(params)),
   updateGroup: params => dispatch(updateGroupAction.request(params)),
   updateItem: params => dispatch(updateItemAction.request(params)),
 });

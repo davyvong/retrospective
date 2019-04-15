@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import { UPDATE_DELAY } from 'constants/timings';
 
-import { constructDoc } from 'firebase/helpers';
 import { isType } from 'utils/validators';
 
 import Input from './Input';
@@ -31,9 +30,7 @@ class Component extends React.PureComponent {
     }
     this.setState({ value: event.target.value }, () => {
       this.updateTimeout = setTimeout(() => {
-        this.props.updateBoard(
-          constructDoc(undefined, { subtitle: this.state.value }),
-        );
+        this.props.update({ value: this.state.value });
         this.updateTimeout = undefined;
       }, UPDATE_DELAY);
     });
@@ -53,12 +50,12 @@ class Component extends React.PureComponent {
 }
 
 Component.defaultProps = {
-  updateBoard: () => {},
+  update: () => {},
   value: '',
 };
 
 Component.propTypes = {
-  updateBoard: PropTypes.func,
+  update: PropTypes.func,
   value: PropTypes.string,
 };
 
