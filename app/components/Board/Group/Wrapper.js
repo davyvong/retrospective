@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { BOARD_ITEM_COLORS } from 'constants/colors';
+import { ITEM_COLORS } from 'constants/colors';
 
 const Component = styled.div`
   border-radius: 6px;
@@ -28,7 +28,7 @@ const Component = styled.div`
 `;
 
 Component.defaultProps = {
-  color: BOARD_ITEM_COLORS.GREY,
+  color: ITEM_COLORS.GREY,
 };
 
 export default Component;

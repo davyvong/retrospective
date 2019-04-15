@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { BOARD_ITEM_COLORS, COLORS } from 'constants/colors';
+import { ITEM_COLORS, COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
 import { COLLECTION_TYPES } from 'firebase/constants';
@@ -87,7 +87,7 @@ class Component extends React.PureComponent {
     const { message } = this.state;
     return (
       <Wrapper
-        color={node.color || parent.color || BOARD_ITEM_COLORS.GREY}
+        color={node.color || parent.color || ITEM_COLORS.GREY}
         shadow={showShadow}
       >
         <VoteWrapper>

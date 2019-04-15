@@ -10,7 +10,7 @@ export const COLORS = {
   PINK: '#e84393',
 };
 
-export const BOARD_ITEM_COLORS = {
+export const ITEM_COLORS = {
   GREEN: '#55efc4',
   TEAL: '#81ecec',
   BLUE: '#74b9ff',

@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-import { BOARD_ITEM_COLORS } from 'constants/colors';
+import { ITEM_COLORS } from 'constants/colors';
 
 const Component = styled.div`
-  background-color: ${BOARD_ITEM_COLORS.GREY};
+  background-color: ${ITEM_COLORS.GREY};
   border-radius: 6px;
   display: flex;
   flex-direction: column;

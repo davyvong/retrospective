@@ -4,7 +4,7 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { TwitterPicker } from 'react-color';
 import uuidv4 from 'uuid/v4';
 
-import { BOARD_ITEM_COLORS } from 'constants/colors';
+import { ITEM_COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
 import { COLLECTION_TYPES } from 'firebase/constants';
@@ -90,7 +90,7 @@ class Component extends React.PureComponent {
     const newId = uuidv4();
     const queue = insertNodeV2(
       constructDoc(newId, {
-        color: BOARD_ITEM_COLORS.GREY,
+        color: ITEM_COLORS.GREY,
         createdBy: this.props.userId,
         dateCreated: new Date().getTime(),
         child: null,
@@ -152,6 +152,7 @@ class Component extends React.PureComponent {
   render() {
     const { createMode, child, items, name } = this.state;
     const { id, node, renderDraftItem, renderItem } = this.props;
+    const colors = Object.values(ITEM_COLORS);
     return (
       <Wrapper color={node.color}>
         <Header>
@@ -164,7 +165,7 @@ class Component extends React.PureComponent {
             <ColorButton>color_lens</ColorButton>
             <TwitterPicker
               color={node.color}
-              colors={BOARD_ITEM_COLORS}
+              colors={colors}
               onChangeComplete={this.updateColor}
               triangle="top-right"
             />

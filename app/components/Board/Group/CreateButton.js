@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-import { BOARD_ITEM_COLORS } from 'constants/colors';
+import { ITEM_COLORS } from 'constants/colors';
 
 const Component = styled.button`
-  background-color: ${BOARD_ITEM_COLORS.GREY};
+  background-color: ${ITEM_COLORS.GREY};
   border-radius: 6px;
   font-size: 1em;
   margin-top: 0.75rem;
