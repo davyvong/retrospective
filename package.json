@@ -27,7 +27,7 @@
     "test:watch": "cross-env NODE_ENV=test jest --watchAll",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "prettify": "prettier --write",
-    "deploy:hosting": "firebase deploy --only hosting"
+    "deploy:hosting": "npm run build && firebase deploy --only hosting"
   },
   "lint-staged": {
     "*.js": [
