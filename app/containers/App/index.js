@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import Board from 'containers/Board/Loadable';
+import Home from 'containers/Home/Loadable';
 import Modal from 'containers/Modal/Loadable';
 import NotFound from 'containers/NotFound/Loadable';
 
@@ -11,6 +12,7 @@ export default function App() {
   return (
     <div>
       <Switch>
+        <Route path="/" component={Home} />
         <Route path="/board/:boardId" component={Board} />
         <Route component={NotFound} />
       </Switch>
