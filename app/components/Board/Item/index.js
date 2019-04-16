@@ -5,13 +5,14 @@ import { ITEM_COLORS, COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
 import { COLLECTION_TYPES } from 'firebase/constants';
-import { deleteNodeV2 } from 'firebase/core';
+import { deleteNodeV2, renderListV1 } from 'firebase/core';
 import { constructDoc } from 'firebase/helpers';
 
 import { isType } from 'utils/validators';
 
 import Content from './Content';
-import DeleteButton from './DeleteButton';
+import DiscardButton from './DiscardButton';
+import DraftComment from '../DraftComment';
 import Footer from './Footer';
 import FooterButton from './FooterButton';
 import Icon from './Icon';
@@ -22,7 +23,10 @@ import Wrapper from './Wrapper';
 class Component extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = { message: '' };
+    this.state = {
+      commentMode: false,
+      message: '',
+    };
   }
 
   componentDidMount() {
@@ -38,6 +42,11 @@ class Component extends React.PureComponent {
       this.setState({ message: newProps.node.message });
     }
   }
+
+  toggleCommentMode = event => {
+    event.preventDefault();
+    this.setState(prevState => ({ commentMode: !prevState.commentMode }));
+  };
 
   onChange = event => {
     if (this.updateTimeout) {
@@ -104,8 +113,15 @@ class Component extends React.PureComponent {
   };
 
   render() {
-    const { node, parent, placeholder, userVotes } = this.props;
-    const { message } = this.state;
+    const {
+      comments,
+      node,
+      parent,
+      placeholder,
+      renderComment,
+      userVotes,
+    } = this.props;
+    const { commentMode, message } = this.state;
     return (
       <Wrapper color={node.color || parent.color || ITEM_COLORS.GREY}>
         <VoteWrapper>
@@ -124,19 +140,24 @@ class Component extends React.PureComponent {
             value={message}
           />
           <Footer>
-            <FooterButton>
+            <FooterButton onClick={this.toggleCommentMode}>
               {node.comments === 0 ? 'No' : node.comments} comment
               {node.comments !== 1 && 's'}
             </FooterButton>
             {userVotes !== 0 && (
               <FooterButton>
                 {userVotes > 0 && '+'}
-                {userVotes} Contribution
+                {userVotes} Vote
+                {Math.abs(userVotes) !== 1 && 's'}
               </FooterButton>
             )}
+            <DiscardButton onClick={this.onDelete}>Delete</DiscardButton>
           </Footer>
+          {commentMode && [
+            <DraftComment placeholder="Type a comment" />,
+            <div>{renderListV1(comments, node.child, renderComment)}</div>,
+          ]}
         </Content>
-        <DeleteButton onClick={this.onDelete}>delete</DeleteButton>
       </Wrapper>
     );
   }
@@ -144,21 +165,25 @@ class Component extends React.PureComponent {
 
 Component.defaultProps = {
   executeBatch: () => {},
+  comments: {},
   node: {},
   parent: {},
   placeholder: '',
   remainingVotes: 0,
+  renderComment: () => null,
   updateItem: () => {},
   userVotes: 0,
 };
 
 Component.propTypes = {
+  comments: PropTypes.object,
   executeBatch: PropTypes.func,
   id: PropTypes.string.isRequired,
   node: PropTypes.object,
   parent: PropTypes.object,
   placeholder: PropTypes.string,
   remainingVotes: PropTypes.number,
+  renderComment: PropTypes.func,
   updateItem: PropTypes.func,
   userId: PropTypes.string.isRequired,
   userVotes: PropTypes.number,

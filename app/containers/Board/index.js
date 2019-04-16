@@ -7,10 +7,11 @@ import { injectIntl, intlShape } from 'react-intl';
 
 import { Draggable } from 'react-beautiful-dnd';
 
+import Comment from 'components/Board/Comment';
 import Container from 'components/Board/Container';
+import DraftItem from 'components/Board/DraftItem';
 import Group from 'components/Board/Group';
 import Item from 'components/Board/Item';
-import DraftItem from 'components/Board/DraftItem';
 import Setting from 'components/Board/Setting';
 import Subtitle from 'components/Board/Subtitle';
 import Title from 'components/Board/Title';
@@ -84,6 +85,11 @@ class Component extends React.PureComponent {
       return collection[b][key] - collection[a][key];
     });
 
+  renderComment = id => {
+    console.log(id);
+    return <Comment>123</Comment>;
+  };
+
   renderDraftItem = ({ disableCreateMode, parentId }) => (
     <DraftItem
       disableCreateMode={disableCreateMode}
@@ -129,12 +135,14 @@ class Component extends React.PureComponent {
             ref={provided.innerRef}
           >
             <Item
+              comments={this.props.comments}
               executeBatch={this.props.executeBatch}
               id={id}
               node={node}
               parent={this.props.groups[node.parent]}
               placeholder={this.props.intl.formatMessage(messages.itemMessage)}
               remainingVotes={this.calculateRemainingVotes()}
+              renderComment={this.renderComment}
               updateItem={this.props.updateItem}
               userId={this.props.uid}
               userVotes={userVotes}
@@ -221,6 +229,7 @@ class Component extends React.PureComponent {
 }
 
 Component.defaultProps = {
+  comments: {},
   groups: {},
   info: {},
   items: {},
@@ -228,6 +237,7 @@ Component.defaultProps = {
 };
 
 Component.propTypes = {
+  comments: PropTypes.object,
   executeBatch: PropTypes.func,
   groups: PropTypes.object,
   info: PropTypes.object,

@@ -8,7 +8,7 @@ const Component = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0.75rem 0 1rem 0;
-  padding: 1.25rem 1.5rem 1rem 1.5rem;
+  padding: 1rem;
   width: 100%;
 
   &:hover {

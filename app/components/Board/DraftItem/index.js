@@ -8,9 +8,9 @@ import { constructDoc } from 'firebase/helpers';
 
 import { isAuthUID, isGUID, isType } from 'utils/validators';
 
-import Button from './Button';
-import CloseButton from './CloseButton';
+import DiscardButton from './DiscardButton';
 import Footer from './Footer';
+import FooterButton from './FooterButton';
 import Message from './Message';
 import Wrapper from './Wrapper';
 
@@ -64,10 +64,10 @@ class Component extends React.PureComponent {
           value={message}
         />
         <Footer>
-          <Button onClick={this.saveItem}>Save</Button>
-          <CloseButton onClick={this.props.disableCreateMode}>
+          <FooterButton onClick={this.saveItem}>Save</FooterButton>
+          <DiscardButton onClick={this.props.disableCreateMode}>
             Discard
-          </CloseButton>
+          </DiscardButton>
         </Footer>
       </Wrapper>
     );
