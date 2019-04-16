@@ -3,6 +3,7 @@ import createAsyncAction from 'utils/createAsyncAction';
 
 import {
   INITIALIZE,
+  CREATE_BOARD,
   EXECUTE_BATCH,
   BOARD_SNAPSHOT,
   COMMENT_SNAPSHOT,
@@ -17,6 +18,8 @@ import {
 } from './constants';
 
 export const initialize = createAsyncAction(INITIALIZE);
+
+export const createBoard = createAsyncAction(CREATE_BOARD);
 
 export const executeBatch = createAsyncAction(EXECUTE_BATCH);
 

@@ -7,12 +7,21 @@ import {
   takeEvery,
   takeLatest,
 } from 'redux-saga/effects';
+import uuidv4 from 'uuid/v4';
 
 import { firestore } from 'configureFirebase';
+
+import { ITEM_COLORS } from 'constants/colors';
+
+import { selectUID } from 'containers/AuthProvider/selectors';
+
 import { COLLECTION_TYPES } from 'firebase/constants';
+import { insertNodeV2 } from 'firebase/core';
+import { constructDoc } from 'firebase/helpers';
 
 import {
   initialize as initializeAction,
+  createBoard as createBoardAction,
   updateBoard as updateBoardAction,
   updateComment as updateCommentAction,
   updateGroup as updateGroupAction,
@@ -22,6 +31,7 @@ import {
 
 import {
   INITIALIZE,
+  CREATE_BOARD,
   UPDATE_BOARD,
   UPDATE_COMMENT,
   UPDATE_GROUP,
@@ -57,6 +67,46 @@ export function* initialize(action) {
     ]);
   } catch (error) {
     yield put(initializeAction.failure(error));
+  }
+}
+
+export function* createBoard() {
+  try {
+    const queue = [];
+    const timestamp = new Date().getTime();
+    const boardId = uuidv4();
+    const uid = yield select(selectUID());
+    const boardNode = constructDoc(
+      boardId,
+      {
+        child: null,
+        createdBy: uid,
+        dateCreated: timestamp,
+        subtitle: '',
+        title: '',
+        voteLimit: 10,
+      },
+      COLLECTION_TYPES.BOARDS,
+    );
+    queue.push(boardNode);
+    const groupId = uuidv4();
+    const groupNode = constructDoc(groupId, {
+      color: ITEM_COLORS.GREY,
+      createdBy: uid,
+      dateCreated: timestamp,
+      child: null,
+      name: '',
+      parent: boardId,
+    });
+    const groupBatch = insertNodeV2(
+      groupNode,
+      COLLECTION_TYPES.GROUPS,
+      constructDoc(boardNode.child, { prev: null }),
+    );
+    yield put(executeBatchAction.request([...queue, ...groupBatch]));
+    yield put(createBoardAction.success());
+  } catch (error) {
+    yield put(createBoardAction.failure(error));
   }
 }
 
@@ -143,6 +193,7 @@ export function* executeBatch(action) {
 
 export default function* saga() {
   yield takeLatest(INITIALIZE.REQUEST, initialize);
+  yield takeLatest(CREATE_BOARD.REQUEST, createBoard);
   yield takeEvery(UPDATE_BOARD.REQUEST, updateBoard);
   yield takeEvery(UPDATE_COMMENT.REQUEST, updateComment);
   yield takeEvery(UPDATE_GROUP.REQUEST, updateGroup);

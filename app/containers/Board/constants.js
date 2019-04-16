@@ -4,6 +4,8 @@ const scope = 'APP/BOARD';
 
 export const INITIALIZE = createRequestTypes(`${scope}/INITIALIZE`);
 
+export const CREATE_BOARD = createRequestTypes(`${scope}/CREATE_BOARD`);
+
 export const EXECUTE_BATCH = createRequestTypes(`${scope}/EXECUTE_BATCH`);
 
 export const BOARD_SNAPSHOT = `${scope}/BOARD_SNAPSHOT`;
