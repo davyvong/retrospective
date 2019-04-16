@@ -111,9 +111,12 @@ export function* updateItem(action) {
 export function* executeBatch(action) {
   try {
     const { params: queue } = action;
-    const boardId = yield select(selectBoardId());
+    let boardId = yield select(selectBoardId());
     const batch = yield call([firestore, firestore.batch]);
     queue.forEach(node => {
+      if (!boardId && node.collection === COLLECTION_TYPES.BOARDS) {
+        boardId = node.id;
+      }
       const ref =
         node.collection === COLLECTION_TYPES.BOARDS
           ? firestore.doc(`boards/${boardId}`)
