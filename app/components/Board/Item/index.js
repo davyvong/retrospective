@@ -158,10 +158,8 @@ class Component extends React.PureComponent {
             )}
             <DiscardButton onClick={this.onDelete}>Delete</DiscardButton>
           </Footer>
-          {commentMode && [
-            renderDraftComment({ parentId: this.props.id }),
-            renderListV1(comments, node.child, renderComment),
-          ]}
+          {commentMode && renderDraftComment({ parentId: this.props.id })}
+          {commentMode && renderListV1(comments, node.child, renderComment)}
         </Content>
       </Wrapper>
     );

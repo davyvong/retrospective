@@ -64,6 +64,13 @@ class Component extends React.PureComponent {
           constructDoc(this.props.id, this.props.node),
           COLLECTION_TYPES.COMMENTS,
         );
+        queue.push(
+          constructDoc(
+            this.props.node.parent,
+            { comments: this.props.parent.comments - 1 },
+            COLLECTION_TYPES.ITEMS,
+          ),
+        );
         this.props.executeBatch(queue);
       }, UPDATE_DELAY * 2);
     }
