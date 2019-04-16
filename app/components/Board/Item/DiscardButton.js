@@ -6,9 +6,7 @@ import FooterButton from './FooterButton';
 
 const Component = styled(FooterButton)`
   color: ${COLORS.RED};
-  position: absolute;
-  right: 0;
-  top: 0;
+  margin-left: auto;
 `;
 
 export default Component;
