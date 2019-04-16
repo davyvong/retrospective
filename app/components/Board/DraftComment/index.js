@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 const Component = styled.input`
-  background-color: #00000010;
   border-radius: 6px;
   font-size: 0.9em;
   line-height: 1.5;
@@ -9,7 +8,12 @@ const Component = styled.input`
   padding: 0.25rem 0.5rem;
 
   &:focus {
+    background-color: #00000010;
     outline: none;
+  }
+
+  &:hover {
+    background-color: #00000010;
   }
 `;
 
