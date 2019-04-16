@@ -59,7 +59,6 @@ class Component extends React.PureComponent {
       constructDoc(boardNode.child, { prev: null }),
     );
     this.props.executeBatch([...queue, ...groupBatch]);
-    window.location.replace(`/board/${boardId}`);
   };
 
   render() {

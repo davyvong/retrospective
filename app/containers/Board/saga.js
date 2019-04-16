@@ -112,6 +112,10 @@ export function* executeBatch(action) {
   try {
     const { params: queue } = action;
     let boardId = yield select(selectBoardId());
+    let redirect = null;
+    if (!boardId) {
+      redirect = () => window.location.replace(`/board/${boardId}`);
+    }
     const batch = yield call([firestore, firestore.batch]);
     queue.forEach(node => {
       if (!boardId && node.collection === COLLECTION_TYPES.BOARDS) {
@@ -128,6 +132,9 @@ export function* executeBatch(action) {
       }
     });
     yield call([batch, batch.commit]);
+    if (redirect) {
+      redirect();
+    }
     yield put(executeBatchAction.success());
   } catch (error) {
     yield put(executeBatchAction.failure(error));

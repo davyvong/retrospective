@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { injectIntl, intlShape } from 'react-intl';
+import uuidv4 from 'uuid/v4';
 
 import { Draggable } from 'react-beautiful-dnd';
 
@@ -16,15 +17,19 @@ import Item from 'components/Board/Item';
 import Setting from 'components/Board/Setting';
 import Subtitle from 'components/Board/Subtitle';
 import Title from 'components/Board/Title';
+import Button from 'components/Bulma/Button';
 import Columns from 'components/Bulma/Columns';
 import Row from 'components/Bulma/Row';
 import Section from 'components/Bulma/Section';
 import FullScreen from 'components/FullScreen';
 import Spinner from 'components/Spinner';
 
+import { ITEM_COLORS } from 'constants/colors';
+
 import { selectUID } from 'containers/AuthProvider/selectors';
 
-import { renderListV1 } from 'firebase/core';
+import { COLLECTION_TYPES } from 'firebase/constants';
+import { insertNodeV2, renderListV1 } from 'firebase/core';
 import { constructDoc } from 'firebase/helpers';
 
 import deepClone from 'utils/deepClone';
@@ -67,6 +72,24 @@ class Component extends React.PureComponent {
       return acc;
     }, 0);
     return this.props.info.voteLimit - voteCount;
+  };
+
+  createColumn = () => {
+    const newId = uuidv4();
+    const queue = insertNodeV2(
+      constructDoc(newId, {
+        color: ITEM_COLORS.GREY,
+        createdBy: this.props.uid,
+        dateCreated: new Date().getTime(),
+        child: null,
+        name: '',
+        parent: this.props.boardId,
+      }),
+      COLLECTION_TYPES.GROUPS,
+      constructDoc(this.props.info.child, { prev: null }),
+      false,
+    );
+    this.props.executeBatch(queue);
   };
 
   filterCollection = (collection, key, value) => {
@@ -243,6 +266,9 @@ class Component extends React.PureComponent {
         </Section>
         <Section style={{ paddingTop: 0 }}>
           <Container>
+            {Object.keys(groups).length === 0 && (
+              <Button onClick={this.createColumn}>Create a column</Button>
+            )}
             <Columns>
               {renderListV1(groups, info.child, this.renderGroup)}
             </Columns>
