@@ -44,6 +44,7 @@ import messages from './messages';
 import reducer from './reducer';
 import saga from './saga';
 import {
+  selectBoardId,
   selectComments,
   selectGroups,
   selectInfo,
@@ -127,6 +128,7 @@ class Component extends React.PureComponent {
     const items = this.filterCollection(this.props.items, 'parent', id);
     return (
       <Group
+        boardId={this.props.boardId}
         createItem={this.createItem}
         executeBatch={this.props.executeBatch}
         id={id}
@@ -260,6 +262,7 @@ Component.defaultProps = {
 };
 
 Component.propTypes = {
+  boardId: PropTypes.string,
   comments: PropTypes.object,
   executeBatch: PropTypes.func,
   groups: PropTypes.object,
@@ -274,6 +277,7 @@ Component.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  boardId: selectBoardId(),
   comments: selectComments(),
   groups: selectGroups(),
   info: selectInfo(),

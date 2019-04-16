@@ -93,7 +93,7 @@ class Component extends React.PureComponent {
         dateCreated: new Date().getTime(),
         child: null,
         name: '',
-        parent: 'd9965f7c-0437-4bc3-8647-40e313058fe1',
+        parent: this.props.boardId,
       }),
       COLLECTION_TYPES.GROUPS,
       constructDoc(this.props.id, this.props.node),
@@ -207,6 +207,7 @@ Component.defaultProps = {
 };
 
 Component.propTypes = {
+  boardId: PropTypes.string,
   createItem: PropTypes.func,
   executeBatch: PropTypes.func,
   id: PropTypes.string.isRequired,
