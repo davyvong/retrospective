@@ -20,10 +20,9 @@ class Component extends React.PureComponent {
     this.state = { message: '' };
   }
 
-  saveItem = event => {
-    event.preventDefault();
+  save = () => {
     const newId = uuidv4();
-    if (this.validateItem()) {
+    if (this.validate()) {
       const queue = insertNodeV2(
         constructDoc(newId, {
           comments: 0,
@@ -43,14 +42,13 @@ class Component extends React.PureComponent {
     }
   };
 
-  validateItem = () =>
+  validate = () =>
     isAuthUID(this.props.userId) &&
     isType(this.state.message, 'String') &&
     this.state.message.length > 0 &&
     isGUID(this.props.parentId);
 
-  updateMessage = event => {
-    event.preventDefault();
+  update = event => {
     this.setState({ message: event.target.value });
   };
 
@@ -59,12 +57,12 @@ class Component extends React.PureComponent {
     return (
       <Wrapper>
         <Message
-          onChange={this.updateMessage}
+          onChange={this.update}
           placeholder={this.props.placeholder}
           value={message}
         />
         <Footer>
-          <FooterButton onClick={this.saveItem}>Save</FooterButton>
+          <FooterButton onClick={this.save}>Save</FooterButton>
           <DiscardButton onClick={this.props.disableCreateMode}>
             Discard
           </DiscardButton>

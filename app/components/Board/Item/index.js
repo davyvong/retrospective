@@ -12,7 +12,6 @@ import { isType } from 'utils/validators';
 
 import Content from './Content';
 import DiscardButton from './DiscardButton';
-import DraftComment from '../DraftComment';
 import Footer from './Footer';
 import FooterButton from './FooterButton';
 import Icon from './Icon';
@@ -43,8 +42,7 @@ class Component extends React.PureComponent {
     }
   }
 
-  toggleCommentMode = event => {
-    event.preventDefault();
+  toggleCommentMode = () => {
     this.setState(prevState => ({ commentMode: !prevState.commentMode }));
   };
 
@@ -62,8 +60,7 @@ class Component extends React.PureComponent {
     });
   };
 
-  onDelete = event => {
-    event.preventDefault();
+  onDelete = () => {
     const queue = deleteNodeV2(
       constructDoc(this.props.id, this.props.node),
       COLLECTION_TYPES.ITEMS,
@@ -71,13 +68,11 @@ class Component extends React.PureComponent {
     this.props.executeBatch(queue);
   };
 
-  onDownvote = event => {
-    event.preventDefault();
+  onDownvote = () => {
     this.onVote('-');
   };
 
-  onUpvote = event => {
-    event.preventDefault();
+  onUpvote = () => {
     this.onVote('+');
   };
 
@@ -119,6 +114,7 @@ class Component extends React.PureComponent {
       parent,
       placeholder,
       renderComment,
+      renderDraftComment,
       userVotes,
     } = this.props;
     const { commentMode, message } = this.state;
@@ -154,8 +150,8 @@ class Component extends React.PureComponent {
             <DiscardButton onClick={this.onDelete}>Delete</DiscardButton>
           </Footer>
           {commentMode && [
-            <DraftComment placeholder="Type a comment" />,
-            <div>{renderListV1(comments, node.child, renderComment)}</div>,
+            renderDraftComment({ parentId: this.props.id }),
+            renderListV1(comments, node.child, renderComment),
           ]}
         </Content>
       </Wrapper>
@@ -171,6 +167,7 @@ Component.defaultProps = {
   placeholder: '',
   remainingVotes: 0,
   renderComment: () => null,
+  renderDraftComment: () => null,
   updateItem: () => {},
   userVotes: 0,
 };
@@ -184,6 +181,7 @@ Component.propTypes = {
   placeholder: PropTypes.string,
   remainingVotes: PropTypes.number,
   renderComment: PropTypes.func,
+  renderDraftComment: PropTypes.func,
   updateItem: PropTypes.func,
   userId: PropTypes.string.isRequired,
   userVotes: PropTypes.number,

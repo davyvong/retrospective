@@ -1,4 +1,5 @@
 {
+  "app.containers.Board.commentMessage": "Type a comment",
   "app.containers.Board.groupName": "Type a column name",
   "app.containers.Board.itemMessage": "Type a message here",
   "app.containers.Board.subtitle": "Description",

@@ -62,8 +62,7 @@ class Component extends React.PureComponent {
     this.setState(state);
   }
 
-  enableCreateMode = event => {
-    event.preventDefault();
+  enableCreateMode = () => {
     this.setState({ createMode: true });
   };
 
@@ -85,8 +84,7 @@ class Component extends React.PureComponent {
     });
   };
 
-  onAdd = event => {
-    event.preventDefault();
+  onAdd = () => {
     const newId = uuidv4();
     const queue = insertNodeV2(
       constructDoc(newId, {
@@ -103,8 +101,7 @@ class Component extends React.PureComponent {
     this.props.executeBatch(queue);
   };
 
-  onDelete = event => {
-    event.preventDefault();
+  onDelete = () => {
     const queue = deleteNodeV2(
       constructDoc(this.props.id, this.props.node),
       COLLECTION_TYPES.GROUPS,

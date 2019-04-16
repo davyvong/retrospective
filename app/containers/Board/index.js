@@ -9,6 +9,7 @@ import { Draggable } from 'react-beautiful-dnd';
 
 import Comment from 'components/Board/Comment';
 import Container from 'components/Board/Container';
+import DraftComment from 'components/Board/DraftComment';
 import DraftItem from 'components/Board/DraftItem';
 import Group from 'components/Board/Group';
 import Item from 'components/Board/Item';
@@ -85,10 +86,17 @@ class Component extends React.PureComponent {
       return collection[b][key] - collection[a][key];
     });
 
-  renderComment = id => {
-    console.log(id);
-    return <Comment>123</Comment>;
-  };
+  renderComment = id => <Comment>{this.props.comments[id].message}</Comment>;
+
+  renderDraftComment = ({ parentId }) => (
+    <DraftComment
+      executeBatch={this.props.executeBatch}
+      parent={this.props.items[parentId]}
+      parentId={parentId}
+      placeholder={this.props.intl.formatMessage(messages.commentMessage)}
+      userId={this.props.uid}
+    />
+  );
 
   renderDraftItem = ({ disableCreateMode, parentId }) => (
     <DraftItem
@@ -143,6 +151,7 @@ class Component extends React.PureComponent {
               placeholder={this.props.intl.formatMessage(messages.itemMessage)}
               remainingVotes={this.calculateRemainingVotes()}
               renderComment={this.renderComment}
+              renderDraftComment={this.renderDraftComment}
               updateItem={this.props.updateItem}
               userId={this.props.uid}
               userVotes={userVotes}
