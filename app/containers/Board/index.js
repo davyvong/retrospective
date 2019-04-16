@@ -86,7 +86,21 @@ class Component extends React.PureComponent {
       return collection[b][key] - collection[a][key];
     });
 
-  renderComment = id => <Comment>{this.props.comments[id].message}</Comment>;
+  renderComment = id => {
+    const node = this.props.comments[id];
+    return (
+      <Comment
+        executeBatch={this.props.executeBatch}
+        id={id}
+        key={id}
+        node={node}
+        parent={this.props.items[node.parent]}
+        placeholder={this.props.intl.formatMessage(messages.commentMessage)}
+        updateComment={this.props.updateComment}
+        userId={this.props.uid}
+      />
+    );
+  };
 
   renderDraftComment = ({ parentId }) => (
     <DraftComment
@@ -253,6 +267,7 @@ Component.propTypes = {
   intl: intlShape.isRequired,
   items: PropTypes.object,
   updateBoard: PropTypes.func,
+  updateComment: PropTypes.func,
   updateGroup: PropTypes.func,
   updateItem: PropTypes.func,
   votes: PropTypes.object,

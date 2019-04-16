@@ -13,8 +13,9 @@ import { COLLECTION_TYPES } from 'firebase/constants';
 
 import {
   initialize as initializeAction,
-  updateGroup as updateGroupAction,
   updateBoard as updateBoardAction,
+  updateComment as updateCommentAction,
+  updateGroup as updateGroupAction,
   updateItem as updateItemAction,
   executeBatch as executeBatchAction,
 } from './actions';
@@ -22,6 +23,7 @@ import {
 import {
   INITIALIZE,
   UPDATE_BOARD,
+  UPDATE_COMMENT,
   UPDATE_GROUP,
   UPDATE_ITEM,
   EXECUTE_BATCH,
@@ -67,6 +69,18 @@ export function* updateBoard(action) {
     yield put(updateBoardAction.success());
   } catch (error) {
     yield put(updateBoardAction.failure(error));
+  }
+}
+
+export function* updateComment(action) {
+  try {
+    const { params: doc } = action;
+    const boardId = yield select(selectBoardId());
+    const ref = firestore.doc(`boards/${boardId}/comments/${doc.id}`);
+    yield call([ref, ref.set], doc.data, { merge: true });
+    yield put(updateCommentAction.success());
+  } catch (error) {
+    yield put(updateCommentAction.failure(error));
   }
 }
 
@@ -120,6 +134,7 @@ export function* executeBatch(action) {
 export default function* saga() {
   yield takeLatest(INITIALIZE.REQUEST, initialize);
   yield takeEvery(UPDATE_BOARD.REQUEST, updateBoard);
+  yield takeEvery(UPDATE_COMMENT.REQUEST, updateComment);
   yield takeEvery(UPDATE_GROUP.REQUEST, updateGroup);
   yield takeEvery(UPDATE_ITEM.REQUEST, updateItem);
   yield takeEvery(EXECUTE_BATCH.REQUEST, executeBatch);

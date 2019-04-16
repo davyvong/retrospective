@@ -8,7 +8,7 @@ import { COLLECTION_TYPES } from 'firebase/constants';
 import { deleteNodeV2, renderListV1 } from 'firebase/core';
 import { constructDoc } from 'firebase/helpers';
 
-import { isType } from 'utils/validators';
+import { isAuthUID, isGUID, isType } from 'utils/validators';
 
 import Content from './Content';
 import DiscardButton from './DiscardButton';
@@ -46,7 +46,16 @@ class Component extends React.PureComponent {
     this.setState(prevState => ({ commentMode: !prevState.commentMode }));
   };
 
+  validate = () =>
+    isAuthUID(this.props.userId) &&
+    isType(this.state.message, 'String') &&
+    isGUID(this.props.node.parent) &&
+    isGUID(this.props.id);
+
   onChange = event => {
+    if (!this.validate()) {
+      return;
+    }
     if (this.updateTimeout) {
       clearTimeout(this.updateTimeout);
     }
