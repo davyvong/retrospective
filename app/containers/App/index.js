@@ -12,7 +12,7 @@ export default function App() {
   return (
     <div>
       <Switch>
-        <Route path="/" component={Home} />
+        <Route exact path="/" component={Home} />
         <Route path="/board/:boardId" component={Board} />
         <Route component={NotFound} />
       </Switch>
