@@ -45,6 +45,11 @@ const Component = styled.div`
   &[disabled] {
     cursor: not-allowed;
   }
+
+  &:hover {
+    border-color: #b5b5b5;
+    color: #363636;
+  }
 `;
 
 export default Component;
