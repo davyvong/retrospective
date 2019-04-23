@@ -57,6 +57,7 @@ class Component extends React.PureComponent {
     return (
       <Wrapper>
         <Message
+          async
           onChange={this.update}
           placeholder={this.props.placeholder}
           value={message}

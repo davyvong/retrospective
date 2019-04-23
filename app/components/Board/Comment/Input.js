@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import TextareaAutosize from 'react-autosize-textarea';
 
-const Component = styled(TextareaAutosize).attrs({ async: true })`
+const Component = styled(TextareaAutosize)`
   background-color: #00000010;
   border-radius: 6px;
   font-size: 0.9em;

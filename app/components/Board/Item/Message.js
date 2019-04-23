@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import TextareaAutosize from 'react-autosize-textarea';
 
-const Component = styled(TextareaAutosize).attrs({ async: true })`
+const Component = styled(TextareaAutosize)`
   border-radius: 6px;
   display: flex;
   flex: 1;

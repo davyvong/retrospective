@@ -140,6 +140,7 @@ class Component extends React.PureComponent {
         </VoteWrapper>
         <Content>
           <Message
+            async
             onChange={this.onChange}
             placeholder={placeholder}
             value={message}

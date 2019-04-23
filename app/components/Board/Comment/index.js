@@ -72,6 +72,7 @@ class Component extends React.PureComponent {
   render() {
     return (
       <Input
+        async
         onBlur={this.onBlur}
         onChange={this.onChange}
         placeholder={this.props.placeholder}
