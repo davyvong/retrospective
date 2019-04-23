@@ -2,6 +2,8 @@ import { call, put, select, take } from 'redux-saga/effects';
 
 import { selectUID } from 'containers/AuthProvider/selectors';
 
+import { isAuthUID, isGUID } from 'utils/validators';
+
 import { createDocumentChannel, createCollectionChannel } from './channels';
 
 import {
@@ -71,10 +73,12 @@ export function* itemCollectionListener() {
 export function* voteDocumentListener() {
   const id = yield select(selectBoardId());
   const uid = yield select(selectUID());
-  yield call(
-    createListener,
-    createDocumentChannel,
-    `boards/${id}/votes/${uid}`,
-    onVoteSnapshot,
-  );
+  if (isAuthUID(uid) && isGUID(id)) {
+    yield call(
+      createListener,
+      createDocumentChannel,
+      `boards/${id}/votes/${uid}`,
+      onVoteSnapshot,
+    );
+  }
 }

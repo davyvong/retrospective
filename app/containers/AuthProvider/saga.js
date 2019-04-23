@@ -4,8 +4,6 @@ import { auth } from 'configureFirebase';
 
 import { voteDocumentListener } from 'containers/Board/listeners';
 
-import { isAuthUID, isType } from 'utils/validators';
-
 import {
   authorizeAnonymously as authorizeAnonymouslyAction,
   setAuthUID as setAuthUIDAction,
@@ -23,15 +21,8 @@ export function* authorizeAnonymously() {
   }
 }
 
-export function* listenToVotes(action) {
-  const { params } = action;
-  if (isType(params, 'Object') && isAuthUID(params.uid)) {
-    yield fork(voteDocumentListener);
-  }
-}
-
 export default function* saga() {
   yield fork(createAuthListener);
   yield takeLatest(AUTHORIZE_ANONYMOUSLY.REQUEST, authorizeAnonymously);
-  yield takeLatest(SET_AUTH_UID, listenToVotes);
+  yield takeLatest(SET_AUTH_UID, voteDocumentListener);
 }
