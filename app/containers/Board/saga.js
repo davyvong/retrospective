@@ -44,7 +44,6 @@ import {
   commentCollectionListener,
   groupCollectionListener,
   itemCollectionListener,
-  voteDocumentListener,
 } from './listeners';
 
 import { selectBoardId } from './selectors';
@@ -63,7 +62,6 @@ export function* initialize(action) {
       fork(commentCollectionListener),
       fork(groupCollectionListener),
       fork(itemCollectionListener),
-      fork(voteDocumentListener),
     ]);
   } catch (error) {
     yield put(initializeAction.failure(error));
