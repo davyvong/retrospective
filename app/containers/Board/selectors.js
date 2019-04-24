@@ -9,7 +9,12 @@ const selectGroups = () =>
   createSelector(selectState, state => state.get('groups').toJS());
 
 const selectBoardId = () =>
-  createSelector(selectState, state => state.get('id'));
+  createSelector(selectState, state => {
+    if (state) {
+      return state.get('id');
+    }
+    return null;
+  });
 
 const selectComments = () =>
   createSelector(selectState, state => state.get('comments').toJS());

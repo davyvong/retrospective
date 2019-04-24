@@ -55,7 +55,7 @@ export function* initialize(action) {
     const ref = firestore.doc(`boards/${id}`);
     const doc = yield call([ref, ref.get]);
     if (!doc.exists) {
-      throw new Error(`Board (${id}) does not exist.`);
+      throw new Error('Board does not exist.');
     }
     yield put(initializeAction.success(id));
     yield all([
@@ -67,6 +67,9 @@ export function* initialize(action) {
     ]);
   } catch (error) {
     yield put(initializeAction.failure(error));
+    if (error.message === 'Board does not exist.') {
+      window.location.replace('/404');
+    }
   }
 }
 
