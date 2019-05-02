@@ -9,15 +9,15 @@ import {
   verifyCollectionType,
 } from './helpers';
 
-export function renderListV1(map, child, renderer) {
+export function renderListV1(map, first, renderer) {
   const list = [];
   let count = 0;
-  let current = child;
+  let current = first;
   while (isGUID(current) && isType(map[current], 'Object')) {
     list.push(current);
     current = map[current].next;
-    // eslint-disable-next-line no-plusplus
-    if (count++ > 1000) {
+    count += 1;
+    if (count > 1000) {
       return null;
     }
   }
@@ -37,7 +37,7 @@ export function deleteNodeV2(node, collection) {
     queue.push(
       constructDoc(
         node.data.parent,
-        { child: node.data.next },
+        { first: node.data.next },
         getParentCollection(collection),
       ),
     );
@@ -73,7 +73,7 @@ export function insertNodeV2(node, collection, destination, append = true) {
     queue.push(
       constructDoc(
         node.data.parent,
-        { child: node.id },
+        { first: node.id },
         getParentCollection(collection),
       ),
     );
@@ -105,7 +105,7 @@ export function reorderNodeV1(prevState, nodeId, destinationId, append) {
   if (isGUID(node.prev)) {
     updateState(node.prev, { next: node.next });
   } else {
-    state.child = node.next;
+    state.first = node.next;
   }
   if (isGUID(node.next)) {
     updateState(node.next, { prev: node.prev });
@@ -127,7 +127,7 @@ export function reorderNodeV1(prevState, nodeId, destinationId, append) {
     updateState(prev, { next: nodeId });
   }
   if (!destinationExists || (!isGUID(prev) && !append)) {
-    state.child = nodeId;
+    state.first = nodeId;
   }
   return state;
 }
@@ -151,7 +151,7 @@ export function reorderNodeV2(node, collection, destination, append = true) {
   } else {
     updateState(
       node.data.parent,
-      { child: node.data.next },
+      { first: node.data.next },
       getParentCollection(collection),
     );
   }
@@ -181,7 +181,7 @@ export function reorderNodeV2(node, collection, destination, append = true) {
   if (!isDocument(destination) || (!isGUID(prev) && !append)) {
     updateState(
       node.data.parent,
-      { child: node.id },
+      { first: node.id },
       getParentCollection(collection),
     );
   }

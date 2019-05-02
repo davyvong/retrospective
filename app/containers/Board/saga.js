@@ -82,7 +82,7 @@ export function* createBoard() {
     const boardNode = constructDoc(
       boardId,
       {
-        child: null,
+        first: null,
         createdBy: uid,
         dateCreated: timestamp,
         subtitle: '',
@@ -97,14 +97,14 @@ export function* createBoard() {
       color: ITEM_COLORS.GREY,
       createdBy: uid,
       dateCreated: timestamp,
-      child: null,
+      first: null,
       name: '',
       parent: boardId,
     });
     const groupBatch = insertNodeV2(
       groupNode,
       COLLECTION_TYPES.GROUPS,
-      constructDoc(boardNode.child, { prev: null }),
+      constructDoc(boardNode.first, { prev: null }),
     );
     yield put(executeBatchAction.request([...queue, ...groupBatch]));
     yield put(createBoardAction.success());

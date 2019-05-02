@@ -30,7 +30,7 @@ class Component extends React.PureComponent {
           parent: this.props.parentId,
         }),
         COLLECTION_TYPES.COMMENTS,
-        constructDoc(this.props.parent.child, { prev: null }),
+        constructDoc(this.props.parent.first, { prev: null }),
         false,
       );
       queue.push(

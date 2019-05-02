@@ -81,12 +81,12 @@ class Component extends React.PureComponent {
         color: ITEM_COLORS.GREY,
         createdBy: this.props.uid,
         dateCreated: new Date().getTime(),
-        child: null,
+        first: null,
         name: '',
         parent: this.props.boardId,
       }),
       COLLECTION_TYPES.GROUPS,
-      constructDoc(this.props.info.child, { prev: null }),
+      constructDoc(this.props.info.first, { prev: null }),
       false,
     );
     this.props.executeBatch(queue);
@@ -270,7 +270,7 @@ class Component extends React.PureComponent {
               <Button onClick={this.createColumn}>Create a column</Button>
             )}
             <Columns>
-              {renderListV1(groups, info.child, this.renderGroup)}
+              {renderListV1(groups, info.first, this.renderGroup)}
             </Columns>
           </Container>
         </Section>

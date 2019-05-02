@@ -35,7 +35,7 @@ class Component extends React.PureComponent {
     super(props);
     this.state = {
       createMode: false,
-      child: null,
+      first: null,
       items: {},
       name: '',
     };
@@ -44,10 +44,10 @@ class Component extends React.PureComponent {
   componentWillReceiveProps(newProps) {
     const state = {};
     if (
-      isGUID(newProps.node.child) &&
-      this.state.child !== newProps.node.child
+      isGUID(newProps.node.first) &&
+      this.state.first !== newProps.node.first
     ) {
-      state.child = newProps.node.child;
+      state.first = newProps.node.first;
     }
     if (
       isType(newProps.node.name, 'String') &&
@@ -91,7 +91,7 @@ class Component extends React.PureComponent {
         color: ITEM_COLORS.GREY,
         createdBy: this.props.userId,
         dateCreated: new Date().getTime(),
-        child: null,
+        first: null,
         name: '',
         parent: this.props.boardId,
       }),
@@ -116,8 +116,8 @@ class Component extends React.PureComponent {
     ) {
       return;
     }
-    const { child, items } = this.state;
-    let destinationId = child;
+    const { first, items } = this.state;
+    let destinationId = first;
     for (let i = 0; i < result.destination.index; i += 1) {
       if (isType(items[destinationId], 'Object')) {
         destinationId = items[destinationId].next;
@@ -132,7 +132,7 @@ class Component extends React.PureComponent {
       append,
     );
     const state = reorderNodeV1(
-      { child, items },
+      { first, items },
       sourceId,
       destinationId,
       append,
@@ -147,7 +147,7 @@ class Component extends React.PureComponent {
   };
 
   render() {
-    const { createMode, child, items, name } = this.state;
+    const { createMode, first, items, name } = this.state;
     const { id, node, renderDraftItem, renderItem } = this.props;
     const colors = Object.values(ITEM_COLORS);
     return (
@@ -183,7 +183,7 @@ class Component extends React.PureComponent {
             <Droppable droppableId={id}>
               {provided => (
                 <Items {...provided.droppableProps} ref={provided.innerRef}>
-                  {renderListV1(items, child, renderItem)}
+                  {renderListV1(items, first, renderItem)}
                   {provided.placeholder}
                 </Items>
               )}

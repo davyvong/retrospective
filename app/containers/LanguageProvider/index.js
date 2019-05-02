@@ -21,9 +21,9 @@ export class Component extends React.PureComponent {
 }
 
 Component.propTypes = {
+  children: PropTypes.element.isRequired,
   locale: PropTypes.string,
   messages: PropTypes.object,
-  children: PropTypes.element.isRequired,
 };
 
 const mapStateToProps = createSelector(makeSelectLocale(), locale => ({
