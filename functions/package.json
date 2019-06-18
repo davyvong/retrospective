@@ -3,8 +3,9 @@
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "lint": "eslint --ignore-path ../.gitignore .",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "predeploy": "npm run lint",
+    "deploy": "firebase deploy --only functions"
   },
   "engines": {
     "node": "8"
