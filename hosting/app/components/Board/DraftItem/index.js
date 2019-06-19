@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 
+import ModalContainer from 'components/Modal/Container';
+import Title from 'components/Modal/Title';
+
 import { COLLECTION_TYPES } from 'firebase/constants';
 import { insertNodeV2 } from 'firebase/core';
 import { constructDoc } from 'firebase/helpers';
@@ -19,6 +22,25 @@ class Component extends React.PureComponent {
     super(props);
     this.state = { message: '' };
   }
+
+  discard = () => {
+    const onDiscard = () => {
+      this.props.disableCreateMode();
+      this.props.closeModal();
+    };
+    this.props.openModal({
+      closeOnBackdrop: true,
+      content: (
+        <ModalContainer>
+          <Title>Are you sure you want to discard this item?</Title>
+          <Footer>
+            <FooterButton onClick={this.props.closeModal}>Keep</FooterButton>
+            <DiscardButton onClick={onDiscard}>Discard</DiscardButton>
+          </Footer>
+        </ModalContainer>
+      ),
+    });
+  };
 
   save = () => {
     const newId = uuidv4();
@@ -64,9 +86,7 @@ class Component extends React.PureComponent {
         />
         <Footer>
           <FooterButton onClick={this.save}>Save</FooterButton>
-          <DiscardButton onClick={this.props.disableCreateMode}>
-            Discard
-          </DiscardButton>
+          <DiscardButton onClick={this.discard}>Discard</DiscardButton>
         </Footer>
       </Wrapper>
     );
@@ -74,15 +94,19 @@ class Component extends React.PureComponent {
 }
 
 Component.defaultProps = {
+  closeModal: () => {},
   disableCreateMode: () => {},
   executeBatch: () => {},
+  openModal: () => {},
   parent: {},
   placeholder: '',
 };
 
 Component.propTypes = {
+  closeModal: PropTypes.func,
   disableCreateMode: PropTypes.func,
   executeBatch: PropTypes.func,
+  openModal: PropTypes.func,
   parent: PropTypes.object,
   parentId: PropTypes.string.isRequired,
   placeholder: PropTypes.string,

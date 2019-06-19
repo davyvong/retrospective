@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import { ITEM_COLORS, COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
+import ModalContainer from 'components/Modal/Container';
+import Title from 'components/Modal/Title';
+
 import { COLLECTION_TYPES } from 'firebase/constants';
 import { deleteNodeV2, renderListV1 } from 'firebase/core';
 import { constructDoc } from 'firebase/helpers';
@@ -74,7 +77,22 @@ class Component extends React.PureComponent {
       constructDoc(this.props.id, this.props.node),
       COLLECTION_TYPES.ITEMS,
     );
-    this.props.executeBatch(queue);
+    const executeBatch = () => {
+      this.props.executeBatch(queue);
+      this.props.closeModal();
+    };
+    this.props.openModal({
+      closeOnBackdrop: true,
+      content: (
+        <ModalContainer>
+          <Title>Are you sure you want to delete this item?</Title>
+          <Footer>
+            <FooterButton onClick={this.props.closeModal}>Keep</FooterButton>
+            <DiscardButton onClick={executeBatch}>Delete</DiscardButton>
+          </Footer>
+        </ModalContainer>
+      ),
+    });
   };
 
   onDownvote = () => {
@@ -168,9 +186,11 @@ class Component extends React.PureComponent {
 }
 
 Component.defaultProps = {
-  executeBatch: () => {},
+  closeModal: () => {},
   comments: {},
+  executeBatch: () => {},
   node: {},
+  openModal: () => {},
   parent: {},
   placeholder: '',
   remainingVotes: 0,
@@ -181,10 +201,12 @@ Component.defaultProps = {
 };
 
 Component.propTypes = {
+  closeModal: PropTypes.func,
   comments: PropTypes.object,
   executeBatch: PropTypes.func,
   id: PropTypes.string.isRequired,
   node: PropTypes.object,
+  openModal: PropTypes.func,
   parent: PropTypes.object,
   placeholder: PropTypes.string,
   remainingVotes: PropTypes.number,

@@ -28,6 +28,11 @@ import { ITEM_COLORS } from 'constants/colors';
 
 import { selectUID } from 'containers/AuthProvider/selectors';
 
+import {
+  closeModal as closeModalAction,
+  openModal as openModalAction,
+} from 'containers/Modal/actions';
+
 import { COLLECTION_TYPES } from 'firebase/constants';
 import { insertNodeV2, renderListV1 } from 'firebase/core';
 import { constructDoc } from 'firebase/helpers';
@@ -138,8 +143,10 @@ class Component extends React.PureComponent {
 
   renderDraftItem = ({ disableCreateMode, parentId }) => (
     <DraftItem
+      closeModal={this.props.closeModal}
       disableCreateMode={disableCreateMode}
       executeBatch={this.props.executeBatch}
+      openModal={this.props.openModal}
       parent={this.props.groups[parentId]}
       parentId={parentId}
       placeholder={this.props.intl.formatMessage(messages.itemMessage)}
@@ -152,12 +159,14 @@ class Component extends React.PureComponent {
     return (
       <Group
         boardId={this.props.boardId}
+        closeModal={this.props.closeModal}
         createItem={this.createItem}
         executeBatch={this.props.executeBatch}
         id={id}
         items={items}
         key={id}
         node={this.props.groups[id]}
+        openModal={this.props.openModal}
         placeholder={this.props.intl.formatMessage(messages.groupName)}
         renderDraftItem={this.renderDraftItem}
         renderItem={this.renderItem}
@@ -182,10 +191,12 @@ class Component extends React.PureComponent {
             ref={provided.innerRef}
           >
             <Item
+              closeModal={this.props.closeModal}
               comments={this.props.comments}
               executeBatch={this.props.executeBatch}
               id={id}
               node={node}
+              openModal={this.props.openModal}
               parent={this.props.groups[node.parent]}
               placeholder={this.props.intl.formatMessage(messages.itemMessage)}
               remainingVotes={this.calculateRemainingVotes()}
@@ -289,12 +300,14 @@ Component.defaultProps = {
 
 Component.propTypes = {
   boardId: PropTypes.string,
+  closeModal: PropTypes.func,
   comments: PropTypes.object,
   executeBatch: PropTypes.func,
   groups: PropTypes.object,
   info: PropTypes.object,
   intl: intlShape.isRequired,
   items: PropTypes.object,
+  openModal: PropTypes.func,
   updateBoard: PropTypes.func,
   updateComment: PropTypes.func,
   updateGroup: PropTypes.func,
@@ -313,8 +326,10 @@ const mapStateToProps = createStructuredSelector({
 });
 
 export const mapDispatchToProps = dispatch => ({
+  closeModal: params => dispatch(closeModalAction(params)),
   executeBatch: params => dispatch(executeBatchAction.request(params)),
   initialize: params => dispatch(initializeAction.request(params)),
+  openModal: params => dispatch(openModalAction(params)),
   updateBoard: params => dispatch(updateBoardAction.request(params)),
   updateComment: params => dispatch(updateCommentAction.request(params)),
   updateGroup: params => dispatch(updateGroupAction.request(params)),

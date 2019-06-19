@@ -26,16 +26,14 @@ function reducer(state = initialState, action) {
 function openModal(state, action) {
   if (isType(action.params, 'Object')) {
     const { params: modal } = action;
-    const newState = { visible: true };
-    if (isType(modal.closeOnBackdrop, 'Boolean')) {
-      newState.closeOnBackdrop = modal.closeOnBackdrop;
-    }
-    if (isType(modal.onClose, 'Function')) {
-      newState.onClose = modal.onClose;
-    }
-    if (React.isValidElement(modal.content)) {
-      newState.content = modal.content;
-    }
+    const newState = {
+      closeOnBackdrop: isType(modal.closeOnBackdrop, 'Boolean')
+        ? modal.closeOnBackdrop
+        : false,
+      content: React.isValidElement(modal.content) ? modal.content : null,
+      onClose: isType(modal.onClose, 'Function') ? modal.onClose : null,
+      visible: true,
+    };
     return state.merge(newState);
   }
   return state;

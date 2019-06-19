@@ -7,6 +7,13 @@ import uuidv4 from 'uuid/v4';
 import { ITEM_COLORS } from 'constants/colors';
 import { UPDATE_DELAY } from 'constants/timings';
 
+import DiscardButton from 'components/Board/DraftItem/DiscardButton';
+import Footer from 'components/Board/DraftItem/Footer';
+import FooterButton from 'components/Board/DraftItem/FooterButton';
+
+import ModalContainer from 'components/Modal/Container';
+import Title from 'components/Modal/Title';
+
 import { COLLECTION_TYPES } from 'firebase/constants';
 import {
   deleteNodeV2,
@@ -106,7 +113,22 @@ class Component extends React.PureComponent {
       constructDoc(this.props.id, this.props.node),
       COLLECTION_TYPES.GROUPS,
     );
-    this.props.executeBatch(queue);
+    const executeBatch = () => {
+      this.props.executeBatch(queue);
+      this.props.closeModal();
+    };
+    this.props.openModal({
+      closeOnBackdrop: true,
+      content: (
+        <ModalContainer>
+          <Title>Are you sure you want to delete this column?</Title>
+          <Footer>
+            <FooterButton onClick={this.props.closeModal}>Keep</FooterButton>
+            <DiscardButton onClick={executeBatch}>Delete</DiscardButton>
+          </Footer>
+        </ModalContainer>
+      ),
+    });
   };
 
   onDragEnd = result => {
@@ -196,10 +218,12 @@ class Component extends React.PureComponent {
 }
 
 Component.defaultProps = {
+  closeModal: () => {},
   createItem: () => {},
   executeBatch: () => {},
   items: {},
   node: {},
+  openModal: () => {},
   placeholder: '',
   renderDraftItem: () => null,
   renderItem: () => null,
@@ -208,11 +232,13 @@ Component.defaultProps = {
 
 Component.propTypes = {
   boardId: PropTypes.string,
+  closeModal: PropTypes.func,
   createItem: PropTypes.func,
   executeBatch: PropTypes.func,
   id: PropTypes.string.isRequired,
   items: PropTypes.object,
   node: PropTypes.object,
+  openModal: PropTypes.func,
   placeholder: PropTypes.string,
   renderDraftItem: PropTypes.func,
   renderItem: PropTypes.func,
