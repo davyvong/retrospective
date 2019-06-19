@@ -24,7 +24,11 @@ class Component extends React.PureComponent {
   }
 
   discard = () => {
-    const onDiscard = () => {
+    if (this.state.message === '') {
+      this.props.disableCreateMode();
+      return;
+    }
+    const disableCreateMode = () => {
       this.props.disableCreateMode();
       this.props.closeModal();
     };
@@ -35,7 +39,7 @@ class Component extends React.PureComponent {
           <Title>Are you sure you want to discard this item?</Title>
           <Footer>
             <FooterButton onClick={this.props.closeModal}>Keep</FooterButton>
-            <DiscardButton onClick={onDiscard}>Discard</DiscardButton>
+            <DiscardButton onClick={disableCreateMode}>Discard</DiscardButton>
           </Footer>
         </ModalContainer>
       ),
