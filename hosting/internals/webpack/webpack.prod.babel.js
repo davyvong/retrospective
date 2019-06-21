@@ -111,7 +111,6 @@ module.exports = require('./webpack.base.babel')({
       safeToUseOptionalCaches: true,
 
       ServiceWorker: { events: true },
-      AppCache: { events: true },
     }),
 
     new CompressionPlugin({
