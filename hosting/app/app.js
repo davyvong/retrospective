@@ -8,8 +8,6 @@ import history from 'utils/history';
 import 'styles/bulma.css';
 import 'sanitize.css/sanitize.css';
 
-import OfflinePlugin from 'offline-plugin/runtime';
-
 import App from 'containers/App';
 import AuthProvider from 'containers/AuthProvider';
 
@@ -63,15 +61,4 @@ if (!window.Intl) {
     });
 } else {
   render(translationMessages);
-}
-
-if (process.env.NODE_ENV === 'production') {
-  OfflinePlugin.install({
-    onUpdateReady: () => {
-      OfflinePlugin.applyUpdate();
-    },
-    onUpdated: () => {
-      window.location.reload();
-    },
-  });
 }
