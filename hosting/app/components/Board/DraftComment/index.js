@@ -30,8 +30,7 @@ class Component extends React.PureComponent {
           parent: this.props.parentId,
         }),
         COLLECTION_TYPES.COMMENTS,
-        constructDoc(this.props.parent.first, { prev: null }),
-        false,
+        constructDoc(this.props.last.id, this.props.last),
       );
       queue.push(
         constructDoc(
@@ -69,12 +68,14 @@ class Component extends React.PureComponent {
 
 Component.defaultProps = {
   executeBatch: () => {},
+  last: {},
   parent: {},
   placeholder: '',
 };
 
 Component.propTypes = {
   executeBatch: PropTypes.func,
+  last: PropTypes.object,
   parent: PropTypes.object,
   parentId: PropTypes.string.isRequired,
   placeholder: PropTypes.string,

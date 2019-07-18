@@ -67,6 +67,21 @@ class Component extends React.PureComponent {
     this.props.initialize(this.props.match.params.boardId);
   }
 
+  calculateLastComment = id => {
+    let last = this.props.items[id].first;
+    while (
+      isGUID(last) &&
+      isType(this.props.comments[last], 'Object') &&
+      isGUID(this.props.comments[last].next)
+    ) {
+      last = this.props.comments[last].next;
+    }
+    return {
+      ...this.props.comments[last],
+      id: last,
+    };
+  };
+
   calculateRemainingVotes = () => {
     const votes = Object.keys(this.props.votes);
     const userVotes = votes.filter(id => isGUID(id));
@@ -134,6 +149,7 @@ class Component extends React.PureComponent {
   renderDraftComment = ({ parentId }) => (
     <DraftComment
       executeBatch={this.props.executeBatch}
+      last={this.calculateLastComment(parentId)}
       parent={this.props.items[parentId]}
       parentId={parentId}
       placeholder={this.props.intl.formatMessage(messages.commentMessage)}
