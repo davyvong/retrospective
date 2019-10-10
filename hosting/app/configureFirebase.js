@@ -3,12 +3,14 @@ import 'firebase/auth';
 import 'firebase/firestore';
 
 export const config = {
-  apiKey: 'AIzaSyA3n0dnLxT93WqewMGK8aEufl6QYnpKQCk',
-  authDomain: 'retrospective-7fdad.firebaseapp.com',
-  databaseURL: 'https://retrospective-7fdad.firebaseio.com',
-  projectId: 'retrospective-7fdad',
-  storageBucket: 'retrospective-7fdad.appspot.com',
-  messagingSenderId: '444001336318',
+  apiKey: 'AIzaSyBY75W4d-x8pggftuaVdR6YLc2ZCv4BQWY',
+  authDomain: 'davyvong-retro.firebaseapp.com',
+  databaseURL: 'https://davyvong-retro.firebaseio.com',
+  projectId: 'davyvong-retro',
+  storageBucket: 'davyvong-retro.appspot.com',
+  messagingSenderId: '577808608561',
+  appId: '1:577808608561:web:036cd4ef892f17624d9410',
+  measurementId: 'G-BR5ZCDQJJJ',
 };
 
 firebase.initializeApp(config);
