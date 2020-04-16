@@ -1,6 +1,6 @@
 # Retrospective Board
 
-https://github.com/davyvong/retrospective
+A user-friendly web application to facilitate retrospective meetings.
 
 ### Demo
 
